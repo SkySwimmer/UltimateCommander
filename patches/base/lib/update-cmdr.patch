@@ -1,18 +1,23 @@
 diff --git a/lib/update-cmdr b/lib/update-cmdr
-index 1f57256..0707803 100644
+index 1f57256..c752245 100644
 --- a/lib/update-cmdr
 +++ b/lib/update-cmdr
-@@ -1,4 +1,15 @@
+@@ -1,4 +1,20 @@
  #!/bin/bash
-+if [ ! "$(id -u)" == "$(id cmdr)" ] && [ "$(id -u)" != "0" ]; then
++if [ ! "$(id -u)" == "$(id -u cmdr)" ] && [ "$(id -u)" != "0" ]; then
 +    1>&2 echo CMD-R needs to run as its own user.
 +    1>&2 echo Use sudo to start this script.
 +    1>&2 echo
 +    1>&2 echo Runuser will be used to start CMD-R as its own user.
 +    exit 1
 +fi
-+if [ ! "$(id -u)" == "$(id cmdr)" ]; then
-+    runuser --user cmdr -- cmd-r "$@"
++if [ ! "$(id -u)" == "$(id -u cmdr)" ]; then
++    runuser --user cmdr -- update-cmdr "$@"
++    exit $?
++fi
++
++if [ "$1" == "--start-service" ]; then
++    screen -DmS cmdr /usr/lib/cmd-r/update-and-run
 +    exit $?
 +fi
  

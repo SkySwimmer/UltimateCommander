@@ -1,8 +1,8 @@
 diff --git a/lib/Update CMD-R.sh b/lib/Update CMD-R.sh
-index 1129667..99201dd 100644
+index 1129667..4a225bb 100644
 --- a/lib/Update CMD-R.sh	
 +++ b/lib/Update CMD-R.sh	
-@@ -1,18 +1,17 @@
+@@ -1,18 +1,18 @@
 +#!/bin/bash
  DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
  DIROLD=$(pwd)
@@ -17,9 +17,9 @@ index 1129667..99201dd 100644
 -    chmod +x ./configure
 -    ./configure --norepoconfig
      echo Compiling...
--    make
-+    chmod +x ./setup.sh
-+    ./setup.sh
++    chmod +x ./configure
++    ./configure
+     make
      echo Installing...
 -    cp build/* .. -r -f
 +    cp work/build/* .. -r -f

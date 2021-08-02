@@ -1,20 +1,30 @@
 diff --git a/lib/cmd-r b/lib/cmd-r
-index 54a2b6c..429ab4e 100644
+index 54a2b6c..36e0a2f 100644
 --- a/lib/cmd-r
 +++ b/lib/cmd-r
-@@ -1,2 +1,15 @@
+@@ -1,2 +1,24 @@
  #!/bin/bash
-+if [ ! "$(id -u)" == "$(id cmdr)" ] && [ "$(id -u)" != "0" ]; then
+-/usr/lib/cmd-r/cmd-r
++if [ "$(id -u)" != "$(id -u cmdr)" ] && [ "$(id -u)" != "0" ]; then
 +    1>&2 echo CMD-R needs to run as its own user.
 +    1>&2 echo Use sudo to start this script.
 +    1>&2 echo
 +    1>&2 echo Runuser will be used to start CMD-R as its own user.
 +    exit 1
 +fi
-+
-+if [ ! "$(id -u)" == "$(id cmdr)" ]; then
++if [ "$(id -u)" != "$(id -u cmdr)" ]; then
 +    runuser --user cmdr -- cmd-r "$@"
 +    exit $?
 +fi
 +
- /usr/lib/cmd-r/cmd-r
++if [ "$1" == "--start-service" ]; then
++    screen -DmS cmdr /usr/lib/cmd-r/cmd-r
++    exit $?
++fi
++
++function fail() {
++    1>&2 echo Failed to connect to the CMD-R sceen session, it might need to be \(re\)started.
++    exit 1
++}
++
++screen -r cmdr &>/dev/null || fail

@@ -1,0 +1,50 @@
+diff --git a/lib/do-install-c.sh b/lib/do-install-c.sh
+index 47b4702..b4e1251 100644
+--- a/lib/do-install-c.sh
++++ b/lib/do-install-c.sh
+@@ -4,24 +4,38 @@ if [ ! -d "./build" ]; then
+     exit
+ fi
+ 
++libdir="."
++if [ "$1" != "" ]; then
++    libdir="$1"
++fi
++
+ if [ ! -f "/usr/bin/cmd-r" ]; then
++    useradd -rmd /usr/lib/cmd-r cmdr &>/dev/null
++    usermod -L cmdr &>/dev/null
++
+     echo Installing CMD-R...
+     
+     mkdir /usr/lib/cmd-r
+     cp build/* /usr/lib/cmd-r -r -f
+     
+-    cp lib/cmd-r /usr/bin/cmd-r -f
+-    cp lib/update-cmdr /usr/bin/update-cmdr -f
+-    chmod 777 /usr/lib/cmd-r
++    cp $libdir/lib/cmd-r /usr/bin/cmd-r -f
++    cp $libdir/lib/update-cmdr /usr/bin/update-cmdr -f
++    chmod 700 /usr/lib/cmd-r
++    chown cmdr /usr/lib/cmd-r
+     
+     echo CMD-R has been installed.
+ else
++    useradd -rmd /usr/lib/cmd-r cmdr &>/dev/null
++    usermod -L cmdr &>/dev/null
++    
+     echo Updating CMD-R...
++
+     cp build/* /usr/lib/cmd-r -r -f
+-    
+-    cp lib/cmd-r /usr/bin/cmd-r -f
+-    cp lib/update-cmdr /usr/bin/update-cmdr -f
+-    chmod 777 /usr/lib/cmd-r
++
++    cp $libdir/lib/cmd-r /usr/bin/cmd-r -f
++    cp $libdir/lib/update-cmdr /usr/bin/update-cmdr -f
++    chmod 700 /usr/lib/cmd-r
++    chown cmdr /usr/lib/cmd-r
+         
+     echo CMD-R has been updated.
+ fi

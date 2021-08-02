@@ -1,6 +1,17 @@
 #!/bin/bash
-missingdepends=false
+chmod +x build.sh
+chmod +x applypatches.sh
+chmod +x buildpatches.sh
+chmod +x clean.sh
 
+requiredvermsbuild=15.6.0.0
+requiredvernuget=5.6.0.6591
+requiredvermake=4.3
+requiredvergit=2.28.0
+requiredverdotnet=5.0.205
+requiredverscreen=4.08.00
+
+missingdepends=false
 echo Searching for make...
 if command -v make &> /dev/null 
 then
@@ -49,6 +60,30 @@ else
     missingdepends=true
 fi
 
+echo Searching for screen...
+if command -v screen &> /dev/null 
+then
+    requiredver=$requiredverscreen
+    currentver="$(screen --version | sed -E "s/.* version (.*) .* .*/\\1/g")"
+    packagename=Screen
+    installed=false
+    
+    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+        echo $packagename is installed.
+        installed=true
+    else
+        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
+        installed=false
+        missingdepends=true
+    fi
+    
+    screeninstalled=$installed
+else
+    echo Screen is NOT installed.
+    screeninstalled=false
+    missingdepends=true
+fi
+
 if [ $missingdepends == "true" ]; then
     echo
     echo You are missing the following dependencies:
@@ -67,21 +102,13 @@ if [ $missingdepends == "true" ]; then
     if [ "$gitinstalled" == "false" ]; then 
         echo Git version $requiredvergit or above.
     fi
+    if [ "$screeninstalled" == "false" ]; then 
+        echo Screen version $requiredverscreen or above.
+    fi
     exit 1
 fi
 
-function applyPatches() {
-    for file in "$1"/*; do
-        if [ -d "$file" ]; then
-            applyPatches "$file" "$2/$(basename "$file")"
-        elif [ -f "$file" ]; then
-            patch -d "$2" -i "$(pwd)/$file"
-        fi
-    done
-}
-
 echo Cloning repositories...
-
 echo Cloning CMD-R base...
 
 rm -rf work
@@ -89,25 +116,17 @@ mkdir "work"
 cd work
 
 rm -rf base-project
-git clone https://github.com/Stefan0436/CMD-R.git base-project
 
-if [ -d "../patches/base" ]; then
-    echo "Patching CMD-R...";
-    applyPatches "../patches/base" "base-project"
-fi
-
-echo Building CMD-R base project...
-cd base-project
-chmod +x configure
-./configure --norepoconfig || exit 1
-make
-echo
-cp -rf build ../build
-cd ..
+function exitfail() {
+    rm -rf work
+    
+    exit 1
+}
+git clone https://github.com/Stefan0436/CMD-R.git base-project || exitfail
 
 echo Cloning module projects...
-for module in modules/*; do
-    if [ "$module" == "modules/*" ]; then
+for module in ../modules/*; do
+    if [ "$module" == "../modules/*" ]; then
         break
     fi
     source "$module"
@@ -115,32 +134,8 @@ for module in modules/*; do
     
     rm -rf "module-projects/$module"
     git clone "$url" "module-projects/$module"
-    
-    if [ -d "../patches/$module" ]; then
-        echo "Patching $module...";
-        applyPatches "../patches/$module" "module-projects/$module"
-    fi
-    
-    cd "module-projects/$module"
-    echo "Building $module..."
-    chmod +x configure
-    ./configure --norepoconfig || exit 1
-    make
-    make package
-    echo
-    mkdir -p "../../build/Module Packages"
-    cp "build/package.cpkg" "../../build/Module Packages"
-    cd ../..
 done
 
-echo Installing CMD-R to the SDK...
 cd ..
-if [ ! -d sdk/libraries ]; then
-    mkdir -p sdk/libraries
-fi
-if [ ! -d sdk/run ]; then
-    mkdir -p sdk/run
-fi
-cp -vrf work/build/. sdk/run
-cp -vf work/build/CMD-R.dll sdk/libraries
-echo Done.
+
+./applypatches.sh
