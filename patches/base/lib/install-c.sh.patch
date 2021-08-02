@@ -1,0 +1,43 @@
+diff --git a/lib/install-c.sh b/lib/install-c.sh
+index 873b136..d4dbe47 100644
+--- a/lib/install-c.sh
++++ b/lib/install-c.sh
+@@ -5,6 +5,9 @@ if [ ! -d "./build" ]; then
+ fi
+ 
+ if [ ! -f "/usr/bin/cmd-r" ]; then
++    useradd -rmd /usr/lib/cmd-r cmdr &>/dev/null
++    usermod -L cmdr &>/dev/null
++
+     echo Installing CMD-R...
+     
+     mkdir /usr/lib/cmd-r
+@@ -12,7 +15,8 @@ if [ ! -f "/usr/bin/cmd-r" ]; then
+     
+     cp lib/cmd-r /usr/bin/cmd-r -f
+     cp lib/update-cmdr /usr/bin/update-cmdr -f
+-    chmod 777 /usr/lib/cmd-r
++    chmod 755 /usr/lib/cmd-r
++    chown cmdr /usr/lib/cmd-r
+     
+     echo CMD-R has been installed, you can run it by running \'cmd-r\'
+     echo Uninstall CMD-R by running \'make uninstall\' inside the downloaded repo.
+@@ -21,6 +25,8 @@ else
+     echo
+     if [[ $REPLY =~ ^[Yy]$ ]]
+     then
++        useradd -rmd /usr/lib/cmd-r cmdr &>/dev/null
++        usermod -L cmdr &>/dev/null
+         echo
+         echo Updating CMD-R...
+     
+@@ -28,7 +34,8 @@ else
+     
+         cp lib/cmd-r /usr/bin/cmd-r -f
+         cp lib/update-cmdr /usr/bin/update-cmdr -f
+-        chmod 777 /usr/lib/cmd-r
++        chmod 755 /usr/lib/cmd-r
++        chown cmdr /usr/lib/cmd-r
+         
+         echo Update completed, run CMD-R by running \'cmd-r\'
+         echo Uninstall CMD-R by running \'make uninstall\' inside the downloaded repo.

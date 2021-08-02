@@ -1,0 +1,20 @@
+diff --git a/lib/update-cmdr b/lib/update-cmdr
+index 1f57256..0707803 100644
+--- a/lib/update-cmdr
++++ b/lib/update-cmdr
+@@ -1,4 +1,15 @@
+ #!/bin/bash
++if [ ! "$(id -u)" == "$(id cmdr)" ] && [ "$(id -u)" != "0" ]; then
++    1>&2 echo CMD-R needs to run as its own user.
++    1>&2 echo Use sudo to start this script.
++    1>&2 echo
++    1>&2 echo Runuser will be used to start CMD-R as its own user.
++    exit 1
++fi
++if [ ! "$(id -u)" == "$(id cmdr)" ]; then
++    runuser --user cmdr -- cmd-r "$@"
++    exit $?
++fi
+ 
+ if [[ $@ == "--run" ]]; then
+     /usr/lib/cmd-r/update-and-run
