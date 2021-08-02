@@ -1,0 +1,14 @@
+diff --git a/todo.txt b/todo.txt
+index b0bf306..4423927 100644
+--- a/todo.txt
++++ b/todo.txt
+@@ -4,6 +4,9 @@ IMPORTANT:
+ Dependency list in readme (including c# libraries and nuget packages, with copyright notice)
+ 
+ Bot core:
++IMPORTANT: SystemD Service
++IMPORTANT: Start scripts in own user
++
+ IMPORTANT: Remove as many try/catch statements as possible and replace with better functions
+ IMPORTANT: Clean and format README
+ IMPORTANT: Reduce string and constructor usage and replace with enums

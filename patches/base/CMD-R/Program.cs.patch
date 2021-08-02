@@ -1,0 +1,77 @@
+diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
+index fc7bc02..f51ec35 100644
+--- a/CMD-R/Program.cs
++++ b/CMD-R/Program.cs
+@@ -109,9 +109,9 @@ namespace CMDR
+             Console.ForegroundColor = b;
+ 
+             path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+-            Bot.WriteLine("Booting CMD-R...");
+-            Bot.WriteLine("AerialWorks CMD-R is Free(Libre) and Open Source Software (FLOSS),\nand will always be licensed under the GPL-2.0 license.");
+-            Bot.WriteLine("------------------------------------------------------------------");
++            Bot.WriteLine("Booting CMD-R (Ultimate Commander Version)...");
++            Bot.WriteLine("AerialWorks Ultimate Commander is Free(Libre) and Open Source Software (FLOSS),\nand will always be licensed under the GPL-2.0 license.");
++            Bot.WriteLine("-------------------------------------------------------------------------------");
+             Bot.WriteLine();
+             Bot.WriteLine("System path: " + path);
+             Directory.CreateDirectory(path + "/Modules");
+@@ -133,7 +133,7 @@ namespace CMDR
+ 
+             Console.CancelKeyPress += new ConsoleCancelEventHandler(delegate (Object sender, ConsoleCancelEventArgs e) {
+                 if (e.SpecialKey == ConsoleSpecialKey.ControlBreak) {
+-                    Bot.WriteLine("Shutting down CMD-R, CTRL+BREAK detected...");
++                    Bot.WriteLine("Shutting down Ultimate Commander, CTRL+BREAK detected...");
+                     client.SetGameAsync("Shutting down...").GetAwaiter().GetResult();
+                     client.SetStatusAsync(UserStatus.Invisible).GetAwaiter().GetResult();
+                     client.StopAsync().GetAwaiter().GetResult();
+@@ -149,7 +149,7 @@ namespace CMDR
+ 
+             await client.LoginAsync(TokenType.Bot, token);
+             await client.StartAsync();
+-            await client.SetGameAsync("Starting CMD-R...");
++            await client.SetGameAsync("Starting Ultimate Commander...");
+ 
+             if (newToken) {
+                 Bot.WriteLine("\nSaved to file Bot.cfg, edit it to change the token.");
+@@ -213,9 +213,9 @@ namespace CMDR
+             // Load CMF (Cyan Modfile) formatted packages
+             // CMF are zips too, just like jars
+             //
+-            // By allowing CMFs to be loaded in  CMD-R, one can create a one-fits-all package
++            // By allowing CMFs to be loaded in Ultimate Commander, one can create a one-fits-all package
+             // When you create a Connective module, you can add a pointer file, dll, and mod.manifest.ccfg document
+-            // to make it compatible with CMD-R, Connective and Cyan. (if you combine the packages)
++            // to make it compatible with Ultimate Commander, Connective and Cyan. (if you combine the packages)
+             foreach (FileInfo info in new DirectoryInfo(path + "/Module Packages").GetFiles("*.cmf"))
+             {
+                 loadPackage(info);
+@@ -293,9 +293,9 @@ namespace CMDR
+                             b = Console.ForegroundColor;
+                             Console.ForegroundColor = ConsoleColor.Red;
+                             Bot.WriteLine("CRITICAL ERROR: Unable to restore or save storage folder, one already exists in both temp and install output!");
+-                            Bot.WriteLine("DO NOT RESTART CMD-R BEFORE FIXING THIS ERROR OR FILES WILL GET LOST!");
++                            Bot.WriteLine("DO NOT RESTART ULTIMATE COMMANDER BEFORE FIXING THIS ERROR OR FILES WILL GET LOST!");
+                             Console.ForegroundColor = b;
+-                            throw new FieldAccessException("Unable to move storage back to origin, already exists, consider CMD-R crashed.");
++                            throw new FieldAccessException("Unable to move storage back to origin, already exists, consider Ultimate Commander crashed.");
+                         }
+                         if (Directory.Exists(path + "/temp/Storage"))
+                         {
+@@ -401,7 +401,7 @@ namespace CMDR
+             await client.SetGameAsync("");
+             while (true)
+             {
+-                string command = Terminal.ReadLine().Replace("\0", "");
++                string command = Terminal.ReadLine("CMD-R: $<path>").Replace("\0", "");
+                 if (command == "quit" || command == "exit")
+                 {
+                     await client.SetGameAsync("Shutting down...");
+@@ -862,7 +862,7 @@ namespace CMDR
+                     await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
+                 }
+             }
+-            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id) await msg.Channel.SendMessageAsync("```diff\n- I am sorry, but CMD-R do not support direct messages yet.\n- Please go to a server and run " + prefix + "help for a list of commands```");
++            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id) await msg.Channel.SendMessageAsync("```diff\n- I am sorry, but Ultimate Commander do not support direct messages yet.\n- Please go to a server and run " + prefix + "help for a list of commands```");
+             else {
+                 foreach (SystemCommand cmd in commands)
+                 {
