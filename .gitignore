@@ -1,0 +1,9 @@
+# Work
+work/
+
+# SDK
+sdk/run
+sdk/libraries
+sdk/obj
+sdk/bin
+sdk/build
