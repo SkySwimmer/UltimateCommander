@@ -1,0 +1,20 @@
+diff --git a/lib/cmdr.service b/lib/cmdr.service
+new file mode 100644
+index 0000000..79cadec
+--- /dev/null
++++ b/lib/cmdr.service
+@@ -0,0 +1,14 @@
++[Unit]
++Description=A Modular Discord Bot
++After=nss-lookup.target network.target network-online.target remote-fs.target
++
++[Service]
++Type=simple
++ExecStart=/usr/bin/update-cmdr --start-service
++User=cmdr
++Group=cmdr
++Restart=always
++RestartSec=5
++
++[Install]
++WantedBy=multi-user.target
