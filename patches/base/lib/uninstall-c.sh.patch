@@ -1,0 +1,12 @@
+diff --git a/lib/uninstall-c.sh b/lib/uninstall-c.sh
+index 2d1c18c..d939cf1 100644
+--- a/lib/uninstall-c.sh
++++ b/lib/uninstall-c.sh
+@@ -5,6 +5,7 @@ if [ -f "/usr/bin/cmd-r" ]; then
+     rm -r -f /usr/lib/cmd-r
+     rm -f /usr/bin/cmd-r
+     rm -f /usr/bin/update-cmdr
++    rm -f /usr/lib/systemd/system/cmdr.service
+     
+     echo Successfully uninstalled CMD-R, you can reinstall by running \'make install\' \(but your configs have been deleted permanently\)
+ else

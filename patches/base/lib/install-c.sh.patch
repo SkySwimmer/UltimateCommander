@@ -1,8 +1,8 @@
 diff --git a/lib/install-c.sh b/lib/install-c.sh
-index 873b136..57b9100 100644
+index 873b136..9a9e387 100644
 --- a/lib/install-c.sh
 +++ b/lib/install-c.sh
-@@ -4,35 +4,42 @@ if [ ! -d "./build" ]; then
+@@ -4,35 +4,44 @@ if [ ! -d "./build" ]; then
      exit
  fi
  
@@ -25,6 +25,7 @@ index 873b136..57b9100 100644
 -    chmod 777 /usr/lib/cmd-r
 +    cp $libdir/lib/cmd-r /usr/bin/cmd-r -f
 +    cp $libdir/lib/update-cmdr /usr/bin/update-cmdr -f
++    cp $libdir/lib/cmdr.service /usr/lib/systemd/system/cmdr.service -f
 +    chmod 700 /usr/lib/cmd-r
 +    chown cmdr /usr/lib/cmd-r
      
@@ -47,6 +48,7 @@ index 873b136..57b9100 100644
 +
 +    cp $libdir/lib/cmd-r /usr/bin/cmd-r -f
 +    cp $libdir/lib/update-cmdr /usr/bin/update-cmdr -f
++    cp $libdir/lib/cmdr.service /usr/lib/systemd/system/cmdr.service -f
 +    chmod 700 /usr/lib/cmd-r
 +    chown cmdr /usr/lib/cmd-r
      

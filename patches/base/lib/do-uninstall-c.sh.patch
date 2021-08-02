@@ -1,0 +1,12 @@
+diff --git a/lib/do-uninstall-c.sh b/lib/do-uninstall-c.sh
+index 4119f18..3905ac2 100644
+--- a/lib/do-uninstall-c.sh
++++ b/lib/do-uninstall-c.sh
+@@ -5,6 +5,7 @@ if [ -f "/usr/bin/cmd-r" ]; then
+     rm -r -f /usr/lib/cmd-r
+     rm -f /usr/bin/cmd-r
+     rm -f /usr/bin/update-cmdr
++    rm -f /usr/lib/systemd/system/cmdr.service
+     
+     echo Successfully uninstalled CMD-R.
+ else
