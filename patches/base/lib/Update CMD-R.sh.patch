@@ -1,8 +1,8 @@
 diff --git a/lib/Update CMD-R.sh b/lib/Update CMD-R.sh
-index 1129667..a851516 100644
+index 1129667..99201dd 100644
 --- a/lib/Update CMD-R.sh	
 +++ b/lib/Update CMD-R.sh	
-@@ -1,18 +1,18 @@
+@@ -1,18 +1,17 @@
 +#!/bin/bash
  DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
  DIROLD=$(pwd)
@@ -10,16 +10,16 @@ index 1129667..a851516 100644
  
  echo Cloning git repo...
 -git clone -q https://github.com/Stefan0436/CMD-R.git Update
-+git clone -q https://github.com/SkySwimemr/UltimateCommander.git Update
++git clone -q https://github.com/SkySwimmer/UltimateCommander.git Update
  if [ -d "Update" ]; then
      cd Update
 -    echo Configuring package and downloading dependencies...
 -    chmod +x ./configure
 -    ./configure --norepoconfig
      echo Compiling...
+-    make
 +    chmod +x ./setup.sh
 +    ./setup.sh
-     make
      echo Installing...
 -    cp build/* .. -r -f
 +    cp work/build/* .. -r -f
