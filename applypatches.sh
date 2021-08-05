@@ -10,7 +10,7 @@ function applyPatches() {
         if [ -d "$file" ]; then
             applyPatches "$file" "$2/$(basename "$file")"
         elif [ -f "$file" ]; then
-            patch -d "$2" -i "$(pwd)/$file" --force
+            patch -d "$2" -i "$(pwd)/$file"
         fi
     done
 }
