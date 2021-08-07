@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..f51ec35 100644
+index fc7bc02..36b1cda 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -66,12 +66,48 @@ index fc7bc02..f51ec35 100644
                  if (command == "quit" || command == "exit")
                  {
                      await client.SetGameAsync("Shutting down...");
-@@ -862,7 +862,7 @@ namespace CMDR
+@@ -862,8 +862,42 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
 -            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id) await msg.Channel.SendMessageAsync("```diff\n- I am sorry, but CMD-R do not support direct messages yet.\n- Please go to a server and run " + prefix + "help for a list of commands```");
-+            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id) await msg.Channel.SendMessageAsync("```diff\n- I am sorry, but Ultimate Commander do not support direct messages yet.\n- Please go to a server and run " + prefix + "help for a list of commands```");
-             else {
+-            else {
++            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id) {
++                bool found = false;
++                foreach (SystemCommand cmd in commands)
++                {
++                    if (cmd is DmSupportedCommand)
++                    {
++                        DmSupportedCommand wrapper = (DmSupportedCommand)cmd;
++                        string fullcmd = message.Content;
++                        string cmdid = fullcmd;
++                        string arguments = "";
++                        if (fullcmd.Contains(" "))
++                        {
++                            arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
++                            cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
++                        }
++
++                        if (cmd.commandid.ToLower() == cmdid.ToLower())
++                        {
++                            if (CheckPermissions(cmd.permissionnode, msg.Author, null))
++                            {
++                                await wrapper.OnExecuteFromDM(msg.Author, (SocketDMChannel) msg.Channel, msg, fullcmd, arguments, GetArgumentListFromString(arguments));
++                            }
++                            else
++                            {
++                                await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
++                            }
++                            found = true;
++                            break;
++                        }
++                    }
++                }
++                if (!found)
++                {
++                    await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that DM command, use help for commands.");
++                }
++            } else {
                  foreach (SystemCommand cmd in commands)
                  {
+                     if (cmd.allowDiscord && cmd.setNoCmdPrefix)

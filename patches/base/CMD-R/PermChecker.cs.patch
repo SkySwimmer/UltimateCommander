@@ -1,0 +1,16 @@
+diff --git a/CMD-R/PermChecker.cs b/CMD-R/PermChecker.cs
+index fa2a644..7052c23 100644
+--- a/CMD-R/PermChecker.cs
++++ b/CMD-R/PermChecker.cs
+@@ -12,6 +12,11 @@ namespace CMDR
+             PermissionsAllowed = new List<string>(DefaultPermissions);
+             PermissionsBlacklist = new List<string>();
+ 
++            if  (server == null){
++                PermissionsAllowed.Add("sys.anyone");
++                return;
++            }
++            
+             if (server.OwnerId == usr.Id)
+             {
+                 PermissionsAllowed.Add("*");
