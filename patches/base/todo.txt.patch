@@ -1,8 +1,8 @@
 diff --git a/todo.txt b/todo.txt
-index b0bf306..0bb8984 100644
+index b0bf306..638ddfa 100644
 --- a/todo.txt
 +++ b/todo.txt
-@@ -4,6 +4,9 @@ IMPORTANT:
+@@ -4,20 +4,21 @@ IMPORTANT:
  Dependency list in readme (including c# libraries and nuget packages, with copyright notice)
  
  Bot core:
@@ -12,3 +12,18 @@ index b0bf306..0bb8984 100644
  IMPORTANT: Remove as many try/catch statements as possible and replace with better functions
  IMPORTANT: Clean and format README
  IMPORTANT: Reduce string and constructor usage and replace with enums
+ IMPORTANT: Add CMD-R Version system (it should work with patch numbers, allowing minimal patch version in modules, howerver, the patch class should also have a version identity string)
+ 
+ Build status on GitHub (through travis, jenkins or something like that)
+-CMD-R Lite - Barebone CMD-R, no default plugins.
+ Offline status through seperate program
+ Run cmd-r in background and control it from a different program
+ System reboot command (requires console-given permission, requires reboot script, intergrates into the start shell script, can only be used when started from the shell script)
+ System reboot and update command (requires console-given permission, requires reboot script, intergrates into the start shell script, can only be used when started from the shell script)
+-DM Message support
+ Better logo for CMD-R Official
+-Invite link for the official on github? (not sure, the server hosting the official version is quite bad, i don't think it can take much more)
++Invite link for the official on github
+ Message logging for active channel
+ 
+ Branch support in update-cmdr
