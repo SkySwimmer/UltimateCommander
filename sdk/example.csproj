@@ -11,6 +11,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="CMDR.DM">
+      <HintPath>libraries/CMDR.DM.dll</HintPath>
+    </Reference>
     <Reference Include="CMDR">
       <HintPath>libraries/CMD-R.dll</HintPath>
     </Reference>

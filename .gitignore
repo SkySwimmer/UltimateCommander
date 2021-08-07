@@ -7,3 +7,7 @@ sdk/libraries
 sdk/obj
 sdk/bin
 sdk/build
+
+# CMDR.DM
+CMDR.DM/bin
+CMDR.DM/obj

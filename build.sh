@@ -37,8 +37,13 @@ for module in ../modules/*; do
     cd ../..
 done
 
-echo Installing CMD-R to the SDK...
+echo Building the CMDR.DM library...
 cd ..
+cd CMDR.DM
+dotnet build
+cd ..
+
+echo Installing CMD-R to the SDK...
 if [ ! -d sdk/libraries ]; then
     mkdir -p sdk/libraries
 fi
@@ -47,4 +52,7 @@ if [ ! -d sdk/run ]; then
 fi
 cp -vrf work/build/. sdk/run
 cp -vf work/build/CMD-R.dll sdk/libraries
+
+echo Installing CMDR.DM to the SDK...
+cp -vf CMDR.DM/bin/Debug/net5.0/CMDR.DM.dll sdk/libraries
 echo Done.
