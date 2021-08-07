@@ -6,7 +6,7 @@ echo Checking dependencies...
 missingdepends=false
 
 requiredvermsbuild=15.6.0.0
-requiredvernuget=5.6.0.6591
+requiredvernuget=5.6.0.6489
 requiredvermake=4.2
 requiredvergit=2.28.0
 requiredverdotnet=5.0.205

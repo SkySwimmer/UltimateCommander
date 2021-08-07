@@ -1,8 +1,8 @@
 diff --git a/todo.txt b/todo.txt
-index b0bf306..638ddfa 100644
+index b0bf306..eb76281 100644
 --- a/todo.txt
 +++ b/todo.txt
-@@ -4,20 +4,21 @@ IMPORTANT:
+@@ -4,20 +4,20 @@ IMPORTANT:
  Dependency list in readme (including c# libraries and nuget packages, with copyright notice)
  
  Bot core:
@@ -14,7 +14,7 @@ index b0bf306..638ddfa 100644
  IMPORTANT: Reduce string and constructor usage and replace with enums
  IMPORTANT: Add CMD-R Version system (it should work with patch numbers, allowing minimal patch version in modules, howerver, the patch class should also have a version identity string)
  
- Build status on GitHub (through travis, jenkins or something like that)
+-Build status on GitHub (through travis, jenkins or something like that)
 -CMD-R Lite - Barebone CMD-R, no default plugins.
  Offline status through seperate program
  Run cmd-r in background and control it from a different program

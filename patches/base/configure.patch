@@ -1,12 +1,14 @@
 diff --git a/configure b/configure
-index dbd3215..3e8dc87 100644
+index dbd3215..f7d3f52 100644
 --- a/configure
 +++ b/configure
-@@ -50,7 +50,7 @@ missingdepends=false
+@@ -49,8 +49,8 @@ echo Checking dependencies...
+ missingdepends=false
  
  requiredvermsbuild=15.6.0.0
- requiredvernuget=5.6.0.6591
+-requiredvernuget=5.6.0.6591
 -requiredvermake=4.3
++requiredvernuget=5.6.0.6489
 +requiredvermake=4.2
  requiredvergit=2.28.0
  requiredverdotnet=5.0.205
