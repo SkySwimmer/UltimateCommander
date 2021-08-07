@@ -32,4 +32,4 @@ jobs:
         run: ./applypatches.sh
       
       - name: Build
-        run: make build
+        run: make
