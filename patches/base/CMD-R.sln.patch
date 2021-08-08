@@ -1,0 +1,31 @@
+diff --git a/CMD-R.sln b/CMD-R.sln
+index 6dc1ad9..d3728f4 100644
+--- a/CMD-R.sln
++++ b/CMD-R.sln
+@@ -5,6 +5,8 @@ VisualStudioVersion = 16.6.30114.105
+ MinimumVisualStudioVersion = 10.0.40219.1
+ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMD-R", "CMD-R\CMD-R.csproj", "{7B6847C7-64CA-48F5-9379-252AE659BA2C}"
+ EndProject
++Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMDR.DM", "..\..\CMDR.DM\CMDR.DM.csproj", "{46D18E43-5684-4608-8FF7-060CE5FE5F6A}"
++EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Any CPU = Debug|Any CPU
+@@ -30,5 +32,17 @@ Global
+ 		{7B6847C7-64CA-48F5-9379-252AE659BA2C}.Release|x64.Build.0 = Release|Any CPU
+ 		{7B6847C7-64CA-48F5-9379-252AE659BA2C}.Release|x86.ActiveCfg = Release|Any CPU
+ 		{7B6847C7-64CA-48F5-9379-252AE659BA2C}.Release|x86.Build.0 = Release|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Debug|x64.ActiveCfg = Debug|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Debug|x64.Build.0 = Debug|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Debug|x86.ActiveCfg = Debug|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Debug|x86.Build.0 = Debug|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Release|Any CPU.Build.0 = Release|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Release|x64.ActiveCfg = Release|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Release|x64.Build.0 = Release|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Release|x86.ActiveCfg = Release|Any CPU
++		{46D18E43-5684-4608-8FF7-060CE5FE5F6A}.Release|x86.Build.0 = Release|Any CPU
+ 	EndGlobalSection
+ EndGlobal

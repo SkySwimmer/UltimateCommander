@@ -1,0 +1,13 @@
+diff --git a/CMD-R/CMD-R.csproj b/CMD-R/CMD-R.csproj
+index af2720e..610a59a 100644
+--- a/CMD-R/CMD-R.csproj
++++ b/CMD-R/CMD-R.csproj
+@@ -10,5 +10,8 @@
+     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+     <PackageReference Include="TextCopy" Version="4.3.1" />
+   </ItemGroup>
++  <ItemGroup>
++    <ProjectReference Include="../../../CMDR.DM/CMDR.DM.csproj" />
++  </ItemGroup>
+ 
+ </Project>
