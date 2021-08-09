@@ -33,7 +33,7 @@ for module in ../modules/*; do
     make package
     echo
     mkdir -p "../../build/Module Packages"
-    cp "build/package.cpkg" "../../build/Module Packages"
+    cp "build/package.cpkg" "../../build/Module Packages/$module.cpkg"
     cd ../..
 done
 
