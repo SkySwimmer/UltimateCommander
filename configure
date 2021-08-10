@@ -129,11 +129,19 @@ for module in ../modules/*; do
     if [ "$module" == "../modules/*" ]; then
         break
     fi
+    
+    olddir="$(pwd)"
+    
     source "$module"
     echo "Downloading $module..."
     
     rm -rf "module-projects/$module"
-    git clone "$url" "module-projects/$module"
+    eval 'git clone "'"$url"'" '$arguments' --single-branch "module-projects/'"$module"'"'
+    cd "module-projects/$module"
+    echo "Resetting..."    
+    git reset --hard "$commit" > /dev/null
+    echo "$module" has been downloaded.
+    cd "$olddir"
 done
 
 cd ..

@@ -15,26 +15,36 @@ rm -rf ../build
 cp -rf build ../build
 cd ..
 
-echo Cloning module projects...
+echo Building module projects...
 for module in ../modules/*; do
     if [ "$module" == "../modules/*" ]; then
         break
     fi
+    
+    olddir="$(pwd)"
+    
+    subdir=""
     source "$module"
     if [ ! -d "module-projects/$module" ]; then
         continue
     fi
     
+    mkdir -p "build/Module Packages"
     cd "module-projects/$module"
+    
+    if [ "$subdir" != "" ]; then
+        cd "$subdir"
+    fi
+    
     echo "Building $module..."
     chmod +x configure
     ./configure --norepoconfig || exit 1
     make
     make package
     echo
-    mkdir -p "../../build/Module Packages"
-    cp "build/package.cpkg" "../../build/Module Packages/$module.cpkg"
-    cd ../..
+    
+    cp "build/package.cpkg" "$olddir/build/Module Packages/$module.cpkg"
+    cd "$olddir"
 done
 
 echo Building the CMDR.DM library...

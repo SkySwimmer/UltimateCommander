@@ -1,0 +1,5 @@
+module="AMAS Support"
+url="https://aerialworks.ddns.net/ASF/CMDR-AMAS.git"
+
+subdir="CMD-R Module"
+commit="0814e7f9329f95800bd84f4921fab6e2127edd8a"
