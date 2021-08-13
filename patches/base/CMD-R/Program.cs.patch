@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..11aecfb 100644
+index fc7bc02..e99637c 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -75,7 +75,7 @@ index fc7bc02..11aecfb 100644
              AppDomain currentDomain = AppDomain.CurrentDomain;
              currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
  
-@@ -620,14 +620,17 @@ namespace CMDR
+@@ -620,14 +620,18 @@ namespace CMDR
                  Assembly assembly = Assembly.LoadFrom(assemblyPath);
                  return assembly;
              }
@@ -83,7 +83,8 @@ index fc7bc02..11aecfb 100644
 +
 +            if (File.Exists(filefolder + Path.DirectorySeparatorChar + filename + ".dll"))
 +                File.Move(filefolder + Path.DirectorySeparatorChar + filename + ".dll", filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll", true);
-+            Assembly asm = Assembly.LoadFrom(filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll");
++                
++            Assembly asm = Assembly.Load(File.ReadAllBytes(filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll"));
              Type type = asm.GetType(namespacepath + "." + classname);
  
              var script = Activator.CreateInstance(type) as BotModule;
@@ -95,7 +96,7 @@ index fc7bc02..11aecfb 100644
              }
              else
              {
-@@ -635,13 +638,13 @@ namespace CMDR
+@@ -635,13 +639,13 @@ namespace CMDR
                  Bot.WriteLine("Loading module: " + script.id + "...");
                  Bot.WriteLine("Module description: " + script.moduledesctiption);
                  Bot.GetBot().modules.Add(script);
@@ -113,7 +114,7 @@ index fc7bc02..11aecfb 100644
                  script.LoadConfig();
                  Bot.WriteLine("Pre-initializing module: " + script.id + "...");
                  script.PreInit(Bot.GetBot());
-@@ -862,8 +865,46 @@ namespace CMDR
+@@ -862,8 +866,46 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
