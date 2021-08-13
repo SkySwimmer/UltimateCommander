@@ -1,0 +1,14 @@
+diff --git a/CMD-R/Terminal.cs b/CMD-R/Terminal.cs
+index f07272d..31c378a 100644
+--- a/CMD-R/Terminal.cs
++++ b/CMD-R/Terminal.cs
+@@ -391,7 +391,8 @@ namespace CMDR
+ 
+                     for (int i = 0; i < l; i++)
+                     {
+-                        if (Console.GetCursorPosition().Left != 0)
++                        Console.Out.Flush();
++                        if (Console.CursorLeft != 0)
+                         {
+                             Console.Write("\b \b");
+                         }
