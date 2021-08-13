@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..84224c6 100644
+index fc7bc02..6ba53da 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -66,6 +66,15 @@ index fc7bc02..84224c6 100644
                  if (command == "quit" || command == "exit")
                  {
                      await client.SetGameAsync("Shutting down...");
+@@ -608,7 +608,7 @@ namespace CMDR
+         {
+             if (classname == "{auto}") classname = filename;
+             if (namespacepath == "{auto}") namespacepath = filename;
+-            Bot.WriteLine("Loading module file: " + filefolder + Path.DirectorySeparatorChar + filename + ".dll");
++            Bot.WriteLine("Loading module file: " + filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll");
+             AppDomain currentDomain = AppDomain.CurrentDomain;
+             currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
+ 
 @@ -620,14 +620,16 @@ namespace CMDR
                  Assembly assembly = Assembly.LoadFrom(assemblyPath);
                  return assembly;
