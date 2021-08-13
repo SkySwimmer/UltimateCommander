@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..1f81e8f 100644
+index fc7bc02..84224c6 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -66,7 +66,26 @@ index fc7bc02..1f81e8f 100644
                  if (command == "quit" || command == "exit")
                  {
                      await client.SetGameAsync("Shutting down...");
-@@ -635,13 +635,13 @@ namespace CMDR
+@@ -620,14 +620,16 @@ namespace CMDR
+                 Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                 return assembly;
+             }
+-            Assembly asm = Assembly.LoadFrom(filefolder + Path.DirectorySeparatorChar + filename + ".dll");
++
++            File.Copy(filefolder + Path.DirectorySeparatorChar + filename + ".dll", filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll", true);
++            Assembly asm = Assembly.LoadFrom(filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll");
+             Type type = asm.GetType(namespacepath + "." + classname);
+ 
+             var script = Activator.CreateInstance(type) as BotModule;
+ 
+             if (script == null)
+             {
+-                Bot.WriteLine("Module file: '" + filefolder + Path.DirectorySeparatorChar + filename + ".dll' does not have a class named " + classname + " in a namespace named " + namespacepath + ", cannot load it, skipping...");
++                Bot.WriteLine("Module file: '" + filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll' does not have a class named " + classname + " in a namespace named " + namespacepath + ", cannot load it, skipping...");
+             }
+             else
+             {
+@@ -635,13 +637,13 @@ namespace CMDR
                  Bot.WriteLine("Loading module: " + script.id + "...");
                  Bot.WriteLine("Module description: " + script.moduledesctiption);
                  Bot.GetBot().modules.Add(script);
@@ -84,7 +103,7 @@ index fc7bc02..1f81e8f 100644
                  script.LoadConfig();
                  Bot.WriteLine("Pre-initializing module: " + script.id + "...");
                  script.PreInit(Bot.GetBot());
-@@ -862,8 +862,46 @@ namespace CMDR
+@@ -862,8 +864,46 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
