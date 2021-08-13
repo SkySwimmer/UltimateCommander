@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..0bf7281 100644
+index fc7bc02..1f81e8f 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -80,7 +80,7 @@ index fc7bc02..0bf7281 100644
                  }
                  script.modulepath = Path.GetFullPath(filefolder + Path.DirectorySeparatorChar + filename + ".dll");
 -                script.storagepath = Path.GetFullPath(Bot.GetBot().path + Path.DirectorySeparatorChar + "Modules" + Path.DirectorySeparatorChar + script.id + Path.DirectorySeparatorChar + "Storage");
-+                script.storagepath = Path.GetFullPath(filefolder + Path.DirectorySeparatorChar + script.id + Path.DirectorySeparatorChar + "Storage");
++                script.storagepath = Path.GetFullPath(filefolder + Path.DirectorySeparatorChar + "Storage");
                  script.LoadConfig();
                  Bot.WriteLine("Pre-initializing module: " + script.id + "...");
                  script.PreInit(Bot.GetBot());
