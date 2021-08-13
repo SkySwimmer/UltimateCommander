@@ -1,0 +1,13 @@
+diff --git a/CMD-R/BotModule.cs b/CMD-R/BotModule.cs
+index 60eef49..938effe 100644
+--- a/CMD-R/BotModule.cs
++++ b/CMD-R/BotModule.cs
+@@ -61,7 +61,7 @@ namespace CMDR
+ 
+         public void SaveConfig()
+         {
+-            File.WriteAllText(storagepath+"/config.xml", Serializer.Serialize(GetConfig()));
++            File.WriteAllText(storagepath + "/config.xml", Serializer.Serialize(GetConfig()));
+         }
+ 
+         public void LoadConfig()
