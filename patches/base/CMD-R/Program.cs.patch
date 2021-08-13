@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..86976f3 100644
+index fc7bc02..0bf7281 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -66,6 +66,24 @@ index fc7bc02..86976f3 100644
                  if (command == "quit" || command == "exit")
                  {
                      await client.SetGameAsync("Shutting down...");
+@@ -635,13 +635,13 @@ namespace CMDR
+                 Bot.WriteLine("Loading module: " + script.id + "...");
+                 Bot.WriteLine("Module description: " + script.moduledesctiption);
+                 Bot.GetBot().modules.Add(script);
+-                Directory.CreateDirectory(Bot.GetBot().path + "/Modules/" + script.id + "/Storage");
+-                if (!File.Exists(Bot.GetBot().path + "/Modules/" + script.id + "/Storage/config.xml") && File.Exists(Bot.GetBot().path + "/Modules/" + script.id + "/config-defaults.xml"))
++                Directory.CreateDirectory(filefolder + "/Storage");
++                if (!File.Exists(filefolder + "/Storage/config.xml") && File.Exists(filefolder + "/config-defaults.xml"))
+                 {
+-                    File.Copy(Bot.GetBot().path + "/Modules/" + script.id + "/config-defaults.xml", Bot.GetBot().path + "/Modules/" + script.id + "/Storage/config.xml");
++                    File.Copy(filefolder + "/config-defaults.xml", filefolder + "/Storage/config.xml");
+                 }
+                 script.modulepath = Path.GetFullPath(filefolder + Path.DirectorySeparatorChar + filename + ".dll");
+-                script.storagepath = Path.GetFullPath(Bot.GetBot().path + Path.DirectorySeparatorChar + "Modules" + Path.DirectorySeparatorChar + script.id + Path.DirectorySeparatorChar + "Storage");
++                script.storagepath = Path.GetFullPath(filefolder + Path.DirectorySeparatorChar + script.id + Path.DirectorySeparatorChar + "Storage");
+                 script.LoadConfig();
+                 Bot.WriteLine("Pre-initializing module: " + script.id + "...");
+                 script.PreInit(Bot.GetBot());
 @@ -862,8 +862,46 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
