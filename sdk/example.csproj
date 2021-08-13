@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <ProjectName>example</ProjectName>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>Module</AssemblyName>
+    <AssemblyName>Module-$(ProjectName)</AssemblyName>
+    <TargetName>Module</TargetName>
   </PropertyGroup>
 
   <ItemGroup>
