@@ -12,6 +12,79 @@ requiredverdotnet=5.0.205
 requiredverscreen=4.08.00
 
 missingdepends=false
+
+echo Searching for dotnet...
+if command -v dotnet &> /dev/null 
+then
+    requiredver=$requiredverdotnet
+    currentver="$(dotnet --version)"
+    packagename="DotNet SDK"
+    installed=false
+    
+    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+        echo $packagename is installed.
+        installed=true
+    else
+        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
+        installed=false
+        missingdepends=true
+    fi
+    
+    dotnetinstalled=$installed
+else
+    echo DotNet SDK Core is NOT installed.
+    dotnetinstalled=false
+    missingdepends=true
+fi
+
+echo Searching for MSBuild...
+if command -v msbuild &> /dev/null 
+then
+    requiredver=$requiredvermsbuild
+    currentver="$(msbuild -version|grep --only-matching --perl-regexp "\\d+\.\\d+\.\\d+\.\\d+")"
+    packagename=MSBuild
+    installed=false
+    
+    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+        echo $packagename is installed.
+        installed=true
+    else
+        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
+        installed=false
+        missingdepends=true
+    fi
+    
+    msbuildinstalled=$installed
+else
+    echo MSBuild is NOT installed.
+    msbuildinstalled=false
+    missingdepends=true
+fi
+
+echo Searching for NuGet...
+if command -v nuget &> /dev/null 
+then
+    requiredver=$requiredvernuget
+    currentver="$(nuget|grep --only-matching --perl-regexp "\\d+\.\\d+\.\\d+\.\\d+")"
+    packagename=NuGet
+    installed=false
+    
+    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+        echo $packagename is installed.
+        installed=true
+    else
+        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
+        installed=false
+        missingdepends=true
+    fi
+    
+    nugetinstalled=$installed
+else
+    echo NuGet is NOT installed.
+    nugetinstalled=false
+    missingdepends=true
+fi
+
 echo Searching for make...
 if command -v make &> /dev/null 
 then
