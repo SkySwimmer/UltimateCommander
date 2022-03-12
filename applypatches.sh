@@ -10,7 +10,7 @@ function applyPatches() {
         if [ -d "$file" ]; then
             applyPatches "$file" "$2/$(basename "$file")"
         elif [ -f "$file" ]; then
-            if ! -d "$(dirname "$2")"; then
+            if [ ! -d "$(dirname "$2")" ]; then
                 mkdir -p "$(dirname "$2")"
             fi
             patch -d "$2" -i "$(pwd)/$file"
