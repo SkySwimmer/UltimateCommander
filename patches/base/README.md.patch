@@ -1,0 +1,29 @@
+diff --git a/README.md b/README.md
+index 6165da2..de5c2a0 100644
+--- a/README.md
++++ b/README.md
+@@ -38,11 +38,12 @@ Coming soon.
+ 6.  I know it says `Reveal token` but we are not there yet, scroll down until you see the settings category `Bot Permissions` and select the required permissions (see the bottom of this page)
+ 7.  Scroll all the way down and copy the number in `Permissions Integer` and save it in a text file named bot info which can be saved anywhere you like, but it is an important file, because it will hold your bots information for later in the guides. (line example: Perm Int: \<integer\>)
+ 8.  Scroll back up and click the link `Click to Reveal Token` and copy the token to the text file (line example: Token: \<token\>)
+-9.  Next, go to the tab `OAuth` in the settings menu (the left side of the page), look for `CLIENT ID` and copy it to the text file (line example: ID: \<client id\>)
+-10. Then copy the following url to the text file: `https://discord.com/api/oauth2/authorize?client_id=<client id>&permissions=<perm int>&scope=bot` (save it twice, so that you can change it later using the template, in one of them, change the id and the perm integer, remove the '\<' and the '\>', example line: URL-1/2: \<url\>)
+-11. Use the url you just created to add the bot to servers (copy it and open it in your browser, see 'Guide to create a discord server' for creating a server)
+-12. Optional: Add a profile icon to the bot in the `Bot` page in the settings menu (the left side of the page)
+-13. Optional: Add the profile icon as a app icon in the `General Information` page in the settings menu (the left side of the page)
++9.  Next, in `Privileged Gateway Intents`, enable both `PRESENCE INTENT` and `SERVER MEMBERS INTENT`
++10.  Next, go to the tab `OAuth` in the settings menu (the left side of the page), look for `CLIENT ID` and copy it to the text file (line example: ID: \<client id\>)
++11. Then copy the following url to the text file: `https://discord.com/api/oauth2/authorize?client_id=<client id>&permissions=<perm int>&scope=bot` (save it twice, so that you can change it later using the template, in one of them, change the id and the perm integer, remove the '\<' and the '\>', example line: URL-1/2: \<url\>)
++12. Use the url you just created to add the bot to servers (copy it and open it in your browser, see 'Guide to create a discord server' for creating a server)
++13. Optional: Add a profile icon to the bot in the `Bot` page in the settings menu (the left side of the page)
++14. Optional: Add the profile icon as a app icon in the `General Information` page in the settings menu (the left side of the page)
+ <br/>
+ 
+ ## Guide to create a discord server (for those who don't know how)
+@@ -136,4 +137,5 @@ To do this, you only need to run a command, you can choose between the following
+ 2. Save in cache (safer, but loses credentials on restart):<br/>`git config --global credential.helper 'cache'`
+ <br/><br/>
+ ## Required bot permissions:
+-Administrator (temporary, specific perms are coming soon!)
++None without any modules.
++
