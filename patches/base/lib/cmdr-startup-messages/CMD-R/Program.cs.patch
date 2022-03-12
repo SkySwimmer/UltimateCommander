@@ -1,9 +1,9 @@
 diff --git a/lib/cmdr-startup-messages/CMD-R/Program.cs b/lib/cmdr-startup-messages/CMD-R/Program.cs
 new file mode 100644
-index 0000000..7763316
+index 0000000..9fe1856
 --- /dev/null
 +++ b/lib/cmdr-startup-messages/CMD-R/Program.cs
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,50 @@
 +﻿using System;
 +using System.Collections.Generic;
 +using System.Collections;
@@ -43,7 +43,10 @@ index 0000000..7763316
 +                await client.StartAsync();
 +                await client.SetStatusAsync(UserStatus.DoNotDisturb);
 +                await client.SetGameAsync(args[1]);
-+                Console.ReadLine();
++                
++                while (!File.Exists(path + "/exitprestart")) {
++                    Thread.Sleep(100);
++                }
 +
 +                client.StopAsync().GetAwaiter().GetResult();
 +                client.Dispose();
