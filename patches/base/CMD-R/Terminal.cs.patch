@@ -1,14 +1,101 @@
 diff --git a/CMD-R/Terminal.cs b/CMD-R/Terminal.cs
-index f07272d..31c378a 100644
+index f07272d..4c2cba5 100644
 --- a/CMD-R/Terminal.cs
 +++ b/CMD-R/Terminal.cs
-@@ -391,7 +391,8 @@ namespace CMDR
+@@ -3,6 +3,7 @@ using System.Collections.Generic;
+ using System.IO;
+ using System.Linq;
+ using TextCopy;
++using System.Threading;
  
-                     for (int i = 0; i < l; i++)
-                     {
+ namespace CMDR
+ {
+@@ -43,6 +44,10 @@ namespace CMDR
+         [STAThread]
+         public string GetInputLineNoSuffix(string prefix)
+         {
++            if (Console.IsInputRedirected)
++            {
++                return Console.ReadLine();
++            }
+             pref = prefix;
+             Prompting = true;
+             if (pref == "" == false) Console.Write(pref.Replace("$<path>", Environment.CurrentDirectory) + characters);
+@@ -379,47 +384,49 @@ namespace CMDR
+         public bool Prompting = false;
+         public void ConsoleWriteLine(string msg)
+         {
+-            try
+-            {
+-                if (Prompting)
++            new Thread(() => {
++                try
+                 {
+-                    string str = pref.Replace("$<path>", Environment.CurrentDirectory) + "> ";
+-                  
+-                    if (pref == "") str = "";
++                    if (Prompting)
++                    {
++                        string str = pref.Replace("$<path>", Environment.CurrentDirectory) + "> ";
++                    
++                        if (pref == "") str = "";
+ 
+-                    int l = (str + characters).Length;
++                        int l = (str + characters).Length;
+ 
+-                    for (int i = 0; i < l; i++)
+-                    {
 -                        if (Console.GetCursorPosition().Left != 0)
-+                        Console.Out.Flush();
-+                        if (Console.CursorLeft != 0)
++                        for (int i = 0; i < l; i++)
                          {
-                             Console.Write("\b \b");
+-                            Console.Write("\b \b");
++                            if (Console.GetCursorPosition().Left != 0)
++                            {
++                                Console.Write("\b \b");
++                            }
                          }
++
++                        Console.SetCursorPosition(0, Console.CursorTop);
+                     }
+ 
+-                    Console.SetCursorPosition(0, Console.CursorTop);
+-                }
++                    if (overrideprompt)
++                    {
++                        overrideprompt = false;
++                        Prompting = overridestate;
++                    }
+ 
+-                if (overrideprompt)
+-                {
+-                    overrideprompt = false;
+-                    Prompting = overridestate;
+-                }
++                    Console.WriteLine(msg);
+ 
+-                Console.WriteLine(msg);
++                    if (Prompting)
++                    {
++                        Console.SetCursorPosition(0, Console.CursorTop);
+ 
+-                if (Prompting)
++                        if (pref == "" == false) Console.Write(pref.Replace("$<path>", Environment.CurrentDirectory) + characters);
++                        else { Console.Write(characters); }
++                    }
++                }
++                catch
+                 {
+-                    Console.SetCursorPosition(0, Console.CursorTop);
+ 
+-                    if (pref == "" == false) Console.Write(pref.Replace("$<path>", Environment.CurrentDirectory) + characters);
+-                    else { Console.Write(characters); }
+                 }
+-            }
+-            catch
+-            {
+-
+-            }
++            }).Start();
+         }
+ 
+         public void ConsoleWrite(string msg)

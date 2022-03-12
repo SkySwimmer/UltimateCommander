@@ -1,0 +1,52 @@
+diff --git a/lib/cmdr-startup-messages/CMD-R/Program.cs b/lib/cmdr-startup-messages/CMD-R/Program.cs
+new file mode 100644
+index 0000000..7256490
+--- /dev/null
++++ b/lib/cmdr-startup-messages/CMD-R/Program.cs
+@@ -0,0 +1,46 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Collections;
++using System.IO;
++using System.Linq;
++using System.Reflection;
++using System.Threading;
++using System.Threading.Tasks;
++using Discord;
++using Discord.WebSocket;
++using System.IO.Compression;
++
++namespace CMDR
++{
++    public partial class Bot
++    {
++        public DiscordSocketClient client;
++
++        public static void Main(string[] args)
++        {
++            new Bot().MainAsync(args).GetAwaiter().GetResult();
++        }
++
++#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
++        public async Task MainAsync(String[] args)
++#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
++        {
++            ConsoleColor b = Console.ForegroundColor;
++            Console.ForegroundColor = b;
++
++            String path = args[0];
++            if (File.Exists(path + "/Bot.cfg"))
++            {
++                String token = File.ReadAllText(path + "/Bot.cfg").Replace("\n", "");
++                client = new DiscordSocketClient();
++                await client.LoginAsync(TokenType.Bot, token);
++                await client.StartAsync();
++                await client.SetStatusAsync(UserStatus.DoNotDisturb);
++                await client.SetGameAsync(args[1]);
++                while (true) {
++                    Thread.Sleep(100);
++                }
++            }
++        }
++    }
++}

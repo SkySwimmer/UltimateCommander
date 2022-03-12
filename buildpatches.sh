@@ -7,6 +7,7 @@ rm -rf "$pwd/patches"
 function buildPatches()  {
     echo "Building $1 patches..."
     mkdir -p "$pwd/patches/$1"
+    git config core.fileMode false
     git add -A
     buildDir "" "$(realpath "$pwd/patches/$1")"
 }

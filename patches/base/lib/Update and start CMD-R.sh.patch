@@ -1,12 +1,15 @@
 diff --git a/lib/Update and start CMD-R.sh b/lib/Update and start CMD-R.sh
-index 2f13044..dc2c5dc 100644
+index 2f13044..6123bf9 100644
 --- a/lib/Update and start CMD-R.sh	
 +++ b/lib/Update and start CMD-R.sh	
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,8 @@
  #!/bin/bash
  DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
  
 -$DIR/update
 -$DIR/cmd-r $@
++"$DIR/prestart/CMD-R" "$DIR" "Updating CMD-R..." &
++CMD_R_PID=$!
 +"$DIR/update"
++kill $CMD_R_PID
 +"$DIR/cmd-r" $@

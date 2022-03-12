@@ -8,7 +8,7 @@ requiredvermsbuild=15.6.0.0
 requiredvernuget=5.6.0.6489
 requiredvermake=4.2
 requiredvergit=2.28.0
-requiredverdotnet=5.0.205
+requiredverdotnet=6.0.0
 requiredverscreen=4.08.00
 
 missingdepends=false
@@ -161,7 +161,7 @@ if [ $missingdepends == "true" ]; then
     echo
     echo You are missing the following dependencies:
     if [ "$dotnetinstalled" == "false" ]; then 
-        echo Mono version $requiredverdotnet or above.
+        echo DotNet SDK version $requiredverdotnet or above.
     fi
     if [ "$msbuildinstalled" == "false" ]; then 
         echo MSBuild version $requiredvermsbuild or above.
