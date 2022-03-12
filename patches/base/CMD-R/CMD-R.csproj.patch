@@ -1,5 +1,5 @@
 diff --git a/CMD-R/CMD-R.csproj b/CMD-R/CMD-R.csproj
-index af2720e..9acc997 100644
+index af2720e..04e0b48 100644
 --- a/CMD-R/CMD-R.csproj
 +++ b/CMD-R/CMD-R.csproj
 @@ -2,13 +2,16 @@
@@ -11,7 +11,8 @@ index af2720e..9acc997 100644
    </PropertyGroup>
  
    <ItemGroup>
-     <PackageReference Include="Discord.NET" Version="2.4.0" />
+-    <PackageReference Include="Discord.NET" Version="2.4.0" />
++    <PackageReference Include="Discord.NET" Version="3.4.1" />
      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 -    <PackageReference Include="TextCopy" Version="4.3.1" />
 +    <PackageReference Include="TextCopy" Version="6.1.0" />

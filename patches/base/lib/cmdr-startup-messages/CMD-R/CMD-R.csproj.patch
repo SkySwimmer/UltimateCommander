@@ -1,6 +1,6 @@
 diff --git a/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj b/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj
 new file mode 100644
-index 0000000..1b766b8
+index 0000000..032ea7f
 --- /dev/null
 +++ b/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj
 @@ -0,0 +1,14 @@
@@ -12,7 +12,7 @@ index 0000000..1b766b8
 +  </PropertyGroup>
 +
 +  <ItemGroup>
-+    <PackageReference Include="Discord.NET" Version="2.4.0" />
++    <PackageReference Include="Discord.NET" Version="3.4.1" />
 +    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 +    <PackageReference Include="TextCopy" Version="6.1.0" />
 +  </ItemGroup>
