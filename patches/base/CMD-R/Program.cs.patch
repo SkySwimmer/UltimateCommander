@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..e99637c 100644
+index fc7bc02..5e5d96c 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -24,7 +24,14 @@ index fc7bc02..e99637c 100644
                      client.SetGameAsync("Shutting down...").GetAwaiter().GetResult();
                      client.SetStatusAsync(UserStatus.Invisible).GetAwaiter().GetResult();
                      client.StopAsync().GetAwaiter().GetResult();
-@@ -149,7 +149,7 @@ namespace CMDR
+@@ -145,11 +145,13 @@ namespace CMDR
+                 e.Cancel = true;
+             });
+             Bot.WriteLine("Starting Discord.NET framework...");
+-            client = new DiscordSocketClient();
++            client = new DiscordSocketClient(new DiscordSocketConfig(){
++                GatewayIntents = GatewayIntents.All
++            });
  
              await client.LoginAsync(TokenType.Bot, token);
              await client.StartAsync();
@@ -33,7 +40,7 @@ index fc7bc02..e99637c 100644
  
              if (newToken) {
                  Bot.WriteLine("\nSaved to file Bot.cfg, edit it to change the token.");
-@@ -213,9 +213,9 @@ namespace CMDR
+@@ -213,9 +215,9 @@ namespace CMDR
              // Load CMF (Cyan Modfile) formatted packages
              // CMF are zips too, just like jars
              //
@@ -45,7 +52,7 @@ index fc7bc02..e99637c 100644
              foreach (FileInfo info in new DirectoryInfo(path + "/Module Packages").GetFiles("*.cmf"))
              {
                  loadPackage(info);
-@@ -293,9 +293,9 @@ namespace CMDR
+@@ -293,9 +295,9 @@ namespace CMDR
                              b = Console.ForegroundColor;
                              Console.ForegroundColor = ConsoleColor.Red;
                              Bot.WriteLine("CRITICAL ERROR: Unable to restore or save storage folder, one already exists in both temp and install output!");
@@ -57,7 +64,7 @@ index fc7bc02..e99637c 100644
                          }
                          if (Directory.Exists(path + "/temp/Storage"))
                          {
-@@ -401,7 +401,7 @@ namespace CMDR
+@@ -401,7 +403,7 @@ namespace CMDR
              await client.SetGameAsync("");
              while (true)
              {
@@ -66,7 +73,7 @@ index fc7bc02..e99637c 100644
                  if (command == "quit" || command == "exit")
                  {
                      await client.SetGameAsync("Shutting down...");
-@@ -608,7 +608,7 @@ namespace CMDR
+@@ -608,7 +610,7 @@ namespace CMDR
          {
              if (classname == "{auto}") classname = filename;
              if (namespacepath == "{auto}") namespacepath = filename;
@@ -75,7 +82,7 @@ index fc7bc02..e99637c 100644
              AppDomain currentDomain = AppDomain.CurrentDomain;
              currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
  
-@@ -620,14 +620,18 @@ namespace CMDR
+@@ -620,14 +622,18 @@ namespace CMDR
                  Assembly assembly = Assembly.LoadFrom(assemblyPath);
                  return assembly;
              }
@@ -96,7 +103,7 @@ index fc7bc02..e99637c 100644
              }
              else
              {
-@@ -635,13 +639,13 @@ namespace CMDR
+@@ -635,13 +641,13 @@ namespace CMDR
                  Bot.WriteLine("Loading module: " + script.id + "...");
                  Bot.WriteLine("Module description: " + script.moduledesctiption);
                  Bot.GetBot().modules.Add(script);
@@ -114,7 +121,7 @@ index fc7bc02..e99637c 100644
                  script.LoadConfig();
                  Bot.WriteLine("Pre-initializing module: " + script.id + "...");
                  script.PreInit(Bot.GetBot());
-@@ -862,8 +866,46 @@ namespace CMDR
+@@ -862,8 +868,46 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
