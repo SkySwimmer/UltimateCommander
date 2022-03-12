@@ -1,5 +1,5 @@
 diff --git a/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs b/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
-index 4f73e73..23918dc 100644
+index 4f73e73..19bb3c4 100644
 --- a/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
 +++ b/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
 @@ -6,7 +6,7 @@ using Discord.WebSocket;
@@ -11,6 +11,15 @@ index 4f73e73..23918dc 100644
      {
           public override string commandid => "lscategories";
  
+@@ -92,7 +92,7 @@ namespace CMDR.HelpCmdModule
+ 
+             Discord.Rest.RestUserMessage message = await channel.SendMessageAsync(pages[page]);
+ 
+-            Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task> handler = new Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task>((arg1, arg2, arg3) =>
++            Func<Cacheable<IUserMessage, ulong>, Cacheable<IMessageChannel, ulong>, SocketReaction, Task> handler = new Func<Cacheable<IUserMessage, ulong>, Cacheable<IMessageChannel, ulong>, SocketReaction, Task>((arg0, arg1, arg3) =>
+             {
+                 if (arg3.MessageId == message.Id && arg3.Channel.Id == message.Channel.Id)
+                 {
 @@ -179,5 +179,155 @@ namespace CMDR.HelpCmdModule
          {
  
@@ -83,7 +92,7 @@ index 4f73e73..23918dc 100644
 +
 +            Discord.Rest.RestUserMessage message = await channel.SendMessageAsync(pages[page]);
 +
-+            Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task> handler = new Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task>((arg1, arg2, arg3) =>
++            Func<Cacheable<IUserMessage, ulong>, Cacheable<IMessageChannel, ulong>, SocketReaction, Task> handler = new Func<Cacheable<IUserMessage, ulong>, Cacheable<IMessageChannel, ulong>, SocketReaction, Task>((arg0, arg1, arg3) =>
 +            {
 +                if (arg3.MessageId == message.Id && arg3.Channel.Id == message.Channel.Id)
 +                {
