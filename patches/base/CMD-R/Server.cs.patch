@@ -1,0 +1,154 @@
+diff --git a/CMD-R/Server.cs b/CMD-R/Server.cs
+index 861f296..57f990f 100644
+--- a/CMD-R/Server.cs
++++ b/CMD-R/Server.cs
+@@ -3,11 +3,32 @@ using System.Collections.Generic;
+ using System.IO;
+ using System.Threading;
+ using Discord.WebSocket;
++using System.Linq;
+ 
+ namespace CMDR
+ {
+     public class Server
+     {
++        private Dictionary<string, ModuleConfig> moduleConfigs = new Dictionary<string, ModuleConfig>();
++
++        public class ModuleConfig {
++            internal bool ___has_changes = false;
++            internal ConfigDictionary<string, object> config = new ConfigDictionary<string, object>();
++            
++            public object Get(string key) {
++                return config.GetValue(key);
++            }
++            
++            public object GetOrDefault(string key, object def) {
++                return config.GetValueOrDefault(key, def);
++            }
++
++            public void Set(string key, object value) {
++                ___has_changes = true;
++                config.Put(key, value);
++            }
++        }
++
+         static Thread t = null;
+         public static bool IsAutoSaveActive() { return t != null; }
+         internal bool ___has_changes = false;
+@@ -18,7 +39,7 @@ namespace CMDR
+             Bot.WriteLine();
+             foreach (Server srv in Bot.GetBot().servers)
+             {
+-                if (srv.___has_changes || force) srv.SaveAll(force);
++                if (srv.___has_changes || force || new List<ModuleConfig>(srv.moduleConfigs.Values).Find(t => t.___has_changes) != null) srv.SaveAll(force);
+             }
+             Bot.WriteLine();
+             Bot.WriteLine("Save completed.");
+@@ -123,13 +144,15 @@ namespace CMDR
+                 return lastname;
+             }
+         }
++        
+         public List<Role> roles = new List<Role>();
+-        public void SaveAll(bool force =false)
++        public void SaveAll(bool force = false)
+         {
+             if (Bot.GetBot().servers.Find(t => t.id == id) != null && Bot.GetBot().servers.Find(t => t.id == id) != this) Bot.GetBot().servers[Bot.GetBot().servers.IndexOf(Bot.GetBot().servers.Find(t => t.id == id))] = this;
+             
+             Bot.WriteLine("Saving server, name: '" + name + "', id: '" + id + "'");
+             Directory.CreateDirectory(Bot.GetBot().path + "/Server Configs/" + id);
++            Directory.CreateDirectory(Bot.GetBot().path + "/Server Configs/" + id + "/Modules");
+             File.WriteAllText(Bot.GetBot().path + "/Server Configs/" + id + "/server.info", name);
+             if (!UseChangeSave)
+             {
+@@ -156,7 +179,16 @@ namespace CMDR
+                 }
+             }
+             Bot.WriteLine("Saved server, name: '" + name + "', id: '" + id + "'");
++
++            foreach (string module in moduleConfigs.Keys) {
++                ModuleConfig config = moduleConfigs[module];
++                if (config.___has_changes || force) {
++                    File.WriteAllText(Bot.GetBot().path + "/Server Configs/" + id + "/Modules/" + module + ".xml", Serializer.Serialize(config.config));                    
++                    config.___has_changes = false;
++                }
++            }
+         }
++
+         public Server(ulong id)
+         {
+             this.id = id;
+@@ -169,12 +201,65 @@ namespace CMDR
+             lastname = name;
+             LoadAll();
+         }
++
++        public ModuleConfig GetModuleConfig(BotModule module) {
++            foreach (string mod in moduleConfigs.Keys) {
++                ModuleConfig config = moduleConfigs[mod];
++                if (mod == module.id) {
++                    return config;
++                }
++            }
++
++            if (!Bot.GetBot().IsModuleLoaded(module.id))
++                return null;
++            
++            ModuleConfig modConf = new ModuleConfig();
++            modConf.___has_changes = true;
++            modConf.config = new ConfigDictionary<string, object>();
++            moduleConfigs[module.id] = modConf;
++            ___has_changes = true;
++            return modConf;
++        }
++
++        public Role[] GetRoles() {
++            return roles.ToArray();
++        }
++
++        public ulong[] GetRoleIds() {
++            return roles.Select(t => t.roleid).ToArray();
++        }
++
++        public Role GetRole(ulong id) {
++            foreach (Role r in roles) {
++                if (r.roleid == id) {
++                    return r;
++                }
++            }
++            return null;
++        }
++
+         public void LoadAll()
+         {
+             Directory.CreateDirectory(Bot.GetBot().path + "/Server Configs/" + id);
+             if (!File.Exists(Bot.GetBot().path + "/Server Configs/" + id + "/server.info")) SaveAll(true);
+ 
+             roles.Clear();
++            moduleConfigs.Clear();
++            if (Directory.Exists(Bot.GetBot().path + "/Server Configs/" + id + "/Modules/")) {
++                FileInfo[] files = new DirectoryInfo(Bot.GetBot().path + "/Server Configs/" + id + "/Modules").GetFiles("*.xml");
++                foreach (FileInfo file in files) {
++                    string module = Path.GetFileNameWithoutExtension(file.FullName);   
++                    if (Bot.GetBot().IsModuleLoaded(module)) {
++                        ModuleConfig conf = new ModuleConfig();
++                        conf.config = Serializer.Deserialize<ConfigDictionary<String, Object>>(File.ReadAllText(file.FullName));
++                        conf.___has_changes = false;
++                        moduleConfigs[module] = conf;
++                    } else {
++                        file.Delete();
++                    }
++                }
++            }
++
+             Bot.WriteLine("Loading roles of server " + name + " (" + id + ")");
+             foreach (FileInfo file in new DirectoryInfo(Bot.GetBot().path + "/Server Configs/" + id).GetFiles("*.role"))
+             {
+@@ -191,6 +276,7 @@ namespace CMDR
+                 roles.Add(r);
+             }
+             Bot.WriteLine("Loaded "+roles.Count+" role"+(roles.Count==1?"":"s"));
++
+         }
+ 
+         public void SaveRole(Role r, string msg = "Saved")

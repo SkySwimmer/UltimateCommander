@@ -1,0 +1,29 @@
+diff --git a/CMD-R/ConfigDictionary.cs b/CMD-R/ConfigDictionary.cs
+index 5adc374..ee2dfb3 100644
+--- a/CMD-R/ConfigDictionary.cs
++++ b/CMD-R/ConfigDictionary.cs
+@@ -1,4 +1,4 @@
+-﻿using System;
++﻿using System;
+ using System.Collections.Generic;
+ 
+ namespace CMDR
+@@ -13,16 +13,14 @@ namespace CMDR
+ 
+         public T2 Put(T1 key, T2 value)
+         {
+-            if (ContainsKey(key))
+-                Remove(key);
+-            Add(key, value);
++            this[key] = value;
+             return value;
+         }
+ 
+         public T2 AddIfAbsent(T1 key, T2 value)
+         {
+             if (!ContainsKey(key))
+-                Add(key, value);
++                Add(key, value);
+             return value;
+         }
+     }

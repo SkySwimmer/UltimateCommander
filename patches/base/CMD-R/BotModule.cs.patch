@@ -1,8 +1,19 @@
 diff --git a/CMD-R/BotModule.cs b/CMD-R/BotModule.cs
-index 60eef49..938effe 100644
+index 60eef49..7ee67de 100644
 --- a/CMD-R/BotModule.cs
 +++ b/CMD-R/BotModule.cs
-@@ -61,7 +61,7 @@ namespace CMDR
+@@ -12,6 +12,10 @@ namespace CMDR
+             return Bot.GetBot();
+         }
+ 
++        public Server[] GetServers() {
++            return GetBot().servers.ToArray();
++        }
++
+         public void RegisterCommand(SystemCommand command)
+         {
+             if (GetBot().CmdCategories.Find(t => t.name.ToLower() == command.commandid.ToLower()) != null)
+@@ -61,7 +65,7 @@ namespace CMDR
  
          public void SaveConfig()
          {
