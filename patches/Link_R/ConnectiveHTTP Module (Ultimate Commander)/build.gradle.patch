@@ -1,0 +1,502 @@
+diff --git a/ConnectiveHTTP Module (Ultimate Commander)/build.gradle b/ConnectiveHTTP Module (Ultimate Commander)/build.gradle
+new file mode 100644
+index 0000000..b4e35c8
+--- /dev/null
++++ b/ConnectiveHTTP Module (Ultimate Commander)/build.gradle	
+@@ -0,0 +1,496 @@
++buildscript {
++	repositories {
++		mavenCentral()
++		maven {
++			name = "AerialWorks"; url = "https://aerialworks.ddns.net/maven"
++		}
++	}
++	dependencies {
++		classpath 'org.asf.cyan.cornflower:Cornflower:1.0.0.A30'
++	}
++}
++
++plugins {
++	id 'java'
++	id 'maven-publish'
++}
++
++
++// Basic information
++version = "1.0.0.A1"
++group = "org.asf.linkr_ultimatecommander"
++
++ext.moduleClass = "LinkrModule"
++ext.authorname = "AerialWorks Software Foundation"
++
++ext.moduletype = "module"
++ext.connectiveversion = "1.0.0.A6"
++
++ext.license = "LGPL 3.0"
++ext.copyrightsuffix = "Free software, read ${license} license document for more information".toString()
++
++ext.description='''
++HTTP frontend and backend for the Link/R CMD-R module.
++'''
++
++
++// Add extensions, processors and other classes here
++ext.classes = [
++	"${group}.LinkrModificationProvider"
++]
++ext.extensionProviders = []
++ext.aliasProviders = []
++ext.restrictionProviders = []
++ext.indexPages = []
++ext.virtualFileProviders = []
++ext.uploadHandlers = []
++ext.lowLevelGetAndPostProcessors = [
++	"${group}.LinkrUploadProcessor"
++]
++
++
++apply plugin: 'eclipse'
++apply plugin: 'org.asf.cyan.cornflower'
++
++Calendar cal = new GregorianCalendar();
++cal.setTime(new Date());
++ext.buildyear = cal.get(Calendar.YEAR).toString();
++
++repositories {
++	mavenCentral()
++	maven { name = "AerialWorks"; url = "https://aerialworks.ddns.net/maven" }
++	flatDir {
++		dirs 'libraries'
++	}
++}
++
++jar {
++	manifest {
++		attributes([
++			"Specification-Title": project.name,
++			"Specification-Vendor": "${authorname}",
++			"Specification-Version": project.version,
++			"Implementation-Title": project.name,
++			"Implementation-Version": project.version,
++			"Implementation-Vendor" :"${authorname}",
++			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
++		])
++	}
++	includeEmptyDirs = false
++}
++
++dependencies {
++	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
++
++	implementation name: "RatsMemory"
++	implementation name: "ConnectiveHTTP"
++	implementation name: "HttpBasicFileModule"
++
++	implementation group: 'org.asf.cyan', name: 'CyanComponents', version: '1.0.0.A4'
++	implementation group: 'org.asf.cyan', name: 'CCFG', version: '1.0.0.A16'
++
++	implementation group: 'org.asf.aos.util.service', name: 'aosutil-service-SLIB-UTIL', version: '0.0.0.12'
++}
++
++createEclipseLaunches {
++	name "Launch ConnectiveStandalone Server (${project.name})"
++
++	// Main server
++	mainClass "org.asf.connective.standalone.main.ConnectiveStandalone"
++	workingDir "server"
++
++	// Set logging to IDE mode.
++	jvm "-DideMode"
++
++	// Make sure the module is loaded into the server
++	jvm "-DaddCpModules=${project.group}.${moduleClass}"
++
++
++	// Coremodule loading, disable the jvm argument above for this, please note that you will need to create a user in the debug group to use this
++	// Creating the user: run './connective credtool debug yourusername' in the server directory
++	//
++	// Uncomment the following:
++	// String credstring = new String(Base64.getEncoder().encode("yourusername:yourpassword".getBytes())); // replace the username and password
++	// jvm "-DdebugCoremodules=${project.group}.${moduleClass}"
++	// jvm "-DdebugCredentials=\"${credstring}\""
++
++
++	// Server dependencies
++	classpath project // current project
++	classpath {
++		add sourceSets.main.output.resourcesDir
++		
++		// libraries
++		for (File file : new File("libraries").listFiles()) {
++			archive file
++		}
++
++		// server libraries
++		for (File file : new File("server/libs").listFiles()) {
++			archive file
++		}
++		archive new File("server/ConnectiveStandalone.jar") // server jars
++	}
++
++	// Server source lookup
++	sourceLookup {
++		// libraries
++		for (File file : new File("libraries").listFiles()) {
++			archive file
++		}
++
++		// server libraries
++		for (File file : new File("server/libs").listFiles()) {
++			archive file
++		}
++		archive new File("server/ConnectiveStandalone.jar") // server jars
++	}
++}
++createEclipseLaunches.dependsOn 'eclipse'
++createEclipseLaunches.dependsOn processResources
++
++
++
++task readme(type: ProcessResources)  {
++	from "src/main/resources/README.md"
++	into "."
++
++	HashMap<String, ?> props = new HashMap<String, ?>();
++	setReadmeProps(props);
++	project.getProperties().forEach { k, v ->
++		if (k.equals("name")) {
++			String val = v.substring(0, 1).toUpperCase() + v.substring(1)
++			if (!val.toLowerCase().endsWith("module"))
++				val += " " + (moduletype.equals("module") ? "Module" : "Core Module")
++
++			props.put("pretty_name", val)
++		}
++		if (v instanceof String)
++			props.put(k, v);
++	}
++	project.getExtensions().getAsMap().forEach { k, v ->
++		if (v instanceof String) {
++			if (v.startsWith("\n") && v.endsWith("\n"))
++				v = v.substring(1, v.length() - 1);
++			props.put(k, v);
++		}
++	}
++	project.getExtensions().getAsMap().get("ext").getProperties().forEach { k, v ->
++		if (v instanceof String) {
++			if (v.startsWith("\n") && v.endsWith("\n"))
++				v = v.substring(1, v.length() - 1);
++			props.put(k, v);
++		}
++	}
++
++	expand props
++}
++
++processResources {
++	HashMap<String, String> props = new HashMap<String, String>();
++	setReadmeProps(props);
++	project.getProperties().forEach { k, v ->
++		if (k.equals("name")) {
++			String val = v.substring(0, 1).toUpperCase() + v.substring(1)
++			if (!val.toLowerCase().endsWith("module"))
++				val += " " + (moduletype.equals("module") ? "Module" : "Core Module")
++
++			props.put("pretty_name", val)
++		}
++		if (v instanceof String)
++			props.put(k, v);
++	}
++	project.getExtensions().getAsMap().forEach { k, v ->
++		if (v instanceof String) {
++			if (v.startsWith("\n") && v.endsWith("\n"))
++				v = v.substring(1, v.length() - 1);
++			props.put(k, v);
++		}
++	}
++	project.getExtensions().getAsMap().get("ext").getProperties().forEach { k, v ->
++		if (v instanceof String) {
++			if (v.startsWith("\n") && v.endsWith("\n"))
++				v = v.substring(1, v.length() - 1);
++			props.put(k, v);
++		}
++	}
++
++	expand props
++}
++
++import java.nio.file.Files
++task genContextFile(dependsOn: processResources) {
++	doLast {
++        StringBuilder builder = new StringBuilder();
++        for (String extension : extensionProviders) {
++            builder.append("extension \"class:" + extension + "\"").append(System.lineSeparator());
++        }
++        for (String alias : aliasProviders) {
++            builder.append("alias \"class:" + alias + "\"").append(System.lineSeparator());
++        }
++        for (String restriction : restrictionProviders) {
++            builder.append("restriction \"class:" + restriction + "\"").append(System.lineSeparator());
++        }
++        for (String handler : uploadHandlers) {
++            builder.append("uploadhandler \"class:" + handler + "\"").append(System.lineSeparator());
++        }
++        for (String processor : lowLevelGetAndPostProcessors) {
++            builder.append("processor \"class:" + processor + "\"").append(System.lineSeparator());
++        }
++        for (String processor : virtualFileProviders) {
++            builder.append("virtualfile \"class:" + processor + "\"").append(System.lineSeparator());
++        }
++		
++        Files.writeString(new File(sourceSets.main.output.resourcesDir, "modules." + project.name + ".ctxf").toPath(), builder.toString());
++    }
++}
++processResources.finalizedBy 'genContextFile'
++
++
++void setReadmeProps(HashMap<String, String> props) {
++	if (moduletype.equals("coremodule")) {
++		props.put("install", [
++			"rats": [
++				"desc": "First, drop the module in the `main` folder of your RaTs! installation.",
++				"config": [
++					"key": "earlyClasses",
++					"entry": "${project.group}.${moduleClass}"
++				]
++			],
++			"standalone": [
++				"desc": "You can install the module by placing the jar in the `coremodules` directory of the server."
++			]
++		])
++
++		String str = ""
++		for (String t : classes) {
++			str += "    " + t + "> '${name}-${version}.jar'" + System.lineSeparator()
++		}
++
++		props.put("otherclasses", [
++			"rats": str
++		])
++	} else {
++		props.put("install", [
++			"rats": [
++				"desc": "First, drop the module in the `main` folder of your RaTs! installation.",
++				"config": [
++					"key": "classes",
++					"entry": "${project.group}.${moduleClass}"
++				]
++			],
++			"standalone": [
++				"desc": "You can install the module by placing the jar in the `modules` directory of the server."
++			]
++		])
++
++		String str = ""
++		for (String t : classes) {
++			str += "    " + t + "> '${name}-${version}.jar'" + System.lineSeparator()
++		}
++
++		props.put("otherclasses", [
++			"rats": str
++		])
++	}
++
++	props.put("moduleConfigAdditionsStandalone", genAdditions());
++}
++
++String genAdditions() {
++	String moduleConfigAdditionsStandalone = "";
++	String data = "";
++
++	boolean first = true
++	boolean multi = false
++	boolean isMulti = false
++	for (String provider : extensionProviders) {
++		moduleConfigAdditionsStandalone = checkStandalone(moduleConfigAdditionsStandalone, first)
++		if (first && !multi && (aliasProviders.size() != 0 || restrictionProviders.size() != 0 || indexPages.size() != 0 || uploadHandlers.size() != 0 || virtualFileProviders.size() != 0)) {
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++		}
++
++		multi = true;
++		first = false;
++
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    extension \"class:" + provider + "\""
++	}
++
++	first = true
++	for (String provider : aliasProviders) {
++		moduleConfigAdditionsStandalone = checkStandalone(moduleConfigAdditionsStandalone, first)
++
++		if (first && !multi && (restrictionProviders.size() != 0 || indexPages.size() != 0 || uploadHandlers.size() != 0 || virtualFileProviders.size() != 0)) {
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++		}
++
++		if (multi)
++			isMulti = true;
++		multi = true;
++		first = false;
++
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    alias \"class:" + provider + "\""
++	}
++
++	first = true
++	for (String provider : restrictionProviders) {
++		moduleConfigAdditionsStandalone = checkStandalone(moduleConfigAdditionsStandalone, first)
++
++		if (first && !multi && (indexPages.size() != 0 || uploadHandlers.size() != 0 || virtualFileProviders.size() != 0)) {
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++		}
++
++		if (multi)
++			isMulti = true;
++		multi = true;
++		first = false;
++
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    restriction \"class:" + provider + "\""
++	}
++
++	first = true
++	for (String provider : indexPages) {
++		moduleConfigAdditionsStandalone = checkStandalone(moduleConfigAdditionsStandalone, first)
++
++		if (first && !multi && (uploadHandlers.size() != 0 || virtualFileProviders.size() != 0)) {
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++		}
++
++		if (multi)
++			isMulti = true;
++		multi = true;
++		first = false;
++
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    indexpage \"[folder]\" \"class:" + provider + "\""
++	}
++
++	first = true
++	for (String provider : uploadHandlers) {
++		moduleConfigAdditionsStandalone = checkStandalone(moduleConfigAdditionsStandalone, first)
++		
++		if (first && !multi && (virtualFileProviders.size() != 0)) {
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++		}
++
++		if (multi)
++			isMulti = true;
++		multi = true;
++		first = false;
++
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    uploadhandler \"class:" + provider + "\""
++	}
++
++	first = true
++	for (String provider : virtualFileProviders) {
++		moduleConfigAdditionsStandalone = checkStandalone(moduleConfigAdditionsStandalone, first)
++		
++		if (multi)
++			isMulti = true;
++		multi = true;
++		first = false;
++
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    virtualfile \"class:" + provider + "\""
++	}
++
++	if (!moduleConfigAdditionsStandalone.isEmpty()) {
++		if (isMulti)
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    # ..."
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    '"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "  # ..."
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "}"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "# ..."
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++
++		if (lowLevelGetAndPostProcessors.size() != 0) {
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "# ..."
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "processors> '"
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "# ..."
++		}
++	}
++
++	for (String processor : lowLevelGetAndPostProcessors) {
++		if (moduleConfigAdditionsStandalone.isEmpty()) {
++			moduleConfigAdditionsStandalone = "## Enabling the modifications on the standalone server"
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "To enable the modifications, one will need to add the following to their server configuration:"
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "```"
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "# File: server.ccfg"
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "# ..."
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "processors> '"
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "# ..."
++		}
++
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += processor
++	}
++
++	if (!moduleConfigAdditionsStandalone.isEmpty()) {
++		if (lowLevelGetAndPostProcessors.size() != 0) {
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "# ..."
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "'"
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += System.lineSeparator()
++			moduleConfigAdditionsStandalone += "# ..."
++		}
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "```"
++	}
++
++	return moduleConfigAdditionsStandalone;
++}
++
++String checkStandalone (String moduleConfigAdditionsStandalone, boolean first) {
++	if (moduleConfigAdditionsStandalone.isEmpty()) {
++		moduleConfigAdditionsStandalone = "## Enabling the modifications on the standalone server"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "To enable the modifications, one will need to add the following to their server configuration:"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "```"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "# File: server.ccfg"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "# ..."
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "context> {"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "  # ..."
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    # We use root, but you can add the instructions to any of your contextfiles"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    root> '"
++		moduleConfigAdditionsStandalone += System.lineSeparator()
++		moduleConfigAdditionsStandalone += "    # ..."
++	} else if (first) {
++		moduleConfigAdditionsStandalone += System.lineSeparator();
++	}
++	return moduleConfigAdditionsStandalone;
++}

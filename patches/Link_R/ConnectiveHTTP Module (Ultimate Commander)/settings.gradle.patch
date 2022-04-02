@@ -1,0 +1,7 @@
+diff --git a/ConnectiveHTTP Module (Ultimate Commander)/settings.gradle b/ConnectiveHTTP Module (Ultimate Commander)/settings.gradle
+new file mode 100644
+index 0000000..d4cd357
+--- /dev/null
++++ b/ConnectiveHTTP Module (Ultimate Commander)/settings.gradle	
+@@ -0,0 +1 @@
++rootProject.name = 'linkr-ultimatecommander-http' 
