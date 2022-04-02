@@ -1,17 +1,15 @@
 #!/bin/bash
-chmod +x build.sh
-chmod +x applypatches.sh
-chmod +x buildpatches.sh
-chmod +x clean.sh
+echo Marking files as executable...
+chmod +x buildpackage.sh
+
+echo Checking dependencies...
+missingdepends=false
 
 requiredvermsbuild=15.6.0.0
 requiredvernuget=5.6.0.6489
 requiredvermake=4.2
 requiredvergit=2.28.0
-requiredverdotnet=6.0.0
-requiredverscreen=4.08.00
-
-missingdepends=false
+requiredverdotnet=5.0.205
 
 echo Searching for dotnet...
 if command -v dotnet &> /dev/null 
@@ -133,35 +131,27 @@ else
     missingdepends=true
 fi
 
-echo Searching for screen...
-if command -v screen &> /dev/null 
-then
-    requiredver=$requiredverscreen
-    currentver="$(screen --version | sed -E "s/.* version (.*) .* .*/\\1/g")"
-    packagename=Screen
-    installed=false
-    
-    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
-        echo $packagename is installed.
-        installed=true
-    else
-        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
-        installed=false
-        missingdepends=true
-    fi
-    
-    screeninstalled=$installed
-else
-    echo Screen is NOT installed.
-    screeninstalled=false
-    missingdepends=true
+if [ ! -d libraries ]; then
+    echo Downloading CMD-R...
+    git clone https://github.com/Stefan0436/CMD-R.git || exit 1
+    echo Building...
+    cd CMD-R
+    chmod +x configure
+    ./configure --norepoconfig >/dev/null || exit 1
+    make >/dev/null || exit 1
+    rm -rf run
+    mkdir -p ../libraries
+    cp build -rf ../run
+    cp build/CMD-R.dll ../libraries
+    cd ..
+    rm -rf CMD-R
 fi
 
 if [ $missingdepends == "true" ]; then
     echo
     echo You are missing the following dependencies:
     if [ "$dotnetinstalled" == "false" ]; then 
-        echo DotNet SDK version $requiredverdotnet or above.
+        echo Mono version $requiredverdotnet or above.
     fi
     if [ "$msbuildinstalled" == "false" ]; then 
         echo MSBuild version $requiredvermsbuild or above.
@@ -175,72 +165,6 @@ if [ $missingdepends == "true" ]; then
     if [ "$gitinstalled" == "false" ]; then 
         echo Git version $requiredvergit or above.
     fi
-    if [ "$screeninstalled" == "false" ]; then 
-        echo Screen version $requiredverscreen or above.
-    fi
     exit 1
 fi
-
-echo Cloning repositories...
-echo Cloning CMD-R base...
-
-rm -rf work
-mkdir "work"
-cd work
-
-rm -rf base-project
-
-function exitfail() {
-    rm -rf work
-    
-    exit 1
-}
-git clone https://github.com/Stefan0436/CMD-R.git base-project || exitfail
-
-echo Preparing local module projects...
-for module in ../local-modules/*; do
-    if [ "$module" == "../local-modules/*" ]; then
-        break
-    fi
-    
-    olddir="$(pwd)"
-    directory=""
-    path="$module"
-    source "$module/settings.module.conf"
-    if [ ! -d module-projects ]; then
-        mkdir -p module-projects
-    fi
-    
-    echo "Preparing $module..."
-    cp -rfv "$path/$directory" "module-projects/$module"
-    rm -f "module-projects/$module/settings.module.conf"
-    cd "module-projects/$module"
-    git init -b main
-    git config user.name builder
-    git config user.email builder@example.com
-    git add -A
-    git commit -m "Initial commit"
-    cd "$olddir"
-done
-
-echo Cloning module projects...
-for module in ../modules/*; do
-    if [ "$module" == "../modules/*" ]; then
-        break
-    fi
-    
-    olddir="$(pwd)"
-    
-    source "$module"
-    echo "Downloading $module..."
-    
-    rm -rf "module-projects/$module"
-    eval 'git clone "'"$url"'" '$arguments' --single-branch "module-projects/'"$module"'"'
-    cd "module-projects/$module"
-    echo "Resetting..."    
-    git reset --hard "$commit" > /dev/null
-    echo "$module" has been downloaded.
-    cd "$olddir"
-done
-
-cd ..
+ 

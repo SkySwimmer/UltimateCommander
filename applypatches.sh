@@ -27,6 +27,18 @@ for module in ../modules/*; do
     if [ "$module" == "../modules/*" ]; then
         break
     fi
+    source "$module"
+    if [ -d "../patches/$module" ]; then
+        echo "Patching $module...";
+        applyPatches "../patches/$module" "module-projects/$module"
+    fi
+done
+
+for module in ../local-modules/*; do
+    if [ "$module" == "../local-modules/*" ]; then
+        break
+    fi
+    source "$module/settings.module.conf"
     if [ -d "../patches/$module" ]; then
         echo "Patching $module...";
         applyPatches "../patches/$module" "module-projects/$module"

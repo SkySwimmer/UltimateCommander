@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ProjectName>link_r</ProjectName>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>Module-$(ProjectName)</AssemblyName>
+    <TargetName>Module</TargetName>
+    <RootNamespace>link_r</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Discord.NET" Version="3.4.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="CMDR.DM">
+      <HintPath>libraries/CMDR.DM.dll</HintPath>
+    </Reference>
+    <Reference Include="CMDR">
+      <HintPath>libraries/CMD-R.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+   <PropertyGroup Condition=" '$(RunConfiguration)' == '$(ProjectName)' ">
+    <StartAction>Program</StartAction>
+    <StartProgram>${ProjectDir}\run\CMD-R.exe</StartProgram>
+    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net6.0\Module.dll} --disable-debug</StartArguments>
+    <StartWorkingDirectory>${ProjectDir}\run</StartWorkingDirectory>
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+</Project>

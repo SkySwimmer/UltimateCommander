@@ -44,3 +44,13 @@ for module in modules/*; do
     buildPatches "$module"
     cd "$pwd"
 done
+
+for module in local-modules/*; do
+    if [ "$module" == "local-modules/*" ]; then
+        break
+    fi
+    source "$module/settings.module.conf"
+    cd "work/module-projects/$module"
+    buildPatches "$module"
+    cd "$pwd"
+done

@@ -1,0 +1,37 @@
+The SubObfuscate library is a system security library intended for use with network APIs, SubObfuscate works with obfuscated subsystem addresses,
+a subsystem is spun up on demand and needs to be used withing 15 minutes. Subsystems are single-use actions, a request and response, then it shuts down.
+
+Subsystems should be supplied with a domain (Eg. a Discord server ID) and optionally a subdomain (such as a user ID)
+
+
+Intents:
+Subsystems work with intents, SubObfuscate uses a intent pool in which action namings are saved, the intent tokens are randomized for each domain and 
+refreshed every 5 minutes, if the wrong token is sent to the wrong subsystem, the subsystem will shut down. Subsystems can only run with one active
+token at a time.
+
+Subsystems are created by spinning a intent runner
+
+
+Subsytem access paramenters:
+ulong:  Domain:             the subsystem domain (which can be a discord server)
+ulong:  Subdomain:          specific section of the specified domain
+string: Subsystem Address:  subsystem instance address (global obfuscated name of the subsystem instance)
+string: Intent:             intent token address (domain obfuscated intent name)
+string: Parameters:         action parameters (JSON-encoded data)
+bytes:  Payload:            action payload for the subsystem (optional)
+
+Subsystem output parameters:
+byte:   Return Code:        error code or 0 if success
+string: Subsystem Address:  address of the subbsystem that was accessed
+bytes:  Response Data:      response payload (only present if return code is 0)
+
+Subsystem return codes:
+0 - action successfully completed
+1 - internal exception
+2 - invalid intent token
+3 - bad request parameters
+4 - subsystem not found
+
+Notes on Subdomains:
+Only one subsystem intent can run in a subdomain, if another subsystem is started with the same intent, the first is shut down.
+

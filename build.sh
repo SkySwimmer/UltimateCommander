@@ -47,6 +47,38 @@ for module in ../modules/*; do
     cd "$olddir"
 done
 
+echo Building local module projects...
+for module in ../local-modules/*; do
+    if [ "$module" == "../local-modules/*" ]; then
+        break
+    fi
+    
+    olddir="$(pwd)"
+    
+    subdir=""
+    source "$module/settings.module.conf"
+    if [ ! -d "module-projects/$module" ]; then
+        continue
+    fi
+    
+    mkdir -p "build/Module Packages"
+    cd "module-projects/$module"
+    
+    if [ "$subdir" != "" ]; then
+        cd "$subdir"
+    fi
+    
+    echo "Building $module..."
+    chmod +x configure
+    ./configure --norepoconfig || exit 1
+    make
+    make package
+    echo
+    
+    cp "build/package.cpkg" "$olddir/build/Module Packages/$module.cpkg"
+    cd "$olddir"
+done
+
 echo Building the CMDR.DM library...
 cd ..
 cd CMDR.DM
