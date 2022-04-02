@@ -1,0 +1,36 @@
+diff --git a/CMD-R/ChangePrefixModule/ChangePrefixCmdModule.cs b/CMD-R/ChangePrefixModule/ChangePrefixCmdModule.cs
+new file mode 100644
+index 0000000..a74271c
+--- /dev/null
++++ b/CMD-R/ChangePrefixModule/ChangePrefixCmdModule.cs
+@@ -0,0 +1,30 @@
++﻿using System;
++
++namespace CMDR.ChangePrefixCmdModule
++{
++    public class ChangePrefixCmdModule : BotModule
++    {
++        public override string id => "ChangePrefixCmdModule";
++
++        public override string moduledesctiption => "Adds the prefix discord command";
++
++        public override void Init(Bot bot)
++        {
++
++        }
++
++        public override void PostInit(Bot bot)
++        {
++            RegisterCommand(new ChangePrefixCommand());
++        }
++
++        public override void PreInit(Bot bot)
++        {
++        }
++
++        public override void RegisterCommands(Bot bot)
++        {
++
++        }
++    }
++}

@@ -1,0 +1,46 @@
+diff --git a/CMD-R/ChangePrefixModule/ChangePrefixCommand.cs b/CMD-R/ChangePrefixModule/ChangePrefixCommand.cs
+new file mode 100644
+index 0000000..138fa30
+--- /dev/null
++++ b/CMD-R/ChangePrefixModule/ChangePrefixCommand.cs
+@@ -0,0 +1,40 @@
++﻿using System;
++using System.Collections.Generic;
++using System.IO;
++using System.Threading.Tasks;
++using Discord;
++using Discord.WebSocket;
++using System.Threading;
++
++namespace CMDR.ChangePrefixCmdModule
++{
++    public class ChangePrefixCommand : SystemCommand
++    {
++        public override string commandid => "prefix";
++        public override string helpsyntax => "[\"<new-prefix>\"]";
++        public override string description => "retrieves or changes the prefix used in this server";
++
++        public override string permissionnode => "sys.anyone";
++
++        public override bool setNoCmdPrefix => false;
++        public override bool allowTerminal => false;
++        public override bool allowDiscord => true;
++
++        public CmdCategory c = new CmdCategory("noncategorized", "Commands that don't have a category");
++        public override CmdCategory[] Categories => new CmdCategory[] { c };
++        
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments)
++        {
++            if (arguments.Count > 0 && GetBot().CheckPermissions("sys.administration", user, guild)) {
++                GetBot().GetServerFromSocketGuild(guild).SetPrefix(arguments[0]);
++                await channel.SendMessageAsync("My new prefix in this server: `" + GetBot().GetServerFromSocketGuild(guild).GetPrefix() + "`");
++            } else {
++                await channel.SendMessageAsync("My prefix in this server: `" + GetBot().GetServerFromSocketGuild(guild).GetPrefix() + "`");
++            }
++        }
++
++        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments)
++        {
++        }
++    }
++}

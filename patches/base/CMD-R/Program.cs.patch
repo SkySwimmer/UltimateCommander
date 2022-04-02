@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..29dc768 100644
+index fc7bc02..aa834ab 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -156,7 +156,48 @@ index fc7bc02..29dc768 100644
  #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
          private async Task Client_RoleDeleted(SocketRole arg)
  #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-@@ -862,8 +888,46 @@ namespace CMDR
+@@ -819,13 +845,29 @@ namespace CMDR
+             }
+         }
+ 
+-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
++#pragma warning disable CS1998
+         private async Task onMessage(SocketMessage msg)
+-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
++#pragma warning restore CS1998
+         {
+             var message = msg as SocketUserMessage;
+             if (message == null) return;
++
+             SocketTextChannel ch = message.Channel as SocketTextChannel;
++            string prefix = this.prefix;
++            if (ch != null && ch.Guild != null) {
++                Server srv = GetServerFromSocketGuild(ch.Guild);
++                if (srv != null) {
++                    prefix = srv.GetPrefix();
++                }
++            }
++
++            // I know, its hacky, but this project is a mess and needs a overhaul so ill use this method
++            if (msg.Content.StartsWith("<@!" + client.CurrentUser.Id + ">", StringComparison.CurrentCulture)) {
++                prefix = "<@!" + client.CurrentUser.Id + "> ";
++            } else if (msg.Content.StartsWith("<@" + client.CurrentUser.Id + ">", StringComparison.CurrentCulture)) {
++                prefix = "<@" + client.CurrentUser.Id + "> ";
++            }
++
+             if (msg.Content.StartsWith(prefix, StringComparison.CurrentCulture) && ch != null && !msg.Content.StartsWith(prefix + " ", StringComparison.CurrentCulture) && msg.Content != prefix)
+             {
+                 bool found = false;
+@@ -836,7 +878,7 @@ namespace CMDR
+                         string fullcmd = message.Content;
+                         string cmdid = fullcmd.Substring(prefix.Length);
+                         string arguments = "";
+-                        if (fullcmd.Contains(" "))
++                        if (cmdid.Contains(" "))
+                         {
+                             arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
+                             cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
+@@ -862,8 +904,46 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
