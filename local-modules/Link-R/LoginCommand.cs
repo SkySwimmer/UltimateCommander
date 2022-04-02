@@ -37,7 +37,7 @@ namespace link_r {
                     + "&bot=" + Bot.GetBot().client.CurrentUser.Id;
                 await dm.SendMessageAsync("**Link/R Login URL:**\n**" + website + "**\n\n**Expires in:** *15 minutes.*\n**Do not share this URL, it grants access to your Link/R account.**");
             } catch {
-                channel.SendMessageAsync("An error occured while trying to create a login URL for <@" + user.Id + ">, please report this to an admin.").GetAwaiter().GetResult();
+                channel.SendMessageAsync("An error occured while trying to create a login URL for <@" + user.Id + ">, please check if DMs are enabled.").GetAwaiter().GetResult();
             }
         }
 

@@ -775,7 +775,7 @@ namespace link_r
                             + "&bot=" + Bot.GetBot().client.CurrentUser.Id)
                     + "\n\n**Note:**\n***This message was sent from '" + guild.Name + "'***").GetAwaiter().GetResult();
             } catch {
-                ch.SendMessageAsync("An error occured verifying <@" + member.Id + ">, please report this to an admin.").GetAwaiter().GetResult();
+                ch.SendMessageAsync("An error occured verifying <@" + member.Id + ">, please check if DMs are enabled.").GetAwaiter().GetResult();
             }
         }
 
