@@ -1,0 +1,22 @@
+diff --git a/Module.cs b/Module.cs
+index fcc8a8a..41915c1 100755
+--- a/Module.cs
++++ b/Module.cs
+@@ -136,7 +136,7 @@ namespace link_r
+         public override void Init(Bot bot)
+         {
+             if (GetConfig().GetValue("website") == null) {
+-                GetConfig().Put("website", "https://aerialworks.ddns.net/linkr");
++                GetConfig().Put("website", "https://aerialworks.ddns.net/ultimatecommander/linkr");
+                 SaveConfig();
+             }
+ 
+@@ -766,7 +766,7 @@ namespace link_r
+                 dm.SendMessageAsync(conf.Get("verification.message.template").ToString()
+                     .Replace("%verificationcode%", code)
+                     .Replace("%mention%", "<@" + member.Id + ">")
+-                    .Replace("%url%", Bot.GetBot().GetModule("Link_r").GetConfig().GetValueOrDefault("website", "https://aerialworks.ddns.net/linkr").ToString() + "/%urlsuffix%")
++                    .Replace("%url%", Bot.GetBot().GetModule("Link_r").GetConfig().GetValueOrDefault("website", "https://aerialworks.ddns.net/ultimatecommander/linkr").ToString() + "/%urlsuffix%")
+                     .Replace("%urlsuffix%","verify?code=" + code
+                             + "&user=" + member.Id
+                             + "&guild=" + guild.Id
