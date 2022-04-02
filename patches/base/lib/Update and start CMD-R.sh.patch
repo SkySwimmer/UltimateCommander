@@ -1,5 +1,5 @@
 diff --git a/lib/Update and start CMD-R.sh b/lib/Update and start CMD-R.sh
-index 2f13044..07ea58a 100644
+index 2f13044..fbb4580 100644
 --- a/lib/Update and start CMD-R.sh	
 +++ b/lib/Update and start CMD-R.sh	
 @@ -1,5 +1,13 @@
@@ -8,7 +8,7 @@ index 2f13044..07ea58a 100644
  
 -$DIR/update
 -$DIR/cmd-r $@
-+"$DIR/prestart/CMD-R" "$DIR" "Updating CMD-R..." &
++"$DIR/prestart/CMD-R" "$DIR" "Updating Ultimate Commander..." &
 +CMD_R_PID=$!
 +"$DIR/update"
 +echo 1 > "$DIR/exitprestart"
