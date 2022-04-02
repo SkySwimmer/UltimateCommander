@@ -1,8 +1,8 @@
 diff --git a/lib/update-cmdr b/lib/update-cmdr
-index 1f57256..63a0265 100644
+index 1f57256..d33cdfd 100644
 --- a/lib/update-cmdr
 +++ b/lib/update-cmdr
-@@ -1,4 +1,20 @@
+@@ -1,5 +1,23 @@
  #!/bin/bash
 +if [ "$(id -u)" != "0" ]; then
 +    1>&2 echo CMD-R needs to run as its own user.
@@ -17,9 +17,12 @@ index 1f57256..63a0265 100644
 +fi
 +
 +if [ "$1" == "--start-service" ]; then
++    cd /usr/lib/cmd-r
 +    screen -DmS cmdr /usr/lib/cmd-r/update-and-run
 +    exit $?
 +fi
  
++cd /usr/lib/cmd-r
  if [[ $@ == "--run" ]]; then
      /usr/lib/cmd-r/update-and-run
+ else
