@@ -1,5 +1,5 @@
 diff --git a/lib/cmd-r b/lib/cmd-r
-index 54a2b6c..36e0a2f 100644
+index 54a2b6c..4cd79d2 100644
 --- a/lib/cmd-r
 +++ b/lib/cmd-r
 @@ -1,2 +1,24 @@
@@ -23,7 +23,7 @@ index 54a2b6c..36e0a2f 100644
 +fi
 +
 +function fail() {
-+    1>&2 echo Failed to connect to the CMD-R sceen session, it might need to be \(re\)started.
++    1>&2 echo Failed to connect to the CMD-R screen session, it might need to be \(re\)started.
 +    exit 1
 +}
 +
