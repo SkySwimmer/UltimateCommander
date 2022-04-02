@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Server.cs b/CMD-R/Server.cs
-index 861f296..f988610 100644
+index 861f296..6890954 100644
 --- a/CMD-R/Server.cs
 +++ b/CMD-R/Server.cs
 @@ -3,22 +3,45 @@ using System.Collections.Generic;
@@ -83,7 +83,7 @@ index 861f296..f988610 100644
                      servers.Add(s);
                      Bot.WriteLine("Folder " + server.Name + " loaded, server name: " + s.name);
                  }
-@@ -123,13 +166,15 @@ namespace CMDR
+@@ -123,14 +166,21 @@ namespace CMDR
                  return lastname;
              }
          }
@@ -98,9 +98,15 @@ index 861f296..f988610 100644
              Directory.CreateDirectory(Bot.GetBot().path + "/Server Configs/" + id);
 +            Directory.CreateDirectory(Bot.GetBot().path + "/Server Configs/" + id + "/Modules");
              File.WriteAllText(Bot.GetBot().path + "/Server Configs/" + id + "/server.info", name);
++            if (prefix == null && File.Exists(Bot.GetBot().path + "/Server Configs/" + id + "/prefix.conf")) {
++                File.Delete(Bot.GetBot().path + "/Server Configs/" + id + "/prefix.conf");
++            } else if (prefix != null && !File.Exists(Bot.GetBot().path + "/Server Configs/" + id + "/prefix.conf")) {
++                File.WriteAllText(Bot.GetBot().path + "/Server Configs/" + id + "/prefix.conf", prefix);
++            }
              if (!UseChangeSave)
              {
-@@ -156,7 +201,16 @@ namespace CMDR
+                 foreach (FileInfo file in new DirectoryInfo(Bot.GetBot().path + "/Server Configs/" + id).GetFiles("*.role"))
+@@ -156,7 +206,16 @@ namespace CMDR
                  }
              }
              Bot.WriteLine("Saved server, name: '" + name + "', id: '" + id + "'");
@@ -117,7 +123,7 @@ index 861f296..f988610 100644
          public Server(ulong id)
          {
              this.id = id;
-@@ -169,12 +223,65 @@ namespace CMDR
+@@ -169,12 +228,65 @@ namespace CMDR
              lastname = name;
              LoadAll();
          }
@@ -183,7 +189,7 @@ index 861f296..f988610 100644
              Bot.WriteLine("Loading roles of server " + name + " (" + id + ")");
              foreach (FileInfo file in new DirectoryInfo(Bot.GetBot().path + "/Server Configs/" + id).GetFiles("*.role"))
              {
-@@ -191,6 +298,7 @@ namespace CMDR
+@@ -191,6 +303,7 @@ namespace CMDR
                  roles.Add(r);
              }
              Bot.WriteLine("Loaded "+roles.Count+" role"+(roles.Count==1?"":"s"));
