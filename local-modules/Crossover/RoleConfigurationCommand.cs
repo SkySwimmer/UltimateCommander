@@ -20,7 +20,7 @@ namespace crossover {
         public override CmdCategory[] Categories => new CmdCategory[] { new CmdCategory("utility", "Utility commands"), new CmdCategory("crossover", "Commands related to Crossover roles") };
 
         public override string commandid => "configure-crossover";
-        public override string helpsyntax => "<list/add/remove> [<role-mention>] [<target-guild-id>] [<target-role-id>]";
+        public override string helpsyntax => "<list/add/remove> [<role-mention>] [<target-guild-id>] [<target-role>]";
         public override string description => "configures crossover roles";
         public override string permissionnode => "commands.admin.configure.crossover";
 
@@ -141,7 +141,7 @@ namespace crossover {
                                 if (arguments.Count >= 4) {
                                     ulong tRoleID = 0;
                                     foreach (SocketRole r in g.Roles) {
-                                        if (r.Name == arguments[1] || r.Id.ToString() == arguments[1]) {
+                                        if (r.Name == arguments[3] || r.Id.ToString() == arguments[3]) {
                                             tRoleID = r.Id;
                                             break;
                                         }
