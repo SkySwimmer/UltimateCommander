@@ -162,7 +162,7 @@ namespace crossover {
                                         return;
                                     }
 
-                                    role = roleID;
+                                    role = tRoleID;
                                 }
 
                                 if (!roleConfig.ContainsKey(server)) {
