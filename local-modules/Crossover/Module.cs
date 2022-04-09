@@ -87,10 +87,27 @@ namespace crossover
                 return;
             var conf = srv.GetModuleConfig(this);
             ConfigDictionary<ulong, List<ulong>> roleConfig = DeserializeRoles(conf.GetOrDefault("roles", "<ConfigDictionary />").ToString());
+            ConfigDictionary<string, ulong> filter = Serializer.Deserialize<ConfigDictionary<string, ulong>>(conf.GetOrDefault("roleFilters", "<ConfigDictionary />").ToString());
+                                
             foreach (ulong server in roleConfig.Keys) {
                 List<ulong> roles = roleConfig[server];
                 if (user.MutualGuilds.FirstOrDefault(t => t.Id == server, null) != null) {
+                    SocketGuildUser uD = user.MutualGuilds.FirstOrDefault(t => t.Id == server, null).GetUser(user.Id);
                     foreach (ulong role in roles) {
+                        if (filter.ContainsKey(server + "-" + role)) {
+                            ulong rd = filter.GetValueOrDefault(server + "-" + role, (ulong)0);
+                            if (uD.Roles.FirstOrDefault(t => t.Id == rd, null) == null) {
+                                if (user.Roles.FirstOrDefault(t => t.Id != role, null) != null) {
+                                    try {
+                                        user.RemoveRoleAsync(role).GetAwaiter().GetResult();
+                                    } catch {
+                                    }
+                                }
+                                
+                                continue;
+                            }
+                        }
+
                         if (user.Roles.FirstOrDefault(t => t.Id == role, null) == null) {
                             try {
                                 user.AddRoleAsync(role).GetAwaiter().GetResult();

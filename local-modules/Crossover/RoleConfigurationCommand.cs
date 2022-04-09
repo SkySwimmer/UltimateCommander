@@ -20,7 +20,7 @@ namespace crossover {
         public override CmdCategory[] Categories => new CmdCategory[] { new CmdCategory("utility", "Utility commands"), new CmdCategory("crossover", "Commands related to Crossover roles") };
 
         public override string commandid => "configure-crossover";
-        public override string helpsyntax => "<list/add/remove> [<role-mention>] [<target-guild-id>]";
+        public override string helpsyntax => "<list/add/remove> [<role-mention>] [<target-guild-id>] [<target-role-id>]";
         public override string description => "configures crossover roles";
         public override string permissionnode => "commands.admin.configure.crossover";
 
@@ -137,6 +137,34 @@ namespace crossover {
                                 await channel.SendMessageAsync("**Error:** unable to access that server, please note that this bot needs to be present in the target server in order to create a crossover role.");
                                 return;
                             } else {
+                                ulong role = 0;
+                                if (arguments.Count >= 4) {
+                                    ulong tRoleID = 0;
+                                    foreach (SocketRole r in g.Roles) {
+                                        if (r.Name == arguments[1] || r.Id.ToString() == arguments[1]) {
+                                            tRoleID = r.Id;
+                                            break;
+                                        }
+                                    }
+
+                                    found = false;
+                                    if (tRoleID != 0) {
+                                        foreach (SocketRole r in g.Roles) {
+                                            if (r.Id == tRoleID) {
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (!found) {
+                                        await channel.SendMessageAsync("**Error:** invalid value for 'target-role', expected: role name or ID");
+                                        return;
+                                    }
+
+                                    role = roleID;
+                                }
+
                                 if (!roleConfig.ContainsKey(server)) {
                                     roleConfig[server] = new List<ulong>();
                                 }
@@ -146,6 +174,10 @@ namespace crossover {
                                 }
 
                                 roleConfig[server].Add(roleID);
+                                ConfigDictionary<string, ulong> filter = Serializer.Deserialize<ConfigDictionary<string, ulong>>(conf.GetOrDefault("roleFilters", "<ConfigDictionary />").ToString());
+                                filter[server + "-" + roleID] = role;
+                                conf.Set("roleFilters", Serializer.Serialize(filter));
+
                                 conf.Set("roles", module.SerializeRoles(roleConfig));
                                 await channel.SendMessageAsync("Saving configuration...");
                                 serverData.SaveAll();
@@ -175,6 +207,11 @@ namespace crossover {
                             List<ulong> roles = roleConfig[server];
                             if (roles.Contains(roleID)) {
                                 roles.Remove(roleID);
+
+                                ConfigDictionary<string, ulong> filter = Serializer.Deserialize<ConfigDictionary<string, ulong>>(conf.GetOrDefault("roleFilters", "<ConfigDictionary />").ToString());
+                                if (filter.ContainsKey(server + "-" + roleID))
+                                    filter.Remove(server + "-" + roleID);
+                                conf.Set("roleFilters", Serializer.Serialize(filter));
 
                                 conf.Set("roles", module.SerializeRoles(roleConfig));
                                 await channel.SendMessageAsync("Saving configuration...");
