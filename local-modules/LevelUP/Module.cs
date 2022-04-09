@@ -183,6 +183,7 @@ namespace levelup
                                         targetCh = ch;
                                     string messageContent = conf.GetOrDefault("messages.roleadvancement.template", "Congratulations %mention%! You advanced to level %level% and unlocked the %role% role!").ToString()
                                             .Replace("%mention%", "<@!" + message.Author.Id + ">")
+                                            .Replace("%name%", (guild.GetUser(message.Author.Id).Nickname == null || guild.GetUser(message.Author.Id).Nickname == "" ? guild.GetUser(message.Author.Id).Username : guild.GetUser(message.Author.Id).Nickname))
                                             .Replace("%level%", level.Level.ToString())
                                             .Replace("%currentxp%", level.CurrentXP.ToString())
                                             .Replace("%levelupxp%", level.LevelUpXP.ToString())
@@ -194,6 +195,7 @@ namespace levelup
                                             SocketTextChannel targetCh = guild.DefaultChannel;
                                             string messageContent = conf.GetOrDefault("messages.roleadvancement.template", "Congratulations %mention%! You advanced to level %level% and unlocked the %role% role!").ToString()
                                                     .Replace("%mention%", "<@!" + message.Author.Id + ">")
+                                                    .Replace("%name%", (guild.GetUser(message.Author.Id).Nickname == null || guild.GetUser(message.Author.Id).Nickname == "" ? guild.GetUser(message.Author.Id).Username : guild.GetUser(message.Author.Id).Nickname))
                                                     .Replace("%level%", level.Level.ToString())
                                                     .Replace("%currentxp%", level.CurrentXP.ToString())
                                                     .Replace("%levelupxp%", level.LevelUpXP.ToString())
@@ -221,6 +223,7 @@ namespace levelup
                                         targetCh = ch;
                                     string messageContent = conf.GetOrDefault("messages.advancement.template", "Congratulations %mention%! You advanced to level %level%!").ToString()
                                             .Replace("%mention%", "<@!" + message.Author.Id + ">")
+                                            .Replace("%name%", (guild.GetUser(message.Author.Id).Nickname == null || guild.GetUser(message.Author.Id).Nickname == "" ? message.Author.Username : guild.GetUser(message.Author.Id).Nickname))
                                             .Replace("%level%", level.Level.ToString())
                                             .Replace("%currentxp%", level.CurrentXP.ToString())
                                             .Replace("%levelupxp%", level.LevelUpXP.ToString());
@@ -231,6 +234,7 @@ namespace levelup
                                             SocketTextChannel targetCh = guild.DefaultChannel;
                                             string messageContent = conf.GetOrDefault("messages.advancement.template", "Congratulations %mention%! You advanced to level %level%!").ToString()
                                                     .Replace("%mention%", "<@!" + message.Author.Id + ">")
+                                                    .Replace("%name%", (guild.GetUser(message.Author.Id).Nickname == null || guild.GetUser(message.Author.Id).Nickname == "" ? message.Author.Username : guild.GetUser(message.Author.Id).Nickname))
                                                     .Replace("%level%", level.Level.ToString())
                                                     .Replace("%currentxp%", level.CurrentXP.ToString())
                                                     .Replace("%levelupxp%", level.LevelUpXP.ToString());

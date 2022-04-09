@@ -778,6 +778,7 @@ namespace levelup {
                     + "\n"
                     + "Possible value replacements are:\n" 
                     + " - `%mention%` - replaced with the user mention\n"
+                    + " - `%name%` - replaced with the user nickname\n"
                     + " - `%level%` - replaced with the current user level (after advancing)\n"
                     + " - `%role%` - replaced with the role the user received\n"
                     + " - `%currentxp%` - replaced with the remaining XP of the user (after advancing)\n"
@@ -804,6 +805,7 @@ namespace levelup {
                 channel.SendMessageAsync("Here follows a preview of the message:").GetAwaiter().GetResult();
                 channel.SendMessageAsync(Template
                         .Replace("%mention%", "<@" + user.Id + ">")
+                        .Replace("%name%", (user.Nickname == null || user.Nickname == "" ? user.Username : user.Nickname))
                         .Replace("%level%", "3")
                         .Replace("%role%", "`Example Role`")
                         .Replace("%currentxp%", "6")
@@ -945,6 +947,7 @@ namespace levelup {
                     + "\n"
                     + "Possible value replacements are:\n" 
                     + " - `%mention%` - replaced with the user mention\n"
+                    + " - `%name%` - replaced with the user nickname\n"
                     + " - `%level%` - replaced with the current user level (after advancing)\n"
                     + " - `%currentxp%` - replaced with the remaining XP of the user (after advancing)\n"
                     + " - `%levelupxp%` - replaced with the max XP for advancing to the next level\n"
@@ -968,6 +971,7 @@ namespace levelup {
                 channel.SendMessageAsync("Here follows a preview of the message:").GetAwaiter().GetResult();
                 channel.SendMessageAsync(Template
                         .Replace("%mention%", "<@" + user.Id + ">")
+                        .Replace("%name%", (user.Nickname == null || user.Nickname == "" ? user.Username : user.Nickname))
                         .Replace("%level%", "3")
                         .Replace("%currentxp%", "6")
                         .Replace("%levelupxp%", "3250")).GetAwaiter().GetResult();
