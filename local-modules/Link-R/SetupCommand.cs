@@ -35,7 +35,7 @@ namespace link_r {
                         if (message.Content.StartsWith("--cancel")) {
                             mem.Put("SetupRunning", false);
                             channel.SendMessageAsync("Cancelled Link/R setup.").GetAwaiter().GetResult();
-                        } else if (!message.Content.StartsWith(module.GetBot().prefix)) {
+                        } else if (!message.Content.StartsWith(server.GetPrefix())) {
                             ((Handler)mem.GetValue("CurrentHandler"))(message, channel, user, guild, server, mem);
                         }
                     }
