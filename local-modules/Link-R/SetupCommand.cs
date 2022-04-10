@@ -248,7 +248,7 @@ namespace link_r {
                     foreach (SocketTextChannel ch in guild.TextChannels) {
                         if (ch.Id == channelID) {
                             found = true;
-                            channel.SendMessageAsync("Selected channel '<#" + ch.Id + ">' (in '" + ch.Category.Name + "') as verification channel.").GetAwaiter().GetResult();
+                            channel.SendMessageAsync("Selected channel '<#" + ch.Id + ">' as verification channel.").GetAwaiter().GetResult();
                             break;
                         }
                     }
@@ -293,7 +293,7 @@ namespace link_r {
                     foreach (SocketTextChannel ch in guild.TextChannels) {
                         if (ch.Id == channelID) {
                             found = true;
-                            channel.SendMessageAsync("Selected channel '<#" + ch.Id + ">' (in '" + ch.Category.Name + "') as post-verification channel.").GetAwaiter().GetResult();
+                            channel.SendMessageAsync("Selected channel '<#" + ch.Id + ">' as post-verification channel.").GetAwaiter().GetResult();
                             break;
                         }
                     }

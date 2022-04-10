@@ -752,7 +752,7 @@ namespace levelup {
                     foreach (SocketTextChannel ch in guild.TextChannels) {
                         if (ch.Id == channelID) {
                             found = true;
-                            channel.SendMessageAsync("Selected channel '<#" + ch.Id + ">' (in '" + ch.Category.Name + "') as role advancement channel.").GetAwaiter().GetResult();
+                            channel.SendMessageAsync("Selected channel '<#" + ch.Id + ">' as role advancement channel.").GetAwaiter().GetResult();
                             break;
                         }
                     }
@@ -921,7 +921,7 @@ namespace levelup {
                     foreach (SocketTextChannel ch in guild.TextChannels) {
                         if (ch.Id == channelID) {
                             found = true;
-                            channel.SendMessageAsync("Selected channel '<#" + ch.Id + ">' (in '" + ch.Category.Name + "') as advancement channel.").GetAwaiter().GetResult();
+                            channel.SendMessageAsync("Selected channel '<#" + ch.Id + ">' as advancement channel.").GetAwaiter().GetResult();
                             break;
                         }
                     }
