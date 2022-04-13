@@ -49,6 +49,14 @@ namespace crossover
                 }
                 return Task.CompletedTask;
             };
+            bot.client.GuildMemberUpdated += (oldUser, user) => {
+                foreach (SocketGuild g in user.MutualGuilds) {
+                    loadUser(user.Id, g, bot.GetServerFromSocketGuild(g));
+                }
+                SocketGuild guild = user.Guild;
+                loadUser(user.Id, guild, bot.GetServerFromSocketGuild(guild));
+                return Task.CompletedTask;
+            };
         }
 
         public override void PreInit(Bot bot)
@@ -96,15 +104,17 @@ namespace crossover
                     foreach (ulong role in roles) {
                         if (filter.ContainsKey(server + "-" + role)) {
                             ulong rd = filter.GetValueOrDefault(server + "-" + role, (ulong)0);
-                            if (uD.Roles.FirstOrDefault(t => t.Id == rd, null) == null) {
-                                if (user.Roles.FirstOrDefault(t => t.Id != role, null) != null) {
-                                    try {
-                                        user.RemoveRoleAsync(role).GetAwaiter().GetResult();
-                                    } catch {
+                            if (rd != 0) {
+                                if (uD.Roles.FirstOrDefault(t => t.Id == rd, null) == null) {
+                                    if (user.Roles.FirstOrDefault(t => t.Id != role, null) != null) {
+                                        try {
+                                            user.RemoveRoleAsync(role).GetAwaiter().GetResult();
+                                        } catch {
+                                        }
                                     }
+                                    
+                                    continue;
                                 }
-                                
-                                continue;
                             }
                         }
 
