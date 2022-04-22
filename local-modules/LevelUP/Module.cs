@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CMDR;
 using Discord;
 using Discord.WebSocket;
+using System.Linq;
 
 namespace levelup
 {
@@ -107,6 +108,8 @@ namespace levelup
                     
                     SocketGuild guild = ch.Guild;
                     Server srv = bot.GetServerFromSocketGuild(guild);
+                    if (message.Content.StartsWith(srv.GetPrefix()))
+                        return Task.CompletedTask;
                     Server.ModuleConfig conf = srv.GetModuleConfig(this);
 
                     int maxXPIncrease = (int)conf.GetOrDefault("xp.increase.max", 12);
@@ -157,9 +160,9 @@ namespace levelup
                                 if (levelRoles.ContainsKey(i)) {
                                     SocketRole role = guild.GetRole(levelRoles[i]);
                                     if (role != null) {
-                                        lastRole = role;
                                         SocketGuildUser usr = guild.GetUser(message.Author.Id);
-                                        if (usr != null) {
+                                        if (usr != null && usr.Roles.FirstOrDefault(t => t.Id == role.Id, null) != null) {
+                                            lastRole = role;
                                             try {
                                                 usr.AddRoleAsync(role.Id).GetAwaiter().GetResult();
                                                 receivedRole = true;
