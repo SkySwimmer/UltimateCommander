@@ -161,7 +161,7 @@ namespace levelup
                                     SocketRole role = guild.GetRole(levelRoles[i]);
                                     if (role != null) {
                                         SocketGuildUser usr = guild.GetUser(message.Author.Id);
-                                        if (usr != null && usr.Roles.FirstOrDefault(t => t.Id == role.Id, null) != null) {
+                                        if (usr != null && usr.Roles.FirstOrDefault(t => t.Id == role.Id, null) == null) {
                                             lastRole = role;
                                             try {
                                                 usr.AddRoleAsync(role.Id).GetAwaiter().GetResult();
