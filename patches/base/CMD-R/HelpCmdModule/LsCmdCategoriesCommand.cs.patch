@@ -1,5 +1,5 @@
 diff --git a/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs b/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
-index 4f73e73..19bb3c4 100644
+index 4f73e73..ea26f9b 100644
 --- a/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
 +++ b/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
 @@ -6,7 +6,7 @@ using Discord.WebSocket;
@@ -11,7 +11,23 @@ index 4f73e73..19bb3c4 100644
      {
           public override string commandid => "lscategories";
  
-@@ -92,7 +92,7 @@ namespace CMDR.HelpCmdModule
+@@ -77,12 +77,13 @@ namespace CMDR.HelpCmdModule
+             }
+ 
+             foreach (CmdCategory cat in categories) {
+-                if (currentPage.Length + 3 >= 2000) {
++                string msg = ("\n - " + cat.name + " - " + cat.description);
++                if (currentPage.Length + msg.Length + 3 >= 2000) {
+                     currentPage += "```";
+                     pages.Add(currentPage);
+                     currentPage = "```A list of known command categories (page " + pages.Count + "):";
+                 }
+-                currentPage += ("\n - " + cat.name + " - " + cat.description);    
++                currentPage += msg;
+             }
+             if (currentPage.Length != ("```A list of known command categories (page " + pages.Count + "):").Length)
+             {
+@@ -92,7 +93,7 @@ namespace CMDR.HelpCmdModule
  
              Discord.Rest.RestUserMessage message = await channel.SendMessageAsync(pages[page]);
  
@@ -20,7 +36,7 @@ index 4f73e73..19bb3c4 100644
              {
                  if (arg3.MessageId == message.Id && arg3.Channel.Id == message.Channel.Id)
                  {
-@@ -179,5 +179,155 @@ namespace CMDR.HelpCmdModule
+@@ -179,5 +180,156 @@ namespace CMDR.HelpCmdModule
          {
  
          }
@@ -77,12 +93,13 @@ index 4f73e73..19bb3c4 100644
 +            }
 +
 +            foreach (CmdCategory cat in categories) {
-+                if (currentPage.Length + 3 >= 2000) {
++                string msg = ("\n - " + cat.name + " - " + cat.description);
++                if (currentPage.Length + msg.Length + 3 >= 2000) {
 +                    currentPage += "```";
 +                    pages.Add(currentPage);
 +                    currentPage = "```A list of known command categories (page " + pages.Count + "):";
 +                }
-+                currentPage += ("\n - " + cat.name + " - " + cat.description);    
++                currentPage += msg;
 +            }
 +            if (currentPage.Length != ("```A list of known command categories (page " + pages.Count + "):").Length)
 +            {
