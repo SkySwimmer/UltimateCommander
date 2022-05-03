@@ -5,6 +5,7 @@ using Discord;
 using Discord.WebSocket;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace crossover
 {
@@ -72,18 +73,11 @@ namespace crossover
         public void loadServer(Server srv) {
             SocketGuild guild = GetBot().client.GetGuild(srv.id);
             if (guild != null) {
-                var e = guild.GetUsersAsync().GetAsyncEnumerator();
-                while (true) {
-                    if (e.Current != null) {
-                        foreach (IUser usr in e.Current) 
-                            if (usr is SocketGuildUser) {{
-                                SocketGuildUser user = (SocketGuildUser)usr;
-                                loadUser(user.Id, guild, srv);
-                            }
-                        }
+                foreach (IUser usr in guild.Users) {
+                    if (usr is SocketGuildUser) {
+                        SocketGuildUser user = (SocketGuildUser)usr;
+                        loadUser(user.Id, guild, srv);
                     }
-                    if (!e.MoveNextAsync().GetAwaiter().GetResult())
-                        break;
                 }
             }
         }
@@ -108,7 +102,7 @@ namespace crossover
                                 if (uD.Roles.FirstOrDefault(t => t.Id == rd, null) == null) {
                                     if (user.Roles.FirstOrDefault(t => t.Id != role, null) != null) {
                                         try {
-                                            user.RemoveRoleAsync(role);
+                                            user.RemoveRoleAsync(role).GetAwaiter().GetResult();
                                         } catch {
                                         }
                                     }
@@ -120,8 +114,8 @@ namespace crossover
 
                         if (user.Roles.FirstOrDefault(t => t.Id == role, null) == null) {
                             try {
-                                user.AddRoleAsync(role);
-                            } catch {
+                                user.AddRoleAsync(role).GetAwaiter().GetResult();
+                            } catch (Exception e) {
                             }
                         }
                     }
@@ -129,7 +123,7 @@ namespace crossover
                     foreach (ulong role in roles) {
                         if (user.Roles.FirstOrDefault(t => t.Id != role, null) != null) {
                             try {
-                                user.RemoveRoleAsync(role);
+                                user.RemoveRoleAsync(role).GetAwaiter().GetResult();
                             } catch {
                             }
                         }
