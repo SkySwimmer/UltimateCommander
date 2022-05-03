@@ -108,7 +108,7 @@ namespace crossover
                                 if (uD.Roles.FirstOrDefault(t => t.Id == rd, null) == null) {
                                     if (user.Roles.FirstOrDefault(t => t.Id != role, null) != null) {
                                         try {
-                                            user.RemoveRoleAsync(role).GetAwaiter().GetResult();
+                                            user.RemoveRoleAsync(role);
                                         } catch {
                                         }
                                     }
@@ -120,7 +120,7 @@ namespace crossover
 
                         if (user.Roles.FirstOrDefault(t => t.Id == role, null) == null) {
                             try {
-                                user.AddRoleAsync(role).GetAwaiter().GetResult();
+                                user.AddRoleAsync(role);
                             } catch {
                             }
                         }
@@ -129,7 +129,7 @@ namespace crossover
                     foreach (ulong role in roles) {
                         if (user.Roles.FirstOrDefault(t => t.Id != role, null) != null) {
                             try {
-                                user.RemoveRoleAsync(role).GetAwaiter().GetResult();
+                                user.RemoveRoleAsync(role);
                             } catch {
                             }
                         }
