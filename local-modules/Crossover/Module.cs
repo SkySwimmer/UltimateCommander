@@ -21,7 +21,7 @@ namespace crossover
 
         public override void PostInit(Bot bot)
         {
-			string status = bot.client.GetGame();
+			string status = bot.client.GetGameAsync().getAwaiter().getResult();
 			bot.client.SetGameAsync("Loading Crossover...").getAwaiter().getResult();
             bot.client.UserJoined += (user) => {
                 foreach (SocketGuild g in user.MutualGuilds) {
