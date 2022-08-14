@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..34d4325 100644
+index fc7bc02..95e5e60 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -219,7 +219,7 @@ index fc7bc02..34d4325 100644
 +                            }
 +                            if (valid) {
 +                                foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n')) {
-+                                    string cid = fullcmd.Substring(prefix.Length);
++                                    string cid = cmdL.Substring(prefix.Length);
 +                                    string args = "";
 +                                    if (cid.Contains(" "))
 +                                    {
@@ -233,7 +233,7 @@ index fc7bc02..34d4325 100644
 +
 +                                        if (CheckPermissions(cmd.permissionnode, msg.Author, ch.Guild))
 +                                        {
-+                                            await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, fullcmd, args, GetArgumentListFromString(args));
++                                            await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, cmdL, args, GetArgumentListFromString(args));
 +                                        }
 +                                        else
 +                                        {
