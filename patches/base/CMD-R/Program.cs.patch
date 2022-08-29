@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..95e5e60 100644
+index fc7bc02..80b3d7a 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -169,7 +169,7 @@ index fc7bc02..95e5e60 100644
  #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
          private async Task Client_RoleDeleted(SocketRole arg)
  #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-@@ -819,13 +849,29 @@ namespace CMDR
+@@ -819,13 +849,70 @@ namespace CMDR
              }
          }
  
@@ -198,53 +198,55 @@ index fc7bc02..95e5e60 100644
 +                prefix = "<@" + client.CurrentUser.Id + "> ";
 +            }
 +
++            string fullcmd = message.Content;
++
++            // If there are multiple commands in one message, process all of them
++            if (fullcmd.Replace("\r", "").Contains("\n")) {
++
++                // Verify command chain
++                bool valid = true;
++                foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n')) {
++                    if (!cmdL.StartsWith(prefix, StringComparison.CurrentCulture) || cmdL.StartsWith(prefix + " ", StringComparison.CurrentCulture) ||  cmdL == prefix) {
++                        valid = false;
++                        break;
++                    }
++                }
++                if (valid) {
++                    foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n')) {
++                        string cid = cmdL.Substring(prefix.Length);
++                        string args = "";
++                        if (cid.Contains(" "))
++                        {
++                            args = cid.Substring(cid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
++                            cid = cid.Remove(cid.IndexOf(" ", StringComparison.CurrentCulture));
++                        }
++
++                        if (cmd.commandid.ToLower() == cid.ToLower())
++                        {
++                            found = true;
++
++                            if (CheckPermissions(cmd.permissionnode, msg.Author, ch.Guild))
++                            {
++                                await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, cmdL, args, GetArgumentListFromString(args));
++                            }
++                            else
++                            {
++                                await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
++                            }
++                        }
++                    }
++                    return;
++                }
++            }
++
              if (msg.Content.StartsWith(prefix, StringComparison.CurrentCulture) && ch != null && !msg.Content.StartsWith(prefix + " ", StringComparison.CurrentCulture) && msg.Content != prefix)
              {
                  bool found = false;
-@@ -834,9 +880,49 @@ namespace CMDR
+@@ -833,10 +920,9 @@ namespace CMDR
+                 {
                      if (cmd.allowDiscord)
                      {
-                         string fullcmd = message.Content;
-+
-+                        // If there are multiple commands in one message, process all of them
-+                        if (fullcmd.Replace("\r", "").Contains("\n")) {
-+
-+                            // Verify command chain
-+                            bool valid = true;
-+                            foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n')) {
-+                                if (!cmdL.StartsWith(prefix, StringComparison.CurrentCulture) || cmdL.StartsWith(prefix + " ", StringComparison.CurrentCulture) ||  cmdL == prefix) {
-+                                    valid = false;
-+                                    break;
-+                                }
-+                            }
-+                            if (valid) {
-+                                foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n')) {
-+                                    string cid = cmdL.Substring(prefix.Length);
-+                                    string args = "";
-+                                    if (cid.Contains(" "))
-+                                    {
-+                                        args = cid.Substring(cid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
-+                                        cid = cid.Remove(cid.IndexOf(" ", StringComparison.CurrentCulture));
-+                                    }
-+
-+                                    if (cmd.commandid.ToLower() == cid.ToLower())
-+                                    {
-+                                        found = true;
-+
-+                                        if (CheckPermissions(cmd.permissionnode, msg.Author, ch.Guild))
-+                                        {
-+                                            await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, cmdL, args, GetArgumentListFromString(args));
-+                                        }
-+                                        else
-+                                        {
-+                                            await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
-+                                        }
-+                                    }
-+                                }
-+                                return;
-+                            }
-+                        }
-+
+-                        string fullcmd = message.Content;
                          string cmdid = fullcmd.Substring(prefix.Length);
                          string arguments = "";
 -                        if (fullcmd.Contains(" "))
