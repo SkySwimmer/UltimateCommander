@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..80b3d7a 100644
+index fc7bc02..ef4e1fe 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -169,7 +169,7 @@ index fc7bc02..80b3d7a 100644
  #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
          private async Task Client_RoleDeleted(SocketRole arg)
  #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-@@ -819,13 +849,70 @@ namespace CMDR
+@@ -819,13 +849,78 @@ namespace CMDR
              }
          }
  
@@ -221,18 +221,26 @@ index fc7bc02..80b3d7a 100644
 +                            cid = cid.Remove(cid.IndexOf(" ", StringComparison.CurrentCulture));
 +                        }
 +
-+                        if (cmd.commandid.ToLower() == cid.ToLower())
++                        bool found = false;
++                        foreach (SystemCommand cmd in commands)
 +                        {
-+                            found = true;
++                            if (cmd.commandid.ToLower() == cid.ToLower())
++                            {
++                                found = true;
 +
-+                            if (CheckPermissions(cmd.permissionnode, msg.Author, ch.Guild))
-+                            {
-+                                await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, cmdL, args, GetArgumentListFromString(args));
++                                if (CheckPermissions(cmd.permissionnode, msg.Author, ch.Guild))
++                                {
++                                    await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, cmdL, args, GetArgumentListFromString(args));
++                                }
++                                else
++                                {
++                                    await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
++                                }
 +                            }
-+                            else
-+                            {
-+                                await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
-+                            }
++                        }
++                        if (!found)
++                        {
++                            await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
 +                        }
 +                    }
 +                    return;
@@ -242,7 +250,7 @@ index fc7bc02..80b3d7a 100644
              if (msg.Content.StartsWith(prefix, StringComparison.CurrentCulture) && ch != null && !msg.Content.StartsWith(prefix + " ", StringComparison.CurrentCulture) && msg.Content != prefix)
              {
                  bool found = false;
-@@ -833,10 +920,9 @@ namespace CMDR
+@@ -833,10 +928,9 @@ namespace CMDR
                  {
                      if (cmd.allowDiscord)
                      {
@@ -254,7 +262,7 @@ index fc7bc02..80b3d7a 100644
                          {
                              arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
                              cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
-@@ -862,8 +948,46 @@ namespace CMDR
+@@ -862,8 +956,46 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
