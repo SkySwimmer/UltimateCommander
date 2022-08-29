@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..ef4e1fe 100644
+index fc7bc02..4fc9120 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -262,7 +262,7 @@ index fc7bc02..ef4e1fe 100644
                          {
                              arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
                              cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
-@@ -862,8 +956,46 @@ namespace CMDR
+@@ -862,13 +956,49 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
@@ -275,7 +275,6 @@ index fc7bc02..ef4e1fe 100644
 +                    if (cmd is DmSupportedCommand)
 +                    {
 +                        DmSupportedCommand wrapper = (DmSupportedCommand)cmd;
-+                        string fullcmd = message.Content;
 +                        if (fullcmd.StartsWith(prefix)) {
 +                            fullcmd = fullcmd.Substring(prefix.Length);
 +                        }
@@ -311,3 +310,8 @@ index fc7bc02..ef4e1fe 100644
                  foreach (SystemCommand cmd in commands)
                  {
                      if (cmd.allowDiscord && cmd.setNoCmdPrefix)
+                     {
+-                        string fullcmd = message.Content;
+                         string cmdid = fullcmd;
+                         string arguments = "";
+                         if (fullcmd.Contains(" "))
