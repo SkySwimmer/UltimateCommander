@@ -75,7 +75,7 @@ namespace levelup {
                         if (arguments.Count >= 3) {
                             ulong roleID = 0;
                             if (Regex.Match(arguments[2], "^\\<\\@&[0-9]+\\>$").Success) {
-                                ulong id = ulong.Parse(arguments[1].Substring(3).Remove(arguments[1].Length - 4));
+                                ulong id = ulong.Parse(arguments[2].Substring(3).Remove(arguments[2].Length - 4));
                                 roleID = id;
                             } else {
                                 foreach (SocketRole r in guild.Roles) {

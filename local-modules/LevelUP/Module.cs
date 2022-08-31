@@ -39,7 +39,8 @@ namespace levelup
                     List<ulong> users = Serializer.Deserialize<List<ulong>>(conf.GetOrDefault("users", null).ToString());
 
                     bool changed = false;
-                    foreach (ulong user in users) {
+                    var usrLst = users.ToArray();
+                    foreach (ulong user in usrLst) {
                         if (guild.GetUser(user) == null) {
                             users.Remove(user);
                             conf.Set("user-" + user, null);
