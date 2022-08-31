@@ -48,7 +48,7 @@ namespace crossover {
                                     } else {
                                         srv = GetBot().client.GetGuild(server).Name;
                                     }
-                                    msg = "**List of crossover roles:**\n - <@&" + role + ">: " + srv;
+                                    msg = "**List of crossover roles:**\n - **" + guild.GetRole(role).Name + "**: " + srv ;
                                 } else {
                                     string srv = "";
                                     if (GetBot().client.GetGuild(server) == null) {
@@ -182,7 +182,7 @@ namespace crossover {
                                 await channel.SendMessageAsync("Saving configuration...");
                                 serverData.SaveAll();
                                 module.loadServer(serverData);
-                                await channel.SendMessageAsync("**Success!** Added crossover role <@&" + roleID + "> and reloaded the server configuration!");
+                                await channel.SendMessageAsync("**Success!** Added crossover role " + guild.GetRole(roleID).Name + " and reloaded the server configuration!");
                             }
                         }
                     }
@@ -191,6 +191,9 @@ namespace crossover {
                         await channel.SendMessageAsync("**Error:** missing the 'role-mention' parameter.");
                     } else {
                         ulong roleID = 0;
+                        try {
+                            roleID = ulong.Parse(arguments[1]);
+                        } catch {}
                         if (Regex.Match(arguments[1], "^\\<\\@&[0-9]+\\>$").Success) {
                             ulong id = ulong.Parse(arguments[1].Substring(3).Remove(arguments[1].Length - 4));
                             roleID = id;
@@ -235,7 +238,7 @@ namespace crossover {
                                 }
 
                                 module.loadServer(serverData);
-                                await channel.SendMessageAsync("**Success!** Removed crossover role <@&" + roleID + "> and reloaded the server configuration!");
+                                await channel.SendMessageAsync("**Success!** Removed crossover role " + (guild.GetRole(roleID) == null ? roleID : guild.GetRole(roleID).Name) + " and reloaded the server configuration!");
                                 return;
                             }
                         }
