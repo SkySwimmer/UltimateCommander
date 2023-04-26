@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..4fc9120 100644
+index fc7bc02..6291ff4 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -109,9 +109,9 @@ namespace CMDR
@@ -9,7 +9,7 @@ index fc7bc02..4fc9120 100644
 -            Bot.WriteLine("Booting CMD-R...");
 -            Bot.WriteLine("AerialWorks CMD-R is Free(Libre) and Open Source Software (FLOSS),\nand will always be licensed under the GPL-2.0 license.");
 -            Bot.WriteLine("------------------------------------------------------------------");
-+            Bot.WriteLine("Booting CMD-R (Ultimate Commander Version)...");
++            Bot.WriteLine("Starting CMD-R (Ultimate Commander Version)...");
 +            Bot.WriteLine("AerialWorks Ultimate Commander is Free(Libre) and Open Source Software (FLOSS),\nand will always be licensed under the GPL-2.0 license.");
 +            Bot.WriteLine("-------------------------------------------------------------------------------");
              Bot.WriteLine();

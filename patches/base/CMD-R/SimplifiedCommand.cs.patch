@@ -1,0 +1,14 @@
+diff --git a/CMD-R/SimplifiedCommand.cs b/CMD-R/SimplifiedCommand.cs
+new file mode 100644
+index 0000000..3602348
+--- /dev/null
++++ b/CMD-R/SimplifiedCommand.cs
+@@ -0,0 +1,7 @@
++namespace CMDR
++{
++    public abstract class SimplifiedCommand : SystemCommand
++    {
++        
++    }
++}
+\ No newline at end of file

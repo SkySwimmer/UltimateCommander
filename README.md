@@ -2,3 +2,5 @@
 
 # Ultimate Commander
 README Coming soon
+
+This started out as a fork of my old project, however im considering it a continuation, might merge it into a regular project bc this is stupid, but for now keeping the old CMD-R archived.
