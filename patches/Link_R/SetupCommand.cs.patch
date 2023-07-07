@@ -1,5 +1,5 @@
 diff --git a/SetupCommand.cs b/SetupCommand.cs
-index 885ea7b..aaffc63 100644
+index 885ea7b..aaffc63 100755
 --- a/SetupCommand.cs
 +++ b/SetupCommand.cs
 @@ -176,7 +176,7 @@ namespace link_r {
