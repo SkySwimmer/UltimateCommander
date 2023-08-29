@@ -3,7 +3,7 @@
     "Link-r": {
       "commandName": "Executable",
       "executablePath": ".\\CMD-R.exe",
-      "commandLineArgs": "--enable-debug ASMLD:{..\\bin\\Debug\\net6.0\\Module.dll} --disable-debug",
+      "commandLineArgs": "--enable-debug ASMLD:{..\\bin\\Debug\\net7.0\\Module.dll} --disable-debug",
       "workingDirectory": "run"
     }
   }
