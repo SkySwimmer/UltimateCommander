@@ -1,8 +1,15 @@
 diff --git a/Rolling.csproj b/Rolling.csproj
-index 964625e..eb0f8b6 100755
+index 964625e..959980d 100755
 --- a/Rolling.csproj
 +++ b/Rolling.csproj
-@@ -8,7 +8,7 @@
+@@ -2,13 +2,13 @@
+ 
+   <PropertyGroup>
+     <ProjectName>Rolling</ProjectName>
+-    <TargetFramework>net6.0</TargetFramework>
++    <TargetFramework>net8.0</TargetFramework>
+     <AssemblyName>Module-$(ProjectName)</AssemblyName>
+     <TargetName>Module</TargetName>
    </PropertyGroup>
  
    <ItemGroup>

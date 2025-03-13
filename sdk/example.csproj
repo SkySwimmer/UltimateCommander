@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <ProjectName>example</ProjectName>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Module-$(ProjectName)</AssemblyName>
     <TargetName>Module</TargetName>
   </PropertyGroup>
@@ -24,7 +24,7 @@
    <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <StartAction>Program</StartAction>
     <StartProgram>${ProjectDir}\run\CMD-R.exe</StartProgram>
-    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net7.0\Module.dll} --disable-debug</StartArguments>
+    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net8.0\Module.dll} --disable-debug</StartArguments>
     <StartWorkingDirectory>${ProjectDir}\run</StartWorkingDirectory>
     <ExternalConsole>true</ExternalConsole>
   </PropertyGroup>

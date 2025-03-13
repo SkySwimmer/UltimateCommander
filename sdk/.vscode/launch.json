@@ -15,7 +15,7 @@
                 "--enable-debug",
 
                 // Load the module
-                "ASMLD:{${workspaceFolder}/bin/Debug/net7.0/Module.dll}",
+                "ASMLD:{${workspaceFolder}/bin/Debug/net8.0/Module.dll}",
 
                 "--disable-debug"
             ],

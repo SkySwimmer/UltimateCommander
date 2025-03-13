@@ -1,0 +1,22 @@
+diff --git a/CMD-R Module/Amas.Auth.csproj b/CMD-R Module/Amas.Auth.csproj
+index fd9440b..6b4ea66 100644
+--- a/CMD-R Module/Amas.Auth.csproj	
++++ b/CMD-R Module/Amas.Auth.csproj	
+@@ -1,7 +1,7 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+ 
+   <PropertyGroup>
+-    <TargetFramework>net6.0</TargetFramework>
++    <TargetFramework>net8.0</TargetFramework>
+     <AssemblyName>Module-$(ProjectName)</AssemblyName>
+     <TargetName>Module</TargetName>
+   </PropertyGroup>
+@@ -23,7 +23,7 @@
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+     <StartAction>Program</StartAction>
+     <StartProgram>${ProjectDir}\run\CMD-R.exe</StartProgram>
+-    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net6.0\Module.dll} --disable-debug</StartArguments>
++    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net8.0\Module.dll} --disable-debug</StartArguments>
+     <StartWorkingDirectory>${ProjectDir}\run</StartWorkingDirectory>
+     <ExternalConsole>true</ExternalConsole>
+   </PropertyGroup>

@@ -1,0 +1,13 @@
+diff --git a/Properties/launchSettings.json b/Properties/launchSettings.json
+index 7ffafe5..00eb34f 100755
+--- a/Properties/launchSettings.json
++++ b/Properties/launchSettings.json
+@@ -3,7 +3,7 @@
+     "Link-r": {
+       "commandName": "Executable",
+       "executablePath": ".\\CMD-R.exe",
+-      "commandLineArgs": "--enable-debug ASMLD:{..\\bin\\Debug\\net6.0\\Module.dll} --disable-debug",
++      "commandLineArgs": "--enable-debug ASMLD:{..\\bin\\Debug\\net8.0\\Module.dll} --disable-debug",
+       "workingDirectory": "run"
+     }
+   }

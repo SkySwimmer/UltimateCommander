@@ -1,8 +1,16 @@
 diff --git a/Link-r.csproj b/Link-r.csproj
-index 2a44b21..58259d9 100755
+index 2a44b21..20922ac 100755
 --- a/Link-r.csproj
 +++ b/Link-r.csproj
-@@ -9,7 +9,7 @@
+@@ -2,14 +2,14 @@
+ 
+   <PropertyGroup>
+     <ProjectName>link_r</ProjectName>
+-    <TargetFramework>net6.0</TargetFramework>
++    <TargetFramework>net8.0</TargetFramework>
+     <AssemblyName>Module-$(ProjectName)</AssemblyName>
+     <TargetName>Module</TargetName>
+     <RootNamespace>link_r</RootNamespace>
    </PropertyGroup>
  
    <ItemGroup>
@@ -11,3 +19,12 @@ index 2a44b21..58259d9 100755
      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
    </ItemGroup>
    
+@@ -25,7 +25,7 @@
+    <PropertyGroup Condition=" '$(RunConfiguration)' == '$(ProjectName)' ">
+     <StartAction>Program</StartAction>
+     <StartProgram>${ProjectDir}\run\CMD-R.exe</StartProgram>
+-    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net6.0\Module.dll} --disable-debug</StartArguments>
++    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net8.0\Module.dll} --disable-debug</StartArguments>
+     <StartWorkingDirectory>${ProjectDir}\run</StartWorkingDirectory>
+     <ExternalConsole>true</ExternalConsole>
+   </PropertyGroup>

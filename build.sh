@@ -96,5 +96,5 @@ cp -vrf work/build/. sdk/run
 cp -vf work/build/CMD-R.dll sdk/libraries
 
 echo Installing CMDR.DM to the SDK...
-cp -vf CMDR.DM/bin/Debug/net7.0/CMDR.DM.dll sdk/libraries
+cp -vf CMDR.DM/bin/Debug/net8.0/CMDR.DM.dll sdk/libraries
 echo Done.

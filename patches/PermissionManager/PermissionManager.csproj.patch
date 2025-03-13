@@ -1,8 +1,15 @@
 diff --git a/PermissionManager.csproj b/PermissionManager.csproj
-index 635c10b..4156a83 100755
+index 635c10b..7c47c84 100755
 --- a/PermissionManager.csproj
 +++ b/PermissionManager.csproj
-@@ -8,7 +8,7 @@
+@@ -2,13 +2,13 @@
+ 
+   <PropertyGroup>
+     <ProjectName>PermissionManager</ProjectName>
+-    <TargetFramework>net6.0</TargetFramework>
++    <TargetFramework>net8.0</TargetFramework>
+     <AssemblyName>Module-$(ProjectName)</AssemblyName>
+     <TargetName>Module</TargetName>
    </PropertyGroup>
  
    <ItemGroup>
@@ -11,3 +18,12 @@ index 635c10b..4156a83 100755
      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
    </ItemGroup>
    
+@@ -24,7 +24,7 @@
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+     <StartAction>Program</StartAction>
+     <StartProgram>${ProjectDir}\run\CMD-R.exe</StartProgram>
+-    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net6.0\Module.dll} --disable-debug</StartArguments>
++    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net8.0\Module.dll} --disable-debug</StartArguments>
+     <StartWorkingDirectory>${ProjectDir}\run</StartWorkingDirectory>
+     <ExternalConsole>true</ExternalConsole>
+   </PropertyGroup>

@@ -1,8 +1,15 @@
 diff --git a/LevelUP.csproj b/LevelUP.csproj
-index 8f2d7bf..86c9c54 100644
+index 8f2d7bf..05be519 100644
 --- a/LevelUP.csproj
 +++ b/LevelUP.csproj
-@@ -8,7 +8,7 @@
+@@ -2,13 +2,13 @@
+ 
+   <PropertyGroup>
+     <ProjectName>example</ProjectName>
+-    <TargetFramework>net6.0</TargetFramework>
++    <TargetFramework>net8.0</TargetFramework>
+     <AssemblyName>Module-$(ProjectName)</AssemblyName>
+     <TargetName>Module</TargetName>
    </PropertyGroup>
  
    <ItemGroup>
@@ -11,3 +18,12 @@ index 8f2d7bf..86c9c54 100644
      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
    </ItemGroup>
    
+@@ -24,7 +24,7 @@
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+     <StartAction>Program</StartAction>
+     <StartProgram>${ProjectDir}\run\CMD-R.exe</StartProgram>
+-    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net6.0\Module.dll} --disable-debug</StartArguments>
++    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net8.0\Module.dll} --disable-debug</StartArguments>
+     <StartWorkingDirectory>${ProjectDir}\run</StartWorkingDirectory>
+     <ExternalConsole>true</ExternalConsole>
+   </PropertyGroup>

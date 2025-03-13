@@ -1,0 +1,12 @@
+diff --git a/Makefile b/Makefile
+index 78a02bb..57f8645 100755
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ compile:
+ 	@dotnet build
+ 	@mkdir -p build/module
+-	@cp -rf bin/Debug/net6.0/. build/module
++	@cp -rf bin/Debug/net8.0/. build/module
+ package:
+ 	@./buildpackage.sh

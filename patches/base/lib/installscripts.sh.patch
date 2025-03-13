@@ -1,5 +1,5 @@
 diff --git a/lib/installscripts.sh b/lib/installscripts.sh
-index 3d6f388..7b1db11 100644
+index 3d6f388..889a719 100644
 --- a/lib/installscripts.sh
 +++ b/lib/installscripts.sh
 @@ -3,14 +3,21 @@ echo Compiling CMD-R...
@@ -15,17 +15,17 @@ index 3d6f388..7b1db11 100644
  echo
  echo Copying start script...
 -cp lib/Start\ CMD-R CMD-R/bin/Debug/net5.0/cmd-r -T -f
-+cp lib/Start\ CMD-R CMD-R/bin/Debug/net6.0/cmd-r -T -f
++cp lib/Start\ CMD-R CMD-R/bin/Debug/net8.0/cmd-r -T -f
  echo Copying update scripts and commands...
 -cp lib/Update\ and\ start\ CMD-R.sh CMD-R/bin/Debug/net5.0/update-and-run -f -T
 -cp lib/Update\ CMD-R.sh CMD-R/bin/Debug/net5.0/update -f -T
-+cp lib/Update\ and\ start\ CMD-R.sh CMD-R/bin/Debug/net6.0/update-and-run -f -T
-+cp lib/Update\ CMD-R.sh CMD-R/bin/Debug/net6.0/update -f -T
++cp lib/Update\ and\ start\ CMD-R.sh CMD-R/bin/Debug/net8.0/update-and-run -f -T
++cp lib/Update\ CMD-R.sh CMD-R/bin/Debug/net8.0/update -f -T
  echo Copying compiled files to build folder...
  rm -rf build
  mkdir build
 -cp -rf CMD-R/bin/Debug/net5.0/. ./build
-+cp -rf lib/cmdr-startup-messages/CMD-R/bin/Debug/net6.0/. ./build/prestart
-+cp -rf CMD-R/bin/Debug/net6.0/. ./build
++cp -rf lib/cmdr-startup-messages/CMD-R/bin/Debug/net8.0/. ./build/prestart
++cp -rf CMD-R/bin/Debug/net8.0/. ./build
 +rm -rf lib/cmdr-startup-messages/CMD-R/bin
 +rm -rf lib/cmdr-startup-messages/CMD-R/obj

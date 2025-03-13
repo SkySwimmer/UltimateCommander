@@ -1,6 +1,6 @@
 diff --git a/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj b/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj
 new file mode 100644
-index 0000000..e38c9b3
+index 0000000..0e9a77f
 --- /dev/null
 +++ b/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj
 @@ -0,0 +1,14 @@
@@ -8,7 +8,7 @@ index 0000000..e38c9b3
 +
 +  <PropertyGroup>
 +    <OutputType>Exe</OutputType>
-+    <TargetFramework>net6.0</TargetFramework>
++    <TargetFramework>net8.0</TargetFramework>
 +  </PropertyGroup>
 +
 +  <ItemGroup>
