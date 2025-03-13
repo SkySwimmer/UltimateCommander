@@ -1,8 +1,8 @@
 diff --git a/Link-r.csproj b/Link-r.csproj
-index 2a44b21..20922ac 100755
+index 2a44b21..3be5e3d 100755
 --- a/Link-r.csproj
 +++ b/Link-r.csproj
-@@ -2,14 +2,14 @@
+@@ -2,15 +2,15 @@
  
    <PropertyGroup>
      <ProjectName>link_r</ProjectName>
@@ -15,10 +15,12 @@ index 2a44b21..20922ac 100755
  
    <ItemGroup>
 -    <PackageReference Include="Discord.NET" Version="3.11.0" />
+-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 +    <PackageReference Include="Discord.NET" Version="3.12.0" />
-     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
++    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
    </ItemGroup>
    
+   <ItemGroup>
 @@ -25,7 +25,7 @@
     <PropertyGroup Condition=" '$(RunConfiguration)' == '$(ProjectName)' ">
      <StartAction>Program</StartAction>

@@ -1,0 +1,190 @@
+warning: in the working copy of 'patches/Crossover/Crossover.csproj.patch', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'patches/LevelUP/LevelUP.csproj.patch', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'patches/Link_R/Link-r.csproj.patch', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'patches/PermissionManager/PermissionManager.csproj.patch', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'patches/Rolling/Rolling.csproj.patch', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'patches/base/CMD-R/CMD-R.csproj.patch', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'patches/base/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj.patch', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/patches/Crossover/Crossover.csproj.patch b/patches/Crossover/Crossover.csproj.patch[m
+[1mindex 380c44f..e18f30a 100644[m
+[1m--- a/patches/Crossover/Crossover.csproj.patch[m
+[1m+++ b/patches/Crossover/Crossover.csproj.patch[m
+[36m@@ -1,8 +1,8 @@[m
+ diff --git a/Crossover.csproj b/Crossover.csproj[m
+[31m-index 2f5f488..9db9281 100644[m
+[32m+[m[32mindex 2f5f488..894d0de 100644[m
+ --- a/Crossover.csproj[m
+ +++ b/Crossover.csproj[m
+[31m-@@ -2,13 +2,13 @@[m
+[32m+[m[32m@@ -2,14 +2,14 @@[m
+  [m
+    <PropertyGroup>[m
+      <ProjectName>Crossover</ProjectName>[m
+[36m@@ -14,10 +14,12 @@[m [mindex 2f5f488..9db9281 100644[m
+  [m
+    <ItemGroup>[m
+ -    <PackageReference Include="Discord.NET" Version="3.11.0" />[m
+[32m+[m[32m-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+ +    <PackageReference Include="Discord.NET" Version="3.12.0" />[m
+[31m-     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+[32m+[m[32m+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />[m
+    </ItemGroup>[m
+    [m
+[32m+[m[32m   <ItemGroup>[m
+ @@ -24,7 +24,7 @@[m
+     <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">[m
+      <StartAction>Program</StartAction>[m
+[1mdiff --git a/patches/LevelUP/LevelUP.csproj.patch b/patches/LevelUP/LevelUP.csproj.patch[m
+[1mindex 2ef381c..c0efad3 100644[m
+[1m--- a/patches/LevelUP/LevelUP.csproj.patch[m
+[1m+++ b/patches/LevelUP/LevelUP.csproj.patch[m
+[36m@@ -1,8 +1,8 @@[m
+ diff --git a/LevelUP.csproj b/LevelUP.csproj[m
+[31m-index 8f2d7bf..05be519 100644[m
+[32m+[m[32mindex 8f2d7bf..f486501 100644[m
+ --- a/LevelUP.csproj[m
+ +++ b/LevelUP.csproj[m
+[31m-@@ -2,13 +2,13 @@[m
+[32m+[m[32m@@ -2,14 +2,14 @@[m
+  [m
+    <PropertyGroup>[m
+      <ProjectName>example</ProjectName>[m
+[36m@@ -14,10 +14,12 @@[m [mindex 8f2d7bf..05be519 100644[m
+  [m
+    <ItemGroup>[m
+ -    <PackageReference Include="Discord.NET" Version="3.11.0" />[m
+[32m+[m[32m-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+ +    <PackageReference Include="Discord.NET" Version="3.12.0" />[m
+[31m-     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+[32m+[m[32m+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />[m
+    </ItemGroup>[m
+    [m
+[32m+[m[32m   <ItemGroup>[m
+ @@ -24,7 +24,7 @@[m
+     <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">[m
+      <StartAction>Program</StartAction>[m
+[1mdiff --git a/patches/Link_R/Link-r.csproj.patch b/patches/Link_R/Link-r.csproj.patch[m
+[1mindex 534349d..5d51c64 100644[m
+[1m--- a/patches/Link_R/Link-r.csproj.patch[m
+[1m+++ b/patches/Link_R/Link-r.csproj.patch[m
+[36m@@ -1,8 +1,8 @@[m
+ diff --git a/Link-r.csproj b/Link-r.csproj[m
+[31m-index 2a44b21..20922ac 100755[m
+[32m+[m[32mindex 2a44b21..3be5e3d 100755[m
+ --- a/Link-r.csproj[m
+ +++ b/Link-r.csproj[m
+[31m-@@ -2,14 +2,14 @@[m
+[32m+[m[32m@@ -2,15 +2,15 @@[m
+  [m
+    <PropertyGroup>[m
+      <ProjectName>link_r</ProjectName>[m
+[36m@@ -15,10 +15,12 @@[m [mindex 2a44b21..20922ac 100755[m
+  [m
+    <ItemGroup>[m
+ -    <PackageReference Include="Discord.NET" Version="3.11.0" />[m
+[32m+[m[32m-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+ +    <PackageReference Include="Discord.NET" Version="3.12.0" />[m
+[31m-     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+[32m+[m[32m+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />[m
+    </ItemGroup>[m
+    [m
+[32m+[m[32m   <ItemGroup>[m
+ @@ -25,7 +25,7 @@[m
+     <PropertyGroup Condition=" '$(RunConfiguration)' == '$(ProjectName)' ">[m
+      <StartAction>Program</StartAction>[m
+[1mdiff --git a/patches/PermissionManager/PermissionManager.csproj.patch b/patches/PermissionManager/PermissionManager.csproj.patch[m
+[1mindex baf16c8..73089d5 100644[m
+[1m--- a/patches/PermissionManager/PermissionManager.csproj.patch[m
+[1m+++ b/patches/PermissionManager/PermissionManager.csproj.patch[m
+[36m@@ -1,8 +1,8 @@[m
+ diff --git a/PermissionManager.csproj b/PermissionManager.csproj[m
+[31m-index 635c10b..7c47c84 100755[m
+[32m+[m[32mindex 635c10b..d85bd3c 100755[m
+ --- a/PermissionManager.csproj[m
+ +++ b/PermissionManager.csproj[m
+[31m-@@ -2,13 +2,13 @@[m
+[32m+[m[32m@@ -2,14 +2,14 @@[m
+  [m
+    <PropertyGroup>[m
+      <ProjectName>PermissionManager</ProjectName>[m
+[36m@@ -14,10 +14,12 @@[m [mindex 635c10b..7c47c84 100755[m
+  [m
+    <ItemGroup>[m
+ -    <PackageReference Include="Discord.NET" Version="3.11.0" />[m
+[32m+[m[32m-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+ +    <PackageReference Include="Discord.NET" Version="3.12.0" />[m
+[31m-     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+[32m+[m[32m+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />[m
+    </ItemGroup>[m
+    [m
+[32m+[m[32m   <ItemGroup>[m
+ @@ -24,7 +24,7 @@[m
+     <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">[m
+      <StartAction>Program</StartAction>[m
+[1mdiff --git a/patches/Rolling/Rolling.csproj.patch b/patches/Rolling/Rolling.csproj.patch[m
+[1mindex a333ab2..153d348 100644[m
+[1m--- a/patches/Rolling/Rolling.csproj.patch[m
+[1m+++ b/patches/Rolling/Rolling.csproj.patch[m
+[36m@@ -1,8 +1,8 @@[m
+ diff --git a/Rolling.csproj b/Rolling.csproj[m
+[31m-index 964625e..959980d 100755[m
+[32m+[m[32mindex 964625e..5f5b5fd 100755[m
+ --- a/Rolling.csproj[m
+ +++ b/Rolling.csproj[m
+[31m-@@ -2,13 +2,13 @@[m
+[32m+[m[32m@@ -2,14 +2,14 @@[m
+  [m
+    <PropertyGroup>[m
+      <ProjectName>Rolling</ProjectName>[m
+[36m@@ -14,7 +14,9 @@[m [mindex 964625e..959980d 100755[m
+  [m
+    <ItemGroup>[m
+ -    <PackageReference Include="Discord.NET" Version="3.11.0" />[m
+[32m+[m[32m-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+ +    <PackageReference Include="Discord.NET" Version="3.12.0" />[m
+[31m-     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+[32m+[m[32m+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />[m
+    </ItemGroup>[m
+    [m
+[32m+[m[32m   <ItemGroup>[m
+[1mdiff --git a/patches/base/CMD-R/CMD-R.csproj.patch b/patches/base/CMD-R/CMD-R.csproj.patch[m
+[1mindex 09db41f..a20214e 100644[m
+[1m--- a/patches/base/CMD-R/CMD-R.csproj.patch[m
+[1m+++ b/patches/base/CMD-R/CMD-R.csproj.patch[m
+[36m@@ -1,5 +1,5 @@[m
+ diff --git a/CMD-R/CMD-R.csproj b/CMD-R/CMD-R.csproj[m
+[31m-index af2720e..f62efd5 100644[m
+[32m+[m[32mindex af2720e..264a4aa 100644[m
+ --- a/CMD-R/CMD-R.csproj[m
+ +++ b/CMD-R/CMD-R.csproj[m
+ @@ -2,13 +2,16 @@[m
+[36m@@ -15,7 +15,7 @@[m [mindex af2720e..f62efd5 100644[m
+ -    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />[m
+ -    <PackageReference Include="TextCopy" Version="4.3.1" />[m
+ +    <PackageReference Include="Discord.NET" Version="3.17.2" />[m
+[31m-+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+[32m+[m[32m+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />[m
+ +    <PackageReference Include="TextCopy" Version="6.1.0" />[m
+ +  </ItemGroup>[m
+ +  <ItemGroup>[m
+[1mdiff --git a/patches/base/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj.patch b/patches/base/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj.patch[m
+[1mindex 5b5006d..2d2f0c8 100644[m
+[1m--- a/patches/base/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj.patch[m
+[1m+++ b/patches/base/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj.patch[m
+[36m@@ -1,6 +1,6 @@[m
+ diff --git a/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj b/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj[m
+ new file mode 100644[m
+[31m-index 0000000..0e9a77f[m
+[32m+[m[32mindex 0000000..265da6a[m
+ --- /dev/null[m
+ +++ b/lib/cmdr-startup-messages/CMD-R/CMD-R.csproj[m
+ @@ -0,0 +1,14 @@[m
+[36m@@ -13,7 +13,7 @@[m [mindex 0000000..0e9a77f[m
+ +[m
+ +  <ItemGroup>[m
+ +    <PackageReference Include="Discord.NET" Version="3.11.0" />[m
+[31m-+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />[m
+[32m+[m[32m+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />[m
+ +    <PackageReference Include="TextCopy" Version="6.1.0" />[m
+ +  </ItemGroup>[m
+ +  [m

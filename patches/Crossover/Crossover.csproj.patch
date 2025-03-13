@@ -1,8 +1,8 @@
 diff --git a/Crossover.csproj b/Crossover.csproj
-index 2f5f488..9db9281 100644
+index 2f5f488..894d0de 100644
 --- a/Crossover.csproj
 +++ b/Crossover.csproj
-@@ -2,13 +2,13 @@
+@@ -2,14 +2,14 @@
  
    <PropertyGroup>
      <ProjectName>Crossover</ProjectName>
@@ -14,10 +14,12 @@ index 2f5f488..9db9281 100644
  
    <ItemGroup>
 -    <PackageReference Include="Discord.NET" Version="3.11.0" />
+-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 +    <PackageReference Include="Discord.NET" Version="3.12.0" />
-     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
++    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
    </ItemGroup>
    
+   <ItemGroup>
 @@ -24,7 +24,7 @@
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
      <StartAction>Program</StartAction>

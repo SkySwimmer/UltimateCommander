@@ -1,8 +1,8 @@
 diff --git a/PermissionManager.csproj b/PermissionManager.csproj
-index 635c10b..7c47c84 100755
+index 635c10b..d85bd3c 100755
 --- a/PermissionManager.csproj
 +++ b/PermissionManager.csproj
-@@ -2,13 +2,13 @@
+@@ -2,14 +2,14 @@
  
    <PropertyGroup>
      <ProjectName>PermissionManager</ProjectName>
@@ -14,10 +14,12 @@ index 635c10b..7c47c84 100755
  
    <ItemGroup>
 -    <PackageReference Include="Discord.NET" Version="3.11.0" />
+-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 +    <PackageReference Include="Discord.NET" Version="3.12.0" />
-     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
++    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
    </ItemGroup>
    
+   <ItemGroup>
 @@ -24,7 +24,7 @@
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
      <StartAction>Program</StartAction>
