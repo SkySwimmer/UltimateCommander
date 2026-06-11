@@ -1,5 +1,5 @@
 diff --git a/configure b/configure
-index dbd3215..80c17f6 100644
+index 7f3f759..0220fe6 100644
 --- a/configure
 +++ b/configure
 @@ -49,10 +49,10 @@ echo Checking dependencies...

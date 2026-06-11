@@ -1,15 +1,8 @@
 diff --git a/PermissionManager.csproj b/PermissionManager.csproj
-index 635c10b..d85bd3c 100755
+index 6b973aa..d85bd3c 100644
 --- a/PermissionManager.csproj
 +++ b/PermissionManager.csproj
-@@ -2,14 +2,14 @@
- 
-   <PropertyGroup>
-     <ProjectName>PermissionManager</ProjectName>
--    <TargetFramework>net6.0</TargetFramework>
-+    <TargetFramework>net8.0</TargetFramework>
-     <AssemblyName>Module-$(ProjectName)</AssemblyName>
-     <TargetName>Module</TargetName>
+@@ -8,8 +8,8 @@
    </PropertyGroup>
  
    <ItemGroup>
@@ -20,12 +13,3 @@ index 635c10b..d85bd3c 100755
    </ItemGroup>
    
    <ItemGroup>
-@@ -24,7 +24,7 @@
-    <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
-     <StartAction>Program</StartAction>
-     <StartProgram>${ProjectDir}\run\CMD-R.exe</StartProgram>
--    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net6.0\Module.dll} --disable-debug</StartArguments>
-+    <StartArguments>--enable-debug ASMLD:{${ProjectDir}\bin\Debug\net8.0\Module.dll} --disable-debug</StartArguments>
-     <StartWorkingDirectory>${ProjectDir}\run</StartWorkingDirectory>
-     <ExternalConsole>true</ExternalConsole>
-   </PropertyGroup>
