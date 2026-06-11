@@ -195,7 +195,7 @@ function exitfail() {
     
     exit 1
 }
-git clone https://github.com/Stefan0436/CMD-R.git base-project || exitfail
+git clone https://github.com/SkySwimmer/CMD-R.git base-project || exitfail
 
 echo Preparing local module projects...
 for module in ../local-modules/*; do
