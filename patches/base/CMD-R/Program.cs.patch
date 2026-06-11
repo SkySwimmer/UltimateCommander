@@ -1,8 +1,17 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..118adb7 100644
+index fc7bc02..1322f11 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
-@@ -28,6 +28,7 @@ namespace CMDR
+@@ -14,6 +14,8 @@ namespace CMDR
+ {
+     public partial class Bot
+     {
++        internal bool lockedCmdReg = false;
++
+         public static void WriteLine(string msg = "")
+         {
+             Terminal.WriteLine(msg);
+@@ -28,6 +30,7 @@ namespace CMDR
          static Bot _bot;
          public List<Server> servers;
  
@@ -10,7 +19,7 @@ index fc7bc02..118adb7 100644
          public List<BotModule> modules = new List<BotModule>();
          public List<SystemCommand> commands = new List<SystemCommand>();
          public List<CmdCategory> CmdCategories = new List<CmdCategory>();
-@@ -109,9 +110,9 @@ namespace CMDR
+@@ -109,9 +112,9 @@ namespace CMDR
              Console.ForegroundColor = b;
  
              path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -23,7 +32,7 @@ index fc7bc02..118adb7 100644
              Bot.WriteLine();
              Bot.WriteLine("System path: " + path);
              Directory.CreateDirectory(path + "/Modules");
-@@ -131,11 +132,16 @@ namespace CMDR
+@@ -131,11 +134,16 @@ namespace CMDR
                  newToken = true;
              }
  
@@ -43,7 +52,7 @@ index fc7bc02..118adb7 100644
                      client.StopAsync().GetAwaiter().GetResult();
                      client.Dispose();
                      Server.RunSaveAll(true);
-@@ -145,17 +151,25 @@ namespace CMDR
+@@ -145,17 +153,25 @@ namespace CMDR
                  e.Cancel = true;
              });
              Bot.WriteLine("Starting Discord.NET framework...");
@@ -72,7 +81,7 @@ index fc7bc02..118adb7 100644
              while (client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Disconnected) { Thread.Sleep(100); }
              while (client.Guilds.Count == 0 || client.Guilds.FirstOrDefault().Name == null || client.Guilds.FirstOrDefault().Name == "") { Thread.Sleep(100); }
  
-@@ -209,30 +223,31 @@ namespace CMDR
+@@ -209,30 +225,31 @@ namespace CMDR
              {
                  loadPackage(info);
              }
@@ -112,7 +121,7 @@ index fc7bc02..118adb7 100644
                      // Read the archive for getting the new version file, skip if patch.ver is not in the archive
                      ZipArchive file = ZipFile.OpenRead(path + "/Module Packages/" + Path.GetFileName(info.FullName));
                      if (file.Entries.ToList().Find(t => t.Name == "patch.ver") != null)
-@@ -245,20 +260,20 @@ namespace CMDR
+@@ -245,20 +262,20 @@ namespace CMDR
                          }
                          catch
                          {
@@ -138,7 +147,7 @@ index fc7bc02..118adb7 100644
                  // Extract files if new/updated
                  if (update)
                  {
-@@ -293,21 +308,21 @@ namespace CMDR
+@@ -293,21 +310,21 @@ namespace CMDR
                              b = Console.ForegroundColor;
                              Console.ForegroundColor = ConsoleColor.Red;
                              Bot.WriteLine("CRITICAL ERROR: Unable to restore or save storage folder, one already exists in both temp and install output!");
@@ -166,7 +175,22 @@ index fc7bc02..118adb7 100644
                  ConfigDictionary<String, String> conf = new ConfigDictionary<string, string>();
                  if (File.Exists(path + "/Module Packages/" + Path.GetFileNameWithoutExtension(info.FullName) + "/pointer.targets"))
                  {
-@@ -397,19 +412,23 @@ namespace CMDR
+@@ -394,22 +411,38 @@ namespace CMDR
+             Bot.WriteLine("Set the autosave interval to " + Server.AutoSaveMinutes + " minutes.");
+             Server.StartAutoSaveThread();
+ 
++            // Legacy to modern discord
++            Bot.WriteLine("Initializing support for legacy commands...");
++            lockedCmdReg = true;
++
++            // Bind event
++            client.JoinedGuild += InitLegacyCommands;
++
++            // Go through existing
++            foreach (SocketGuild guild in client.Guilds) {
++                await InitLegacyCommands(guild);
++            }
++
              Bot.WriteLine();
              Bot.WriteLine("Execute quit or exit to close.");
  
@@ -192,7 +216,17 @@ index fc7bc02..118adb7 100644
                      Server.StopAutoSaveThread();
                      Environment.Exit(0);
                  }
-@@ -608,7 +627,7 @@ namespace CMDR
+@@ -604,11 +637,17 @@ namespace CMDR
+             }
+         }
+ 
++        private async Task InitLegacyCommands(SocketGuild guild)
++        {
++            // Guild joined
++            // FIXME: todo
++        }
++
+         public static void LoadBotModule(string filename, string filefolder, string classname = "{auto}", string namespacepath = "{auto}")
          {
              if (classname == "{auto}") classname = filename;
              if (namespacepath == "{auto}") namespacepath = filename;
@@ -201,7 +235,7 @@ index fc7bc02..118adb7 100644
              AppDomain currentDomain = AppDomain.CurrentDomain;
              currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
  
-@@ -620,14 +639,18 @@ namespace CMDR
+@@ -620,14 +659,18 @@ namespace CMDR
                  Assembly assembly = Assembly.LoadFrom(assemblyPath);
                  return assembly;
              }
@@ -222,7 +256,7 @@ index fc7bc02..118adb7 100644
              }
              else
              {
-@@ -635,13 +658,13 @@ namespace CMDR
+@@ -635,13 +678,13 @@ namespace CMDR
                  Bot.WriteLine("Loading module: " + script.id + "...");
                  Bot.WriteLine("Module description: " + script.moduledesctiption);
                  Bot.GetBot().modules.Add(script);
@@ -240,7 +274,7 @@ index fc7bc02..118adb7 100644
                  script.LoadConfig();
                  Bot.WriteLine("Pre-initializing module: " + script.id + "...");
                  script.PreInit(Bot.GetBot());
-@@ -650,6 +673,30 @@ namespace CMDR
+@@ -650,6 +693,30 @@ namespace CMDR
              }
          }
  
@@ -271,7 +305,7 @@ index fc7bc02..118adb7 100644
  #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
          private async Task Client_RoleDeleted(SocketRole arg)
  #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-@@ -819,13 +866,88 @@ namespace CMDR
+@@ -819,13 +886,88 @@ namespace CMDR
              }
          }
  
@@ -362,7 +396,7 @@ index fc7bc02..118adb7 100644
              if (msg.Content.StartsWith(prefix, StringComparison.CurrentCulture) && ch != null && !msg.Content.StartsWith(prefix + " ", StringComparison.CurrentCulture) && msg.Content != prefix)
              {
                  bool found = false;
-@@ -833,10 +955,9 @@ namespace CMDR
+@@ -833,10 +975,9 @@ namespace CMDR
                  {
                      if (cmd.allowDiscord)
                      {
@@ -374,7 +408,7 @@ index fc7bc02..118adb7 100644
                          {
                              arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
                              cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
-@@ -862,13 +983,53 @@ namespace CMDR
+@@ -862,13 +1003,53 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
@@ -431,7 +465,7 @@ index fc7bc02..118adb7 100644
                          string cmdid = fullcmd;
                          string arguments = "";
                          if (fullcmd.Contains(" "))
-@@ -904,5 +1065,11 @@ namespace CMDR
+@@ -904,5 +1085,11 @@ namespace CMDR
                  await t.GetAwaiter().GetResult().DeleteAsync();
              });
          }

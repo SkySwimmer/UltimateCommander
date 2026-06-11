@@ -1,14 +1,14 @@
 diff --git a/configure b/configure
-index 7f3f759..0220fe6 100644
+index 7f3f759..d6bf924 100644
 --- a/configure
 +++ b/configure
-@@ -49,10 +49,10 @@ echo Checking dependencies...
+@@ -48,11 +48,9 @@ fi
+ echo Checking dependencies...
  missingdepends=false
  
- requiredvermsbuild=15.6.0.0
+-requiredvermsbuild=15.6.0.0
 -requiredvernuget=5.6.0.6591
 -requiredvermake=4.3
-+requiredvernuget=5.6.0.6489
 +requiredvermake=4.2
  requiredvergit=2.28.0
 -requiredverdotnet=5.0.205
@@ -16,3 +16,87 @@ index 7f3f759..0220fe6 100644
  
  echo Searching for dotnet...
  if command -v dotnet &> /dev/null 
+@@ -78,54 +76,6 @@ else
+     missingdepends=true
+ fi
+ 
+-echo Searching for MSBuild...
+-if command -v msbuild &> /dev/null 
+-then
+-    requiredver=$requiredvermsbuild
+-    currentver="$(msbuild -version|grep --only-matching --perl-regexp "\\d+\.\\d+\.\\d+\.\\d+")"
+-    packagename=MSBuild
+-    installed=false
+-    
+-    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+-        echo $packagename is installed.
+-        installed=true
+-    else
+-        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
+-        installed=false
+-        missingdepends=true
+-    fi
+-    
+-    msbuildinstalled=$installed
+-else
+-    echo MSBuild is NOT installed.
+-    msbuildinstalled=false
+-    missingdepends=true
+-fi
+-
+-echo Searching for NuGet...
+-if command -v nuget &> /dev/null 
+-then
+-    requiredver=$requiredvernuget
+-    currentver="$(nuget|grep --only-matching --perl-regexp "\\d+\.\\d+\.\\d+\.\\d+")"
+-    packagename=NuGet
+-    installed=false
+-    
+-    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+-        echo $packagename is installed.
+-        installed=true
+-    else
+-        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
+-        installed=false
+-        missingdepends=true
+-    fi
+-    
+-    nugetinstalled=$installed
+-else
+-    echo NuGet is NOT installed.
+-    nugetinstalled=false
+-    missingdepends=true
+-fi
+-
+ echo Searching for make...
+ if command -v make &> /dev/null 
+ then
+@@ -172,26 +122,14 @@ else
+     echo Git is NOT installed.
+     makeinstalled=false
+     missingdepends=true
+-fi
++fi 
+ 
+-if [ $missingdepends == "false" ]; then
+-    echo
+-    echo Trying to restore packages...
+-    nuget restore -Verbosity quiet
+-    echo
+-    echo If package restore succeeded, run make to compile.
+-else
++if [ $missingdepends == "true" ]; then
+     echo
+     echo You are missing the following dependencies:
+     if [ "$dotnetinstalled" == "false" ]; then 
+         echo DotNet SDK version $requiredverdotnet or above.
+     fi
+-    if [ "$msbuildinstalled" == "false" ]; then 
+-        echo MSBuild version $requiredvermsbuild or above.
+-    fi
+-    if [ "$nugetinstalled" == "false" ]; then 
+-        echo NuGet version $requiredvernuget or above.
+-    fi
+     if [ "$makeinstalled" == "false" ]; then 
+         echo Make version $requiredvermake or above.
+     fi

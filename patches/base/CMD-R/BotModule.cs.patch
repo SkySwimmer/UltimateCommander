@@ -1,8 +1,8 @@
 diff --git a/CMD-R/BotModule.cs b/CMD-R/BotModule.cs
-index 60eef49..7ee67de 100644
+index 60eef49..deab46a 100644
 --- a/CMD-R/BotModule.cs
 +++ b/CMD-R/BotModule.cs
-@@ -12,6 +12,10 @@ namespace CMDR
+@@ -12,8 +12,15 @@ namespace CMDR
              return Bot.GetBot();
          }
  
@@ -12,8 +12,13 @@ index 60eef49..7ee67de 100644
 +
          public void RegisterCommand(SystemCommand command)
          {
++            if (GetBot().lockedCmdReg)
++                throw new InvalidOperationException("Legacy commands can only be registered during init due to limitations with discord command registration");
++
              if (GetBot().CmdCategories.Find(t => t.name.ToLower() == command.commandid.ToLower()) != null)
-@@ -61,7 +65,7 @@ namespace CMDR
+                 throw new Exception("Error: a category exists with that command id.");
+ 
+@@ -61,7 +68,7 @@ namespace CMDR
  
          public void SaveConfig()
          {

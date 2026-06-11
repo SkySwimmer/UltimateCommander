@@ -1,0 +1,23 @@
+diff --git a/CMD-R/HelpCmdModule/HelpCmdModule.cs b/CMD-R/HelpCmdModule/HelpCmdModule.cs
+index 527397a..ea441c7 100644
+--- a/CMD-R/HelpCmdModule/HelpCmdModule.cs
++++ b/CMD-R/HelpCmdModule/HelpCmdModule.cs
+@@ -15,8 +15,6 @@ namespace CMDR.HelpCmdModule
+ 
+         public override void PostInit(Bot bot)
+         {
+-            RegisterCommand(new HelpCommand());
+-            RegisterCommand(new LsCmdCategoriesCommand());
+         }
+ 
+         public override void PreInit(Bot bot)
+@@ -25,7 +23,8 @@ namespace CMDR.HelpCmdModule
+ 
+         public override void RegisterCommands(Bot bot)
+         {
+-
++            RegisterCommand(new HelpCommand());
++            RegisterCommand(new LsCmdCategoriesCommand());
+         }
+     }
+ }
