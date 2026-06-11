@@ -1,5 +1,5 @@
 diff --git a/Rolling.csproj b/Rolling.csproj
-index 644a817..4d24c1d 100644
+index 644a817..028400c 100644
 --- a/Rolling.csproj
 +++ b/Rolling.csproj
 @@ -8,10 +8,10 @@
@@ -8,7 +8,7 @@ index 644a817..4d24c1d 100644
    <ItemGroup>
 -    <PackageReference Include="Discord.NET" Version="3.11.0" />
 -    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-+    <PackageReference Include="Discord.NET" Version="3.12.0" />
++    <PackageReference Include="Discord.NET" Version="3.17.2" />
 +    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
    </ItemGroup>
 -  

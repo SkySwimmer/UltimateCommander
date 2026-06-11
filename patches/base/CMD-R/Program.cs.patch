@@ -1,8 +1,16 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..6291ff4 100644
+index fc7bc02..118adb7 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
-@@ -109,9 +109,9 @@ namespace CMDR
+@@ -28,6 +28,7 @@ namespace CMDR
+         static Bot _bot;
+         public List<Server> servers;
+ 
++        internal List<GatewayIntents> intents = new List<GatewayIntents>();
+         public List<BotModule> modules = new List<BotModule>();
+         public List<SystemCommand> commands = new List<SystemCommand>();
+         public List<CmdCategory> CmdCategories = new List<CmdCategory>();
+@@ -109,9 +110,9 @@ namespace CMDR
              Console.ForegroundColor = b;
  
              path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -15,35 +23,47 @@ index fc7bc02..6291ff4 100644
              Bot.WriteLine();
              Bot.WriteLine("System path: " + path);
              Directory.CreateDirectory(path + "/Modules");
-@@ -133,9 +133,12 @@ namespace CMDR
+@@ -131,11 +132,16 @@ namespace CMDR
+                 newToken = true;
+             }
  
-             Console.CancelKeyPress += new ConsoleCancelEventHandler(delegate (Object sender, ConsoleCancelEventArgs e) {
-                 if (e.SpecialKey == ConsoleSpecialKey.ControlBreak) {
+-            Console.CancelKeyPress += new ConsoleCancelEventHandler(delegate (Object sender, ConsoleCancelEventArgs e) {
+-                if (e.SpecialKey == ConsoleSpecialKey.ControlBreak) {
 -                    Bot.WriteLine("Shutting down CMD-R, CTRL+BREAK detected...");
++            Console.CancelKeyPress += new ConsoleCancelEventHandler(delegate (Object sender, ConsoleCancelEventArgs e)
++            {
++                if (e.SpecialKey == ConsoleSpecialKey.ControlBreak)
++                {
 +                    Bot.WriteLine("Shutting down Ultimate Commander, CTRL+BREAK detected...");
                      client.SetGameAsync("Shutting down...").GetAwaiter().GetResult();
 +                    Server.RunSaveAll(true);
-+                    
++
                      client.SetStatusAsync(UserStatus.Invisible).GetAwaiter().GetResult();
 +                    client.SetGameAsync("").GetAwaiter().GetResult();
                      client.StopAsync().GetAwaiter().GetResult();
                      client.Dispose();
                      Server.RunSaveAll(true);
-@@ -145,17 +148,20 @@ namespace CMDR
+@@ -145,17 +151,25 @@ namespace CMDR
                  e.Cancel = true;
              });
              Bot.WriteLine("Starting Discord.NET framework...");
 -            client = new DiscordSocketClient();
-+            client = new DiscordSocketClient(new DiscordSocketConfig(){
-+                GatewayIntents = GatewayIntents.All
++            GatewayIntents intentI = GatewayIntents.AllUnprivileged;
++            foreach (GatewayIntents i in intents)
++                intentI = intentI | i;
++            client = new DiscordSocketClient(new DiscordSocketConfig()
++            {
++                GatewayIntents = intentI
 +            });
  
              await client.LoginAsync(TokenType.Bot, token);
              await client.StartAsync();
 -            await client.SetGameAsync("Starting CMD-R...");
-+            await client.SetGameAsync("Starting Ultimate Commander...");
++            await client.SetGameAsync("Starting application...");
  
-             if (newToken) {
+-            if (newToken) {
++            if (newToken)
++            {
                  Bot.WriteLine("\nSaved to file Bot.cfg, edit it to change the token.");
                  File.WriteAllText(path + "/Bot.cfg", token);
              }
@@ -52,7 +72,12 @@ index fc7bc02..6291ff4 100644
              while (client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Disconnected) { Thread.Sleep(100); }
              while (client.Guilds.Count == 0 || client.Guilds.FirstOrDefault().Name == null || client.Guilds.FirstOrDefault().Name == "") { Thread.Sleep(100); }
  
-@@ -213,9 +219,9 @@ namespace CMDR
+@@ -209,30 +223,31 @@ namespace CMDR
+             {
+                 loadPackage(info);
+             }
+-            
++
              // Load CMF (Cyan Modfile) formatted packages
              // CMF are zips too, just like jars
              //
@@ -64,7 +89,56 @@ index fc7bc02..6291ff4 100644
              foreach (FileInfo info in new DirectoryInfo(path + "/Module Packages").GetFiles("*.cmf"))
              {
                  loadPackage(info);
-@@ -293,9 +299,9 @@ namespace CMDR
+             }
+-            
+-            void loadPackage(FileInfo info) {
++
++            void loadPackage(FileInfo info)
++            {
+                 bool update = false;
+-                
++
+                 if (!Directory.Exists(path + "/Module Packages/" + Path.GetFileNameWithoutExtension(info.FullName))) update = true; // Make sure the package gets extracted if new
+                 else
+                 {
+                     // Check if package archive is newer than extracted version
+                     string oldpatch = (File.Exists(path + "/Module Packages/" + Path.GetFileNameWithoutExtension(info.FullName) + "/patch.ver") ? File.ReadAllText(path + "/Module Packages/" + Path.GetFileNameWithoutExtension(info.FullName) + "/patch.ver") : "");
+                     // If the patch.ver file does not exist, the string is empty
+-                    
++
+                     string newpatch = "";
+-                    
++
+                     // Read the archive for getting the new version file, skip if patch.ver is not in the archive
+                     ZipArchive file = ZipFile.OpenRead(path + "/Module Packages/" + Path.GetFileName(info.FullName));
+                     if (file.Entries.ToList().Find(t => t.Name == "patch.ver") != null)
+@@ -245,20 +260,20 @@ namespace CMDR
+                         }
+                         catch
+                         {
+-                            
++
+                         }
+                     }
+-                    
++
+                     int newv = 0;
+                     int oldv = 0;
+-                    
++
+                     // Parse if the strings are not empty
+                     if (newpatch != "") newv = int.Parse(newpatch);
+                     if (oldpatch != "") oldv = int.Parse(oldpatch);
+-                    
++
+                     update = (oldv < newv); // Check if the archive is newer than the folder
+                 }
+-                
++
+                 // Extract files if new/updated
+                 if (update)
+                 {
+@@ -293,21 +308,21 @@ namespace CMDR
                              b = Console.ForegroundColor;
                              Console.ForegroundColor = ConsoleColor.Red;
                              Bot.WriteLine("CRITICAL ERROR: Unable to restore or save storage folder, one already exists in both temp and install output!");
@@ -76,7 +150,29 @@ index fc7bc02..6291ff4 100644
                          }
                          if (Directory.Exists(path + "/temp/Storage"))
                          {
-@@ -401,15 +407,17 @@ namespace CMDR
+                             Directory.Move(path + "/temp/Storage", path + "/Module Packages/" + Path.GetFileNameWithoutExtension(info.FullName) + "/Storage");
+                         }
+-                        
+-                        #pragma warning disable CA2200
++
++#pragma warning disable CA2200
+                         throw e;
+-                        #pragma warning restore CA2200
++#pragma warning restore CA2200
+                     }
+                 }
+-                
++
+                 ConfigDictionary<String, String> conf = new ConfigDictionary<string, string>();
+                 if (File.Exists(path + "/Module Packages/" + Path.GetFileNameWithoutExtension(info.FullName) + "/pointer.targets"))
+                 {
+@@ -397,19 +412,23 @@ namespace CMDR
+             Bot.WriteLine();
+             Bot.WriteLine("Execute quit or exit to close.");
+ 
++            // Bind
+             client.MessageReceived += onMessage;
++            
              await client.SetGameAsync("");
              while (true)
              {
@@ -96,7 +192,7 @@ index fc7bc02..6291ff4 100644
                      Server.StopAutoSaveThread();
                      Environment.Exit(0);
                  }
-@@ -608,7 +616,7 @@ namespace CMDR
+@@ -608,7 +627,7 @@ namespace CMDR
          {
              if (classname == "{auto}") classname = filename;
              if (namespacepath == "{auto}") namespacepath = filename;
@@ -105,7 +201,7 @@ index fc7bc02..6291ff4 100644
              AppDomain currentDomain = AppDomain.CurrentDomain;
              currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
  
-@@ -620,14 +628,18 @@ namespace CMDR
+@@ -620,14 +639,18 @@ namespace CMDR
                  Assembly assembly = Assembly.LoadFrom(assemblyPath);
                  return assembly;
              }
@@ -113,7 +209,7 @@ index fc7bc02..6291ff4 100644
 +
 +            if (File.Exists(filefolder + Path.DirectorySeparatorChar + filename + ".dll"))
 +                File.Move(filefolder + Path.DirectorySeparatorChar + filename + ".dll", filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll", true);
-+                
++
 +            Assembly asm = Assembly.Load(File.ReadAllBytes(filefolder + Path.DirectorySeparatorChar + filename + "-" + namespacepath + "." + classname + ".dll"));
              Type type = asm.GetType(namespacepath + "." + classname);
  
@@ -126,7 +222,7 @@ index fc7bc02..6291ff4 100644
              }
              else
              {
-@@ -635,13 +647,13 @@ namespace CMDR
+@@ -635,13 +658,13 @@ namespace CMDR
                  Bot.WriteLine("Loading module: " + script.id + "...");
                  Bot.WriteLine("Module description: " + script.moduledesctiption);
                  Bot.GetBot().modules.Add(script);
@@ -144,22 +240,28 @@ index fc7bc02..6291ff4 100644
                  script.LoadConfig();
                  Bot.WriteLine("Pre-initializing module: " + script.id + "...");
                  script.PreInit(Bot.GetBot());
-@@ -650,6 +662,24 @@ namespace CMDR
+@@ -650,6 +673,30 @@ namespace CMDR
              }
          }
  
-+        public BotModule GetModule(string module) {
-+            foreach (BotModule mod in modules) {
-+                if (mod.id == module) {
++        public BotModule GetModule(string module)
++        {
++            foreach (BotModule mod in modules)
++            {
++                if (mod.id == module)
++                {
 +                    return mod;
 +                }
 +            }
 +            return null;
 +        }
 +
-+        public bool IsModuleLoaded(string module) {
-+            foreach (BotModule mod in modules) {
-+                if (mod.id == module) {
++        public bool IsModuleLoaded(string module)
++        {
++            foreach (BotModule mod in modules)
++            {
++                if (mod.id == module)
++                {
 +                    return true;
 +                }
 +            }
@@ -169,7 +271,7 @@ index fc7bc02..6291ff4 100644
  #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
          private async Task Client_RoleDeleted(SocketRole arg)
  #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-@@ -819,13 +849,78 @@ namespace CMDR
+@@ -819,13 +866,88 @@ namespace CMDR
              }
          }
  
@@ -184,35 +286,45 @@ index fc7bc02..6291ff4 100644
 +
              SocketTextChannel ch = message.Channel as SocketTextChannel;
 +            string prefix = this.prefix;
-+            if (ch != null && ch.Guild != null) {
++            if (ch != null && ch.Guild != null)
++            {
 +                Server srv = GetServerFromSocketGuild(ch.Guild);
-+                if (srv != null) {
++                if (srv != null)
++                {
 +                    prefix = srv.GetPrefix();
 +                }
 +            }
 +
 +            // I know, its hacky, but this project is a mess and needs a overhaul so ill use this method
-+            if (msg.Content.StartsWith("<@!" + client.CurrentUser.Id + ">", StringComparison.CurrentCulture)) {
++            if (msg.Content.StartsWith("<@!" + client.CurrentUser.Id + ">", StringComparison.CurrentCulture))
++            {
 +                prefix = "<@!" + client.CurrentUser.Id + "> ";
-+            } else if (msg.Content.StartsWith("<@" + client.CurrentUser.Id + ">", StringComparison.CurrentCulture)) {
++            }
++            else if (msg.Content.StartsWith("<@" + client.CurrentUser.Id + ">", StringComparison.CurrentCulture))
++            {
 +                prefix = "<@" + client.CurrentUser.Id + "> ";
 +            }
 +
 +            string fullcmd = message.Content;
 +
 +            // If there are multiple commands in one message, process all of them
-+            if (fullcmd.Replace("\r", "").Contains("\n")) {
++            if (fullcmd.Replace("\r", "").Contains("\n"))
++            {
 +
 +                // Verify command chain
 +                bool valid = true;
-+                foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n')) {
-+                    if (!cmdL.StartsWith(prefix, StringComparison.CurrentCulture) || cmdL.StartsWith(prefix + " ", StringComparison.CurrentCulture) ||  cmdL == prefix) {
++                foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n'))
++                {
++                    if (!cmdL.StartsWith(prefix, StringComparison.CurrentCulture) || cmdL.StartsWith(prefix + " ", StringComparison.CurrentCulture) || cmdL == prefix)
++                    {
 +                        valid = false;
 +                        break;
 +                    }
 +                }
-+                if (valid) {
-+                    foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n')) {
++                if (valid)
++                {
++                    foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n'))
++                    {
 +                        string cid = cmdL.Substring(prefix.Length);
 +                        string args = "";
 +                        if (cid.Contains(" "))
@@ -250,7 +362,7 @@ index fc7bc02..6291ff4 100644
              if (msg.Content.StartsWith(prefix, StringComparison.CurrentCulture) && ch != null && !msg.Content.StartsWith(prefix + " ", StringComparison.CurrentCulture) && msg.Content != prefix)
              {
                  bool found = false;
-@@ -833,10 +928,9 @@ namespace CMDR
+@@ -833,10 +955,9 @@ namespace CMDR
                  {
                      if (cmd.allowDiscord)
                      {
@@ -262,23 +374,25 @@ index fc7bc02..6291ff4 100644
                          {
                              arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
                              cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
-@@ -862,13 +956,49 @@ namespace CMDR
+@@ -862,13 +983,53 @@ namespace CMDR
                      await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
                  }
              }
 -            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id) await msg.Channel.SendMessageAsync("```diff\n- I am sorry, but CMD-R do not support direct messages yet.\n- Please go to a server and run " + prefix + "help for a list of commands```");
 -            else {
-+            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id) {
++            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id)
++            {
 +                bool found = false;
 +                foreach (SystemCommand cmd in commands)
 +                {
 +                    if (cmd is DmSupportedCommand)
 +                    {
 +                        DmSupportedCommand wrapper = (DmSupportedCommand)cmd;
-+                        if (fullcmd.StartsWith(prefix)) {
++                        if (fullcmd.StartsWith(prefix))
++                        {
 +                            fullcmd = fullcmd.Substring(prefix.Length);
 +                        }
-+                        
++
 +                        string cmdid = fullcmd;
 +                        string arguments = "";
 +                        if (fullcmd.Contains(" "))
@@ -291,7 +405,7 @@ index fc7bc02..6291ff4 100644
 +                        {
 +                            if (CheckPermissions(cmd.permissionnode, msg.Author, null))
 +                            {
-+                                await wrapper.OnExecuteFromDM(msg.Author, (SocketDMChannel) msg.Channel, msg, fullcmd, arguments, GetArgumentListFromString(arguments));
++                                await wrapper.OnExecuteFromDM(msg.Author, (SocketDMChannel)msg.Channel, msg, fullcmd, arguments, GetArgumentListFromString(arguments));
 +                            }
 +                            else
 +                            {
@@ -306,7 +420,9 @@ index fc7bc02..6291ff4 100644
 +                {
 +                    await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that DM command, use help for commands.");
 +                }
-+            } else {
++            }
++            else
++            {
                  foreach (SystemCommand cmd in commands)
                  {
                      if (cmd.allowDiscord && cmd.setNoCmdPrefix)
@@ -315,3 +431,15 @@ index fc7bc02..6291ff4 100644
                          string cmdid = fullcmd;
                          string arguments = "";
                          if (fullcmd.Contains(" "))
+@@ -904,5 +1065,11 @@ namespace CMDR
+                 await t.GetAwaiter().GetResult().DeleteAsync();
+             });
+         }
++
++        public void AddRequiredIntent(GatewayIntents intent)
++        {
++            if (!intents.Contains(intent))
++                intents.Add(intent);
++        }
+     }
+ }

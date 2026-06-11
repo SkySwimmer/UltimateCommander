@@ -1,5 +1,5 @@
 diff --git a/PermissionManager.csproj b/PermissionManager.csproj
-index 6b973aa..d85bd3c 100644
+index 6b973aa..fa7595c 100644
 --- a/PermissionManager.csproj
 +++ b/PermissionManager.csproj
 @@ -8,8 +8,8 @@
@@ -8,7 +8,7 @@ index 6b973aa..d85bd3c 100644
    <ItemGroup>
 -    <PackageReference Include="Discord.NET" Version="3.11.0" />
 -    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-+    <PackageReference Include="Discord.NET" Version="3.12.0" />
++    <PackageReference Include="Discord.NET" Version="3.17.2" />
 +    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
    </ItemGroup>
    
