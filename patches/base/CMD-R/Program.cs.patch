@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..8374080 100644
+index fc7bc02..07c943a 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -9,11 +9,15 @@ using System.Threading.Tasks;
@@ -67,63 +67,40 @@ index fc7bc02..8374080 100644
                      client.StopAsync().GetAwaiter().GetResult();
                      client.Dispose();
                      Server.RunSaveAll(true);
-@@ -144,18 +153,52 @@ namespace CMDR
+@@ -144,20 +153,6 @@ namespace CMDR
                  }
                  e.Cancel = true;
              });
-+
-+            // Configure client
-             Bot.WriteLine("Starting Discord.NET framework...");
+-            Bot.WriteLine("Starting Discord.NET framework...");
 -            client = new DiscordSocketClient();
-+
-+            // Load itnent config
-+            if (!File.Exists(path + "/Intents.cfg"))
-+                File.WriteAllText(path + "/Intents.cfg", "# Add required intents here\n# Each intent should be on its own line\n# If none are given, only unprivileged intents are used\n# See Discord.NET GatewayIntents enum for names\n\n");
-+            foreach (string line in File.ReadAllLines(path + "/Intents.cfg"))
-+            {
-+                if (line.StartsWith("#") || line == "")
-+                    continue;
-+
-+                // Parse
-+                try
-+                {
-+                    AddRequiredIntent(Enum.Parse<GatewayIntents>(line));
-+                }
-+                catch
-+                {
-+                    throw new FormatException("Unknown intent: " + line + " in Intents.cfg");
-+                }
-+            }
-+            
-+            // Create intent list
-+            GatewayIntents intentI = GatewayIntents.AllUnprivileged;
-+            foreach (GatewayIntents i in intents)
-+                intentI = intentI | i;
-+
-+            // Apply intents
-+            client = new DiscordSocketClient(new DiscordSocketConfig()
-+            {
-+                GatewayIntents = intentI
-+            });
- 
-             await client.LoginAsync(TokenType.Bot, token);
-             await client.StartAsync();
+-
+-            await client.LoginAsync(TokenType.Bot, token);
+-            await client.StartAsync();
 -            await client.SetGameAsync("Starting CMD-R...");
-+            await client.SetGameAsync("Starting application...");
- 
+-
 -            if (newToken) {
-+            if (newToken)
-+            {
-                 Bot.WriteLine("\nSaved to file Bot.cfg, edit it to change the token.");
-                 File.WriteAllText(path + "/Bot.cfg", token);
+-                Bot.WriteLine("\nSaved to file Bot.cfg, edit it to change the token.");
+-                File.WriteAllText(path + "/Bot.cfg", token);
+-            }
+-
+-            while (client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Disconnected) { Thread.Sleep(100); }
+-            while (client.Guilds.Count == 0 || client.Guilds.FirstOrDefault().Name == null || client.Guilds.FirstOrDefault().Name == "") { Thread.Sleep(100); }
+ 
+             Bot.WriteLine("Loading modules...");
+             Bot.WriteLine("Loading embedded/injected modules...");
+@@ -179,11 +174,6 @@ namespace CMDR
+                         {
+                             File.Copy(Bot.GetBot().path + "/Modules/" + script.id + "/config-defaults.xml", Bot.GetBot().path + "/Embedded Modules/" + script.id + "/Storage/config.xml");
+                         }
+-                        script.LoadConfig();
+-                        Bot.WriteLine("Pre-initializing module: " + script.id + "...");
+-                        script.PreInit(this);
+-                        script.SaveConfig();
+-                        Bot.WriteLine("Loaded module: " + script.id + "...");
+                     }
+                 }
              }
- 
-+            Bot.WriteLine("Waiting for servers to load... Please note that the bot needs to be in at least ONE server for it to load.");
-+            Bot.WriteLine("Please confirm all required intents are properly configured in the dev portal, as otherwise the bot can hang.");
-             while (client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Disconnected) { Thread.Sleep(100); }
-             while (client.Guilds.Count == 0 || client.Guilds.FirstOrDefault().Name == null || client.Guilds.FirstOrDefault().Name == "") { Thread.Sleep(100); }
- 
-@@ -209,30 +252,31 @@ namespace CMDR
+@@ -209,30 +199,31 @@ namespace CMDR
              {
                  loadPackage(info);
              }
@@ -163,7 +140,7 @@ index fc7bc02..8374080 100644
                      // Read the archive for getting the new version file, skip if patch.ver is not in the archive
                      ZipArchive file = ZipFile.OpenRead(path + "/Module Packages/" + Path.GetFileName(info.FullName));
                      if (file.Entries.ToList().Find(t => t.Name == "patch.ver") != null)
-@@ -245,20 +289,20 @@ namespace CMDR
+@@ -245,20 +236,20 @@ namespace CMDR
                          }
                          catch
                          {
@@ -189,7 +166,7 @@ index fc7bc02..8374080 100644
                  // Extract files if new/updated
                  if (update)
                  {
-@@ -293,21 +337,21 @@ namespace CMDR
+@@ -293,21 +284,21 @@ namespace CMDR
                              b = Console.ForegroundColor;
                              Console.ForegroundColor = ConsoleColor.Red;
                              Bot.WriteLine("CRITICAL ERROR: Unable to restore or save storage folder, one already exists in both temp and install output!");
@@ -217,7 +194,93 @@ index fc7bc02..8374080 100644
                  ConfigDictionary<String, String> conf = new ConfigDictionary<string, string>();
                  if (File.Exists(path + "/Module Packages/" + Path.GetFileNameWithoutExtension(info.FullName) + "/pointer.targets"))
                  {
-@@ -394,22 +438,44 @@ namespace CMDR
+@@ -328,6 +319,85 @@ namespace CMDR
+                 );
+             }
+ 
++            // Configure client
++            Bot.WriteLine("Starting Discord.NET framework...");
++
++            // Load itnent config
++            if (!File.Exists(path + "/Intents.cfg"))
++                File.WriteAllText(path + "/Intents.cfg", "# Add required intents here\n# Each intent should be on its own line\n# If none are given, only unprivileged intents are used\n# See Discord.NET GatewayIntents enum for names\n\n");
++            foreach (string line in File.ReadAllLines(path + "/Intents.cfg"))
++            {
++                if (line.StartsWith("#") || line == "")
++                    continue;
++
++                // Parse
++                try
++                {
++                    AddRequiredIntent(Enum.Parse<GatewayIntents>(line));
++                }
++                catch
++                {
++                    throw new FormatException("Unknown intent: " + line + " in Intents.cfg");
++                }
++            }
++            
++            Bot.WriteLine("Calling modules for framework prepare...");
++            foreach (BotModule mod in modules)
++            {
++                Bot.WriteLine("Calling module: " + mod.id + " for framework prepare...");
++                mod.PrepareFramework(this);
++            }
++
++            // Create intent list
++            GatewayIntents intentI = GatewayIntents.AllUnprivileged;
++            foreach (GatewayIntents i in intents)
++                intentI = intentI | i;
++
++            // Apply intents
++            client = new DiscordSocketClient(new DiscordSocketConfig()
++            {
++                GatewayIntents = intentI
++            });
++
++            Bot.WriteLine("Calling modules for client setup...");
++            foreach (BotModule mod in modules)
++            {
++                Bot.WriteLine("Calling module: " + mod.id + " for client setup...");
++                mod.ConfigureClient(this, client);
++            }
++
++            await client.LoginAsync(TokenType.Bot, token);
++            await client.StartAsync();
++
++            Bot.WriteLine("Calling modules for client login complete...");
++            foreach (BotModule mod in modules)
++            {
++                Bot.WriteLine("Calling module: " + mod.id + " for client login complete...");
++                mod.ClientLogin(this, client);
++            }
++
++            await client.SetGameAsync("Starting application...");
++
++            if (newToken)
++            {
++                Bot.WriteLine("\nSaved to file Bot.cfg, edit it to change the token.");
++                File.WriteAllText(path + "/Bot.cfg", token);
++            }
++
++            Bot.WriteLine("Waiting for servers to load... Please note that the bot needs to be in at least ONE server for it to load.");
++            Bot.WriteLine("Please confirm all required intents are properly configured in the dev portal, as otherwise the bot can hang.");
++            while (client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Disconnected) { Thread.Sleep(100); }
++            while (client.Guilds.Count == 0 || client.Guilds.FirstOrDefault().Name == null || client.Guilds.FirstOrDefault().Name == "") { Thread.Sleep(100); }
++
++            // Call module init
++            foreach (BotModule mod in modules) {
++                mod.LoadConfig();
++                Bot.WriteLine("Pre-initializing module: " + mod.id + "...");
++                mod.PreInit(Bot.GetBot());
++                mod.SaveConfig();
++                Bot.WriteLine("Loaded module: " + mod.id + "...");
++            }
++
+             Bot.WriteLine();
+             Bot.WriteLine("Preparing server config directories...");
+             Directory.CreateDirectory(path + "/Server Configs");
+@@ -394,22 +464,44 @@ namespace CMDR
              Bot.WriteLine("Set the autosave interval to " + Server.AutoSaveMinutes + " minutes.");
              Server.StartAutoSaveThread();
  
@@ -265,7 +328,7 @@ index fc7bc02..8374080 100644
                      Server.StopAutoSaveThread();
                      Environment.Exit(0);
                  }
-@@ -604,11 +670,239 @@ namespace CMDR
+@@ -604,11 +696,240 @@ namespace CMDR
              }
          }
  
@@ -399,7 +462,8 @@ index fc7bc02..8374080 100644
 +        }
 +
 +        private async Task InitLegacyDmCommands(DiscordSocketClient client)
-+        {// De-register old commands
++        {
++            // De-register old commands
 +            bool commandAvailable = false;
 +            IReadOnlyCollection<SocketApplicationCommand> arr = null;
 +            try
@@ -506,7 +570,7 @@ index fc7bc02..8374080 100644
              AppDomain currentDomain = AppDomain.CurrentDomain;
              currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
  
-@@ -620,14 +914,18 @@ namespace CMDR
+@@ -620,14 +941,18 @@ namespace CMDR
                  Assembly assembly = Assembly.LoadFrom(assemblyPath);
                  return assembly;
              }
@@ -527,7 +591,7 @@ index fc7bc02..8374080 100644
              }
              else
              {
-@@ -635,13 +933,13 @@ namespace CMDR
+@@ -635,19 +960,38 @@ namespace CMDR
                  Bot.WriteLine("Loading module: " + script.id + "...");
                  Bot.WriteLine("Module description: " + script.moduledesctiption);
                  Bot.GetBot().modules.Add(script);
@@ -541,14 +605,15 @@ index fc7bc02..8374080 100644
                  }
                  script.modulepath = Path.GetFullPath(filefolder + Path.DirectorySeparatorChar + filename + ".dll");
 -                script.storagepath = Path.GetFullPath(Bot.GetBot().path + Path.DirectorySeparatorChar + "Modules" + Path.DirectorySeparatorChar + script.id + Path.DirectorySeparatorChar + "Storage");
+-                script.LoadConfig();
+-                Bot.WriteLine("Pre-initializing module: " + script.id + "...");
+-                script.PreInit(Bot.GetBot());
+-                script.SaveConfig();
+-                Bot.WriteLine("Loaded module: " + script.id + "...");
 +                script.storagepath = Path.GetFullPath(filefolder + Path.DirectorySeparatorChar + "Storage");
-                 script.LoadConfig();
-                 Bot.WriteLine("Pre-initializing module: " + script.id + "...");
-                 script.PreInit(Bot.GetBot());
-@@ -650,6 +948,30 @@ namespace CMDR
-             }
-         }
- 
++            }
++        }
++
 +        public BotModule GetModule(string module)
 +        {
 +            foreach (BotModule mod in modules)
@@ -569,14 +634,12 @@ index fc7bc02..8374080 100644
 +                {
 +                    return true;
 +                }
-+            }
+             }
 +            return false;
-+        }
-+
+         }
+ 
  #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-         private async Task Client_RoleDeleted(SocketRole arg)
- #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-@@ -819,75 +1141,110 @@ namespace CMDR
+@@ -819,75 +1163,110 @@ namespace CMDR
              }
          }
  
@@ -735,7 +798,7 @@ index fc7bc02..8374080 100644
                      }
                  }
              }
-@@ -904,5 +1261,11 @@ namespace CMDR
+@@ -904,5 +1283,11 @@ namespace CMDR
                  await t.GetAwaiter().GetResult().DeleteAsync();
              });
          }
