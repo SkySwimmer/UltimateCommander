@@ -1,0 +1,153 @@
+diff --git a/ResetUserXPCommand.cs b/ResetUserXPCommand.cs
+index ba5e74e..158ee8b 100644
+--- a/ResetUserXPCommand.cs
++++ b/ResetUserXPCommand.cs
+@@ -6,11 +6,14 @@ using System.Linq;
+ using System.Text.RegularExpressions;
+ using System.Threading.Tasks;
+ 
+-namespace levelup {
+-    public class ResetUserXPCommand : SystemCommand {
++namespace levelup
++{
++    public class ResetUserXPCommand : SystemCommand
++    {
+         private Module module;
+-        
+-        public ResetUserXPCommand(Module module) {
++
++        public ResetUserXPCommand(Module module)
++        {
+             this.module = module;
+         }
+ 
+@@ -22,20 +25,32 @@ namespace levelup {
+         public override bool setNoCmdPrefix => false;
+         public override bool allowTerminal => false;
+         public override bool allowDiscord => true;
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments) {
+-            if (arguments.Count >= 1) {
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser user, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
++        {
++            if (arguments.Count >= 1)
++            {
+                 ulong id = 0;
+-                if (Regex.Match(arguments[0], "^\\<\\@![0-9]+\\>$").Success) {
++                if (Regex.Match(arguments[0], "^\\<\\@![0-9]+\\>$").Success)
++                {
+                     id = ulong.Parse(arguments[0].Substring(3).Remove(arguments[0].Length - 4));
+-                } else {
+-                    try {
++                }
++                else
++                {
++                    try
++                    {
+                         id = ulong.Parse(arguments[0]);
+-                    } catch {
++                    }
++                    catch
++                    {
+                         var en = guild.GetUsersAsync().GetAsyncEnumerator();
+-                        while (true) {
+-                            if (en.Current != null) {
+-                                foreach (IGuildUser usr in en.Current) {
+-                                    if (usr.DisplayName == arguments[0]) {
++                        while (true)
++                        {
++                            if (en.Current != null)
++                            {
++                                foreach (IGuildUser usr in en.Current)
++                                {
++                                    if (usr.DisplayName == arguments[0])
++                                    {
+                                         id = usr.Id;
+                                     }
+                                 }
+@@ -43,12 +58,17 @@ namespace levelup {
+                             if (!en.MoveNextAsync().GetAwaiter().GetResult())
+                                 break;
+                         }
+-                        if (id == 0) {
++                        if (id == 0)
++                        {
+                             en = guild.GetUsersAsync().GetAsyncEnumerator();
+-                            while (true) {
+-                                if (en.Current != null) {
+-                                    foreach (IGuildUser usr in en.Current) {
+-                                        if (usr.Nickname == arguments[0] && id == 0) {
++                            while (true)
++                            {
++                                if (en.Current != null)
++                                {
++                                    foreach (IGuildUser usr in en.Current)
++                                    {
++                                        if (usr.Nickname == arguments[0] && id == 0)
++                                        {
+                                             id = usr.Id;
+                                         }
+                                     }
+@@ -60,22 +80,30 @@ namespace levelup {
+                     }
+                 }
+ 
+-                if (id == 0) {
++                if (id == 0)
++                {
+                     await channel.SendMessageAsync("Invalid usage, parameter 'user' is invalid.");
+-                } else {
++                }
++                else
++                {
+                     Server server = GetBot().GetServerFromSocketGuild(guild);
+                     ConfigDictionary<string, object> mem = module.serverMemory[server];
+                     Server.ModuleConfig conf = server.GetModuleConfig(module);
+                     SocketGuildUser usr = guild.GetUser(id);
+ 
+-                    if ((bool)conf.GetOrDefault("SetupCompleted", false)) {
+-                        if (conf.GetOrDefault("users", null) != null) {
++                    if ((bool)conf.GetOrDefault("SetupCompleted", false))
++                    {
++                        if (conf.GetOrDefault("users", null) != null)
++                        {
+                             List<ulong> users = Serializer.Deserialize<List<ulong>>(conf.GetOrDefault("users", null).ToString());
+-                            if (users.Contains(id)) {
++                            if (users.Contains(id))
++                            {
+                                 int defaultLevelBaseXP = (int)conf.GetOrDefault("xp.levelup.base", 1400);
+                                 string uL = (string)conf.GetOrDefault("user-" + id, null);
+-                                if (uL == null) {
+-                                    uL = Serializer.Serialize(new Module.UserLevel() {
++                                if (uL == null)
++                                {
++                                    uL = Serializer.Serialize(new Module.UserLevel()
++                                    {
+                                         LevelUpXP = defaultLevelBaseXP,
+                                         Level = 1
+                                     });
+@@ -88,16 +116,21 @@ namespace levelup {
+                             }
+                         }
+                         await channel.SendMessageAsync("Success! Resetted XP of user `" + (usr.Nickname == null ? usr.DisplayName : usr.Nickname) + "`!");
+-                    } else {
++                    }
++                    else
++                    {
+                         await channel.SendMessageAsync("LevelUP setup has not been completed, please run `levelup-setup` first.");
+                     }
+                 }
+-            } else {
++            }
++            else
++            {
+                 await channel.SendMessageAsync("Invalid usage, missing the 'user' parameter.");
+             }
+         }
+-        
+-        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments) {
++
++        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments)
++        {
+         }
+     }
+ }

@@ -1,0 +1,213 @@
+diff --git a/ChangeOptionCommand.cs b/ChangeOptionCommand.cs
+index ab3f38d..69bca68 100644
+--- a/ChangeOptionCommand.cs
++++ b/ChangeOptionCommand.cs
+@@ -5,11 +5,14 @@ using System.Linq;
+ using System.Text.RegularExpressions;
+ using System.Threading.Tasks;
+ 
+-namespace levelup {
+-    public class ChangeOptionCommand : SystemCommand {
++namespace levelup
++{
++    public class ChangeOptionCommand : SystemCommand
++    {
+         private Module module;
+-        
+-        public ChangeOptionCommand(Module module) {
++
++        public ChangeOptionCommand(Module module)
++        {
+             this.module = module;
+         }
+ 
+@@ -21,58 +24,86 @@ namespace levelup {
+         public override bool setNoCmdPrefix => false;
+         public override bool allowTerminal => false;
+         public override bool allowDiscord => true;
+-        
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments) {
++
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser usr, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
++        {
+             Server server = GetBot().GetServerFromSocketGuild(guild);
+             Server.ModuleConfig conf = server.GetModuleConfig(module);
+ 
+-            if ((bool)conf.GetOrDefault("SetupCompleted", false)) {
+-                if (arguments.Count > 1) {
+-                    if (arguments[0].Contains(".") && arguments[0].ToLower().Equals(arguments[0])) {
+-                        if (conf.Get(arguments[0]) != null) {
+-                            if (conf.Get(arguments[0]) is int) {
+-                                try {
++            if ((bool)conf.GetOrDefault("SetupCompleted", false))
++            {
++                if (arguments.Count > 1)
++                {
++                    if (arguments[0].Contains(".") && arguments[0].ToLower().Equals(arguments[0]))
++                    {
++                        if (conf.Get(arguments[0]) != null)
++                        {
++                            if (conf.Get(arguments[0]) is int)
++                            {
++                                try
++                                {
+                                     int val = int.Parse(arguments[1]);
+-                                    if (arguments[0] == "xp.maxlevel") {
+-                                        if (val < 2) {
++                                    if (arguments[0] == "xp.maxlevel")
++                                    {
++                                        if (val < 2)
++                                        {
+                                             await channel.SendMessageAsync("Invalid value, expected: number (greater than one)");
+-                                            return;        
+-                                        } else if (val > int.MaxValue / 1000) {
++                                            return;
++                                        }
++                                        else if (val > int.MaxValue / 1000)
++                                        {
+                                             await channel.SendMessageAsync("Invalid value, expected: number (less than " + (int.MaxValue / 1000) + ")");
+                                         }
+                                     }
+ 
+                                     conf.Set(arguments[0], val);
+                                     await channel.SendMessageAsync("Configuration has been saved.");
+-                                } catch {
++                                }
++                                catch
++                                {
+                                     await channel.SendMessageAsync("Invalid value, expected: number.");
+                                 }
+-                            } else if (conf.Get(arguments[0]) is ulong) {
+-                                if (Regex.Match(arguments[1], "^\\<\\#[0-9]+\\>$").Success) {
++                            }
++                            else if (conf.Get(arguments[0]) is ulong)
++                            {
++                                if (Regex.Match(arguments[1], "^\\<\\#[0-9]+\\>$").Success)
++                                {
+                                     arguments[1] = arguments[1].Substring(2).Remove(arguments[1].Length - 3);
+                                 }
+ 
+-                                try {
++                                try
++                                {
+                                     conf.Set(arguments[0], ulong.Parse(arguments[1]));
+                                     await channel.SendMessageAsync("Configuration has been saved.");
+-                                } catch {
++                                }
++                                catch
++                                {
+                                     await channel.SendMessageAsync("Invalid value, expected: channel mention.");
+                                 }
+-                            } else if (conf.Get(arguments[0]) is bool) {
+-                                try {
++                            }
++                            else if (conf.Get(arguments[0]) is bool)
++                            {
++                                try
++                                {
+                                     conf.Set(arguments[0], bool.Parse(arguments[1]));
+                                     await channel.SendMessageAsync("Configuration has been saved.");
+-                                } catch {
++                                }
++                                catch
++                                {
+                                     await channel.SendMessageAsync("Invalid value, expected: true or false.");
+                                 }
+-                            } else {
++                            }
++                            else
++                            {
+                                 conf.Set(arguments[0], arguments[1]);
+                                 await channel.SendMessageAsync("Configuration has been saved.");
+                             }
+-                        } else {
++                        }
++                        else
++                        {
+                             await channel.SendMessageAsync("Invalid configuration option name.\n\nSupported option names:\n"
+                                     + " - xp.maxlevel: max level"
+-                                    + " - xp.increase.max: XP character limit\n" 
++                                    + " - xp.increase.max: XP character limit\n"
+                                     + " - xp.increase.multiplier.max: XP multiplier\n"
+                                     + " - xp.levelup.base: XP needed for first advancement\n"
+                                     + " - messages.sendonadvancement: send a message on advancement [true/false]\n"
+@@ -86,23 +117,36 @@ namespace levelup {
+                                     + "\n"
+                                     + "Note: role configuration cannot be done using this command, use `configure-level-roles` to configure level roles");
+                         }
+-                    } else {
++                    }
++                    else
++                    {
+                         await channel.SendMessageAsync("Invalid configuration option name.\n\nSupported option names:\n - verification.message.template\n - verification.memberrole\n - verification.channel\n - verification.channel.message.template\n - verification.nicknames.overridenickname\n - verification.nicknames.usedisplayname\n - verification.postver.channel\n - verification.postver.message.template");
+                     }
+-                } else {
+-                    if (arguments.Count > 0 && arguments[0].Contains(".") && arguments[0].ToLower().Equals(arguments[0])) {
+-                        if (conf.Get(arguments[0]) != null) {
+-                            if (arguments[0] == "messages.advancement.channel" || arguments[0] == "messages.roleadvancement.channel") {
++                }
++                else
++                {
++                    if (arguments.Count > 0 && arguments[0].Contains(".") && arguments[0].ToLower().Equals(arguments[0]))
++                    {
++                        if (conf.Get(arguments[0]) != null)
++                        {
++                            if (arguments[0] == "messages.advancement.channel" || arguments[0] == "messages.roleadvancement.channel")
++                            {
+                                 await channel.SendMessageAsync("Value of " + arguments[0] + ": <#" + conf.Get(arguments[0]) + ">");
+-                            } else if (!arguments[0].EndsWith("template")) {
++                            }
++                            else if (!arguments[0].EndsWith("template"))
++                            {
+                                 await channel.SendMessageAsync("Value of " + arguments[0] + ": **" + conf.Get(arguments[0]) + "**");
+-                            } else {
++                            }
++                            else
++                            {
+                                 await channel.SendMessageAsync("Value of " + arguments[0] + ":\n```" + conf.Get(arguments[0]).ToString().Replace("```", "'''") + "```");
+                             }
+-                        } else {
++                        }
++                        else
++                        {
+                             await channel.SendMessageAsync("Invalid configuration option name.\n\nSupported option names:\n"
+                                     + " - xp.maxlevel: max level"
+-                                    + " - xp.increase.max: XP character limit\n" 
++                                    + " - xp.increase.max: XP character limit\n"
+                                     + " - xp.increase.multiplier.max: XP multiplier\n"
+                                     + " - xp.levelup.base: XP needed for first advancement\n"
+                                     + " - messages.sendonadvancement: send a message on advancement [true/false]\n"
+@@ -116,10 +160,12 @@ namespace levelup {
+                                     + "\n"
+                                     + "Note: role configuration cannot be done using this command, use `configure-level-roles` to configure level roles");
+                         }
+-                    } else {
++                    }
++                    else
++                    {
+                         await channel.SendMessageAsync("Invalid configuration option name.\n\nSupported option names:\n"
+                                 + " - xp.maxlevel: max level"
+-                                + " - xp.increase.max: XP character limit\n" 
++                                + " - xp.increase.max: XP character limit\n"
+                                 + " - xp.increase.multiplier.max: XP multiplier\n"
+                                 + " - xp.levelup.base: XP needed for first advancement\n"
+                                 + " - messages.sendonadvancement: send a message on advancement [true/false]\n"
+@@ -134,12 +180,15 @@ namespace levelup {
+                                 + "Note: role configuration cannot be done using this command, use `configure-level-roles` to configure level roles");
+                     }
+                 }
+-            } else {
++            }
++            else
++            {
+                 await channel.SendMessageAsync("LevelUP setup has not been completed, please run `levelup-setup` first.");
+             }
+         }
+-        
+-        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments) {
++
++        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments)
++        {
+         }
+     }
+ }

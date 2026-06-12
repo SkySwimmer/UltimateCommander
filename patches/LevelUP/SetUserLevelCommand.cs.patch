@@ -1,0 +1,13 @@
+diff --git a/SetUserLevelCommand.cs b/SetUserLevelCommand.cs
+index a7ab6f5..b9878ee 100644
+--- a/SetUserLevelCommand.cs
++++ b/SetUserLevelCommand.cs
+@@ -25,7 +25,7 @@ namespace levelup {
+         public override bool allowTerminal => false;
+         public override bool allowDiscord => true;
+ 
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments)
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser user, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
+         {
+             if (arguments.Count >= 2) {
+                 ulong id = 0;

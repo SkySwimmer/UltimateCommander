@@ -1,0 +1,33 @@
+diff --git a/Module.cs b/Module.cs
+index cde82d5..9af9cda 100644
+--- a/Module.cs
++++ b/Module.cs
+@@ -31,6 +31,9 @@ namespace levelup
+ 
+         public override void PostInit(Bot bot)
+         {
++            // Intent
++            bot.AddRequiredIntent(GatewayIntents.MessageContent);
++
+             foreach (Server srv in bot.servers) {
+                 Server.ModuleConfig conf = srv.GetModuleConfig(this);
+                 SocketGuild guild = bot.client.GetGuild(srv.id);
+@@ -95,9 +98,6 @@ namespace levelup
+                 if (message.Channel is SocketTextChannel) {
+                     if (message.Author.IsBot)
+                         return Task.CompletedTask;
+-                    if (message.Content.StartsWith(bot.prefix)) {
+-                        return Task.CompletedTask;
+-                    }
+                     
+                     SocketTextChannel ch = (SocketTextChannel)message.Channel;
+                     Thread.Sleep(1000);
+@@ -109,8 +109,6 @@ namespace levelup
+                     
+                     SocketGuild guild = ch.Guild;
+                     Server srv = bot.GetServerFromSocketGuild(guild);
+-                    if (message.Content.StartsWith(srv.GetPrefix()))
+-                        return Task.CompletedTask;
+                     Server.ModuleConfig conf = srv.GetModuleConfig(this);
+ 
+                     int maxXPIncrease = (int)conf.GetOrDefault("xp.increase.max", 12);

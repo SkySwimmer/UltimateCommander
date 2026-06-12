@@ -1,0 +1,13 @@
+diff --git a/PermissionManagerCommand.cs b/PermissionManagerCommand.cs
+index b8e9057..59fe53c 100644
+--- a/PermissionManagerCommand.cs
++++ b/PermissionManagerCommand.cs
+@@ -20,7 +20,7 @@ namespace permissionmanager
+         public override bool allowTerminal => false;
+         public override bool allowDiscord => true;
+ 
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments)
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser user, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
+         {
+             if (arguments.Count >= 2) {
+                 ulong roleId = 0;

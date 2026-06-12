@@ -1,0 +1,53 @@
+diff --git a/CancelSetupCommand.cs b/CancelSetupCommand.cs
+index 443aed1..eec12ae 100644
+--- a/CancelSetupCommand.cs
++++ b/CancelSetupCommand.cs
+@@ -5,11 +5,14 @@ using System.Linq;
+ using System.Text.RegularExpressions;
+ using System.Threading.Tasks;
+ 
+-namespace levelup {
+-    public class CancelSetupCommand : SystemCommand {
++namespace levelup
++{
++    public class CancelSetupCommand : SystemCommand
++    {
+         private Module module;
+-        
+-        public CancelSetupCommand(Module module) {
++
++        public CancelSetupCommand(Module module)
++        {
+             this.module = module;
+         }
+ 
+@@ -21,19 +24,24 @@ namespace levelup {
+         public override bool setNoCmdPrefix => false;
+         public override bool allowTerminal => false;
+         public override bool allowDiscord => true;
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments) {
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser usr, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
++        {
+             Server server = GetBot().GetServerFromSocketGuild(guild);
+             ConfigDictionary<string, object> mem = module.serverMemory[server];
+ 
+-            if ((bool)mem.GetValueOrDefault("SetupRunning", false)) {
++            if ((bool)mem.GetValueOrDefault("SetupRunning", false))
++            {
+                 mem.Put("SetupChannel", false);
+                 await channel.SendMessageAsync("LevelUP setup cancelled.");
+-            } else {
++            }
++            else
++            {
+                 await channel.SendMessageAsync("LevelUP setup is not running.");
+             }
+         }
+-        
+-        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments) {
++
++        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments)
++        {
+         }
+     }
+ }

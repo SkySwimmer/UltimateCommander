@@ -1,0 +1,13 @@
+diff --git a/UserLevelCommand.cs b/UserLevelCommand.cs
+index a276912..f0c517e 100644
+--- a/UserLevelCommand.cs
++++ b/UserLevelCommand.cs
+@@ -24,7 +24,7 @@ namespace levelup {
+         public override bool allowTerminal => false;
+         public override bool allowDiscord => true;
+         
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser usr, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments)
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser usr, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
+         {
+             Server server = GetBot().GetServerFromSocketGuild(guild);
+             Server.ModuleConfig conf = server.GetModuleConfig(module);

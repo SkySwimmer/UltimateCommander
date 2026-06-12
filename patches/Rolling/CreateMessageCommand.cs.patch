@@ -1,0 +1,106 @@
+diff --git a/CreateMessageCommand.cs b/CreateMessageCommand.cs
+index e637e7b..50d9a22 100644
+--- a/CreateMessageCommand.cs
++++ b/CreateMessageCommand.cs
+@@ -7,7 +7,8 @@ using Discord.WebSocket;
+ using Discord;
+ using Discord.Rest;
+ 
+-namespace Rolling {
++namespace Rolling
++{
+     public class CreateMessageCommand : SystemCommand
+     {
+         public override CmdCategory[] Categories => new CmdCategory[] { new CmdCategory("utility", "Utility commands") };
+@@ -26,54 +27,68 @@ namespace Rolling {
+ 
+         public override bool allowDiscord => true;
+ 
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments)
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser user, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
+         {
+             string content = arguments_string.TrimStart().Replace("\r", "");
+ 
+             Dictionary<string, ulong> roles = new Dictionary<string, ulong>();
+-            foreach (string line in content.Split("\n")) {
++            foreach (string line in content.Split("\n"))
++            {
+                 string d = line.Trim();
+-                if (d.StartsWith("- ")) {
++                if (d.StartsWith("- "))
++                {
+                     d = d.Substring(2);
+                 }
+ 
+                 Match m = Regex.Match(d, "^(((\\:[a-zA-Z0-9]+\\:)|(\\<\\:[a-zA-Z0-9]+\\:[0-9]+\\>)|..?) (\\- )?(\\<\\@\\&[0-9]+\\>).*)$");
+-                if (m.Success) {
++                if (m.Success)
++                {
+                     string emoji = m.Groups[2].Value;
+                     string role = m.Groups[6].Value;
+ 
+                     IEmote e = null;
+-                    try {
++                    try
++                    {
+                         e = new Emoji(emoji);
+-                    } catch {
+-                        try {
++                    }
++                    catch
++                    {
++                        try
++                        {
+                             e = Emote.Parse(emoji);
+-                        } catch {
++                        }
++                        catch
++                        {
+ 
+                         }
+                     }
+ 
+-                    if (e != null) {
++                    if (e != null)
++                    {
+                         ulong roleID = ulong.Parse(role.Substring(3).Remove(role.Substring(3).LastIndexOf(">")));
+                         roles[emoji] = roleID;
+                     }
+                 }
+             }
+-           
++
+             IMessage ms = channel.SendMessageAsync(content).GetAwaiter().GetResult();
+             Message msg = new Message();
+             msg.channel = ms.Channel.Id;
+             msg.guild = guild.Id;
+             msg.id = ms.Id;
+             msg.message = channel.GetMessageAsync(msg.id).GetAwaiter().GetResult();
+-            foreach (string emoji in roles.Keys) {
++            foreach (string emoji in roles.Keys)
++            {
+                 ulong role = roles[emoji];
+                 msg.roles.Add(role);
+ 
+                 IEmote e = null;
+-                try {
++                try
++                {
+                     e = new Emoji(emoji);
+-                } catch {
++                }
++                catch
++                {
+                     e = Emote.Parse(emoji);
+                 }
+ 
+@@ -87,9 +102,6 @@ namespace Rolling {
+ 
+             Module.module.roleMessages.Add(msg);
+             Module.module.saveMessages();
+-            try {
+-                messageobject.DeleteAsync().GetAwaiter().GetResult();
+-            } catch {}
+         }
+ 
+         public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments)

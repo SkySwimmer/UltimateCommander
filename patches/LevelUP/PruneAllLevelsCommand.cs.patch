@@ -1,0 +1,72 @@
+diff --git a/PruneAllLevelsCommand.cs b/PruneAllLevelsCommand.cs
+index 10351eb..efeef10 100644
+--- a/PruneAllLevelsCommand.cs
++++ b/PruneAllLevelsCommand.cs
+@@ -5,11 +5,14 @@ using System.Linq;
+ using System.Text.RegularExpressions;
+ using System.Threading.Tasks;
+ 
+-namespace levelup {
+-    public class PruneAllLevelsCommand : SystemCommand {
++namespace levelup
++{
++    public class PruneAllLevelsCommand : SystemCommand
++    {
+         private Module module;
+-        
+-        public PruneAllLevelsCommand(Module module) {
++
++        public PruneAllLevelsCommand(Module module)
++        {
+             this.module = module;
+         }
+ 
+@@ -21,31 +24,39 @@ namespace levelup {
+         public override bool setNoCmdPrefix => false;
+         public override bool allowTerminal => false;
+         public override bool allowDiscord => true;
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments) {
++
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser user, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
++        {
+             Server server = GetBot().GetServerFromSocketGuild(guild);
+             ConfigDictionary<string, object> mem = module.serverMemory[server];
+             Server.ModuleConfig conf = server.GetModuleConfig(module);
+ 
+-            if ((bool)conf.GetOrDefault("SetupCompleted", false)) {
+-                if (conf.GetOrDefault("users", null) != null) {
++            if ((bool)conf.GetOrDefault("SetupCompleted", false))
++            {
++                if (conf.GetOrDefault("users", null) != null)
++                {
+                     List<ulong> users = Serializer.Deserialize<List<ulong>>(conf.GetOrDefault("users", null).ToString());
+                     int defaultLevelBaseXP = (int)conf.GetOrDefault("xp.levelup.base", 1400);
+-                    
+-                    foreach (ulong usr in users) {
++
++                    foreach (ulong usr in users)
++                    {
+                         conf.Set("user-" + usr, null);
+                     }
+-                    
++
+                     users.Clear();
+                     conf.Set("users", Serializer.Serialize(users));
+                     server.SaveAll();
+                 }
+                 await channel.SendMessageAsync("Success! All levels have been pruned!");
+-            } else {
++            }
++            else
++            {
+                 await channel.SendMessageAsync("LevelUP setup has not been completed, please run `levelup-setup` first.");
+             }
+         }
+-        
+-        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments) {
++
++        public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments)
++        {
+         }
+     }
+ }
