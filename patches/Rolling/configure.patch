@@ -1,0 +1,81 @@
+diff --git a/configure b/configure
+index 971be78..0bf54db 100644
+--- a/configure
++++ b/configure
+@@ -5,8 +5,6 @@ chmod +x buildpackage.sh
+ echo Checking dependencies...
+ missingdepends=false
+ 
+-requiredvermsbuild=15.6.0.0
+-requiredvernuget=5.6.0.6489
+ requiredvermake=4.2
+ requiredvergit=2.28.0
+ requiredverdotnet=5.0.205
+@@ -35,54 +33,6 @@ else
+     missingdepends=true
+ fi
+ 
+-echo Searching for MSBuild...
+-if command -v msbuild &> /dev/null 
+-then
+-    requiredver=$requiredvermsbuild
+-    currentver="$(msbuild -version|grep --only-matching --perl-regexp "\\d+\.\\d+\.\\d+\.\\d+")"
+-    packagename=MSBuild
+-    installed=false
+-    
+-    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+-        echo $packagename is installed.
+-        installed=true
+-    else
+-        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
+-        installed=false
+-        missingdepends=true
+-    fi
+-    
+-    msbuildinstalled=$installed
+-else
+-    echo MSBuild is NOT installed.
+-    msbuildinstalled=false
+-    missingdepends=true
+-fi
+-
+-echo Searching for NuGet...
+-if command -v nuget &> /dev/null 
+-then
+-    requiredver=$requiredvernuget
+-    currentver="$(nuget|grep --only-matching --perl-regexp "\\d+\.\\d+\.\\d+\.\\d+")"
+-    packagename=NuGet
+-    installed=false
+-    
+-    if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+-        echo $packagename is installed.
+-        installed=true
+-    else
+-        echo $packagename is installed but OUTDATED, minimal version: $requiredver, current version: $currentver
+-        installed=false
+-        missingdepends=true
+-    fi
+-    
+-    nugetinstalled=$installed
+-else
+-    echo NuGet is NOT installed.
+-    nugetinstalled=false
+-    missingdepends=true
+-fi
+-
+ echo Searching for make...
+ if command -v make &> /dev/null 
+ then
+@@ -153,12 +103,6 @@ if [ $missingdepends == "true" ]; then
+     if [ "$dotnetinstalled" == "false" ]; then 
+         echo Mono version $requiredverdotnet or above.
+     fi
+-    if [ "$msbuildinstalled" == "false" ]; then 
+-        echo MSBuild version $requiredvermsbuild or above.
+-    fi
+-    if [ "$nugetinstalled" == "false" ]; then 
+-        echo NuGet version $requiredvernuget or above.
+-    fi
+     if [ "$makeinstalled" == "false" ]; then 
+         echo Make version $requiredvermake or above.
+     fi
