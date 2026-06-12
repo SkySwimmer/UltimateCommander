@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..14734ae 100644
+index fc7bc02..8374080 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
 @@ -9,11 +9,15 @@ using System.Threading.Tasks;
@@ -440,9 +440,9 @@ index fc7bc02..14734ae 100644
 +                List<SystemCommand> reregister = new List<SystemCommand>();
 +                foreach (SystemCommand command in commands)
 +                {
-+                    if (command.allowDiscord && !arr.Any(t =>
++                    if (command.allowDiscord && command is DmSupportedCommand && !arr.Any(t =>
 +                    {
-+                        if (t.Description.StartsWith("[LEGACY] ") && t.Description.EndsWith(" (Legacy CMD-R Command)") && t.Name == command.commandid && t is DmSupportedCommand)
++                        if (t.Description.StartsWith("[LEGACY] ") && t.Description.EndsWith(" (Legacy CMD-R Command)") && t.Name == command.commandid)
 +                        {
 +                            // Check description
 +                            if (("[LEGACY] " + command.description + " (Legacy CMD-R Command)").Length > 100)
