@@ -39,8 +39,8 @@ for module in ../modules/*; do
     echo "Building $module..."
     chmod +x configure
     ./configure --norepoconfig || exit 1
-    make
-    make package
+    make || exit 1
+    make package || exit 1
     echo
     
     cp "build/package.cpkg" "$olddir/build/Module Packages/$module.cpkg"
