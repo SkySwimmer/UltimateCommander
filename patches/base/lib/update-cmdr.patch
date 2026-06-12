@@ -1,8 +1,8 @@
 diff --git a/lib/update-cmdr b/lib/update-cmdr
-index 1f57256..d33cdfd 100644
+index 1f57256..3355ca5 100644
 --- a/lib/update-cmdr
 +++ b/lib/update-cmdr
-@@ -1,5 +1,23 @@
+@@ -1,7 +1,25 @@
  #!/bin/bash
 +if [ "$(id -u)" != "0" ]; then
 +    1>&2 echo CMD-R needs to run as its own user.
@@ -26,3 +26,6 @@ index 1f57256..d33cdfd 100644
  if [[ $@ == "--run" ]]; then
      /usr/lib/cmd-r/update-and-run
  else
+-    /usr/lib/cmd-r/update
++    /usr/lib/cmd-r/update 
+ fi

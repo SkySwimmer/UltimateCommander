@@ -1,5 +1,5 @@
 diff --git a/lib/Update CMD-R.sh b/lib/Update CMD-R.sh
-index 1129667..6e8c6e0 100644
+index 1129667..12540c7 100644
 --- a/lib/Update CMD-R.sh	
 +++ b/lib/Update CMD-R.sh	
 @@ -1,18 +1,19 @@
@@ -17,10 +17,11 @@ index 1129667..6e8c6e0 100644
 -    chmod +x ./configure
 -    ./configure --norepoconfig
      echo Compiling...
+-    make
 +    chmod +x ./configure
-+    ./configure
-+    ./applypatches.sh
-     make
++    ./configure || exit 1
++    ./applypatches.sh || exit 1
++    make || exit 1
      echo Installing...
 -    cp build/* .. -r -f
 +    cp work/build/* .. -r -f
