@@ -1,8 +1,15 @@
 diff --git a/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs b/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
-index 4f73e73..ea26f9b 100644
+index 4f73e73..3479f8d 100644
 --- a/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
 +++ b/CMD-R/HelpCmdModule/LsCmdCategoriesCommand.cs
-@@ -6,7 +6,7 @@ using Discord.WebSocket;
+@@ -1,12 +1,14 @@
+ using System;
+ using System.Collections.Generic;
++using System.Threading;
+ using System.Threading.Tasks;
+ using Discord;
++using Discord.Rest;
+ using Discord.WebSocket;
  
  namespace CMDR.HelpCmdModule
  {
@@ -11,7 +18,16 @@ index 4f73e73..ea26f9b 100644
      {
           public override string commandid => "lscategories";
  
-@@ -77,12 +77,13 @@ namespace CMDR.HelpCmdModule
+@@ -25,7 +27,7 @@ namespace CMDR.HelpCmdModule
+         public CmdCategory c = new CmdCategory("noncategorized", "Commands that don't have a category");
+         public override CmdCategory[] Categories => new CmdCategory[] { c };
+         
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments)
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser user, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
+         {
+             int page = 0;
+             List<string> pages = new List<string>();
+@@ -77,12 +79,13 @@ namespace CMDR.HelpCmdModule
              }
  
              foreach (CmdCategory cat in categories) {
@@ -27,21 +43,95 @@ index 4f73e73..ea26f9b 100644
              }
              if (currentPage.Length != ("```A list of known command categories (page " + pages.Count + "):").Length)
              {
-@@ -92,7 +93,7 @@ namespace CMDR.HelpCmdModule
+@@ -90,9 +93,13 @@ namespace CMDR.HelpCmdModule
+                 pages.Add(currentPage);
+             }
  
-             Discord.Rest.RestUserMessage message = await channel.SendMessageAsync(pages[page]);
+-            Discord.Rest.RestUserMessage message = await channel.SendMessageAsync(pages[page]);
++            RestFollowupMessage message = await ev.FollowupAsync(embed: new EmbedBuilder()
++                    .WithTitle("Command category listing")
++                    .WithColor(Color.Blue)
++                    .WithDescription(pages[page])
++                .Build());
  
 -            Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task> handler = new Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task>((arg1, arg2, arg3) =>
 +            Func<Cacheable<IUserMessage, ulong>, Cacheable<IMessageChannel, ulong>, SocketReaction, Task> handler = new Func<Cacheable<IUserMessage, ulong>, Cacheable<IMessageChannel, ulong>, SocketReaction, Task>((arg0, arg1, arg3) =>
              {
                  if (arg3.MessageId == message.Id && arg3.Channel.Id == message.Channel.Id)
                  {
-@@ -179,5 +180,156 @@ namespace CMDR.HelpCmdModule
+@@ -117,8 +124,11 @@ namespace CMDR.HelpCmdModule
+                             page--;
+ 
+                             var oldmsg = message;
+-                            message = channel.SendMessageAsync(pages[page]).GetAwaiter().GetResult();
+-                            oldmsg.DeleteAsync().GetAwaiter().GetResult();
++                            message.ModifyAsync(t2 => t2.Embed = new EmbedBuilder()
++                                    .WithTitle("Command category listing")
++                                    .WithColor(Color.Blue)
++                                    .WithDescription(pages[page])
++                                .Build()).GetAwaiter().GetResult();
+ 
+                             if (page != 0)
+                                 message.AddReactionAsync(em1).GetAwaiter().GetResult();
+@@ -147,8 +157,11 @@ namespace CMDR.HelpCmdModule
+                             page++;
+ 
+                             var oldmsg = message;
+-                            message = channel.SendMessageAsync(pages[page]).GetAwaiter().GetResult();
+-                            oldmsg.DeleteAsync().GetAwaiter().GetResult();
++                            message.ModifyAsync(t2 => t2.Embed = new EmbedBuilder()
++                                    .WithTitle("Command category listing")
++                                    .WithColor(Color.Blue)
++                                    .WithDescription(pages[page])
++                                .Build()).GetAwaiter().GetResult();
+ 
+                             if (page != 0)
+                                 message.AddReactionAsync(em1).GetAwaiter().GetResult();
+@@ -160,24 +173,203 @@ namespace CMDR.HelpCmdModule
+                 return null;
+             });
+ 
+-            Bot.GetBot().client.ReactionAdded += handler;
+-            Bot.GetBot().client.MessageDeleted += (arg11, arg22) =>
++            new Thread(() =>
+             {
+-                if (arg11.Id == message.Id)
++                Bot.GetBot().client.ReactionAdded += handler;
++                Bot.GetBot().client.MessageDeleted += (arg11, arg22) =>
++                {
++                    if (arg11.Id == message.Id)
++                        Bot.GetBot().client.ReactionAdded -= handler;
++                    return null;
++                };
++
++                Task.Run(() =>
++                {
++                    Thread.Sleep(30000);
+                     Bot.GetBot().client.ReactionAdded -= handler;
+-                return null;
+-            };
+-            
+-            if (pages.Count != 1)
+-            {
+-                if (page != pages.Count)
+-                   await message.AddReactionAsync(em2);
+-            }
++                });
++                
++                if (pages.Count != 1)
++                {
++                    if (page != pages.Count)
++                        message.AddReactionAsync(em2).GetAwaiter().GetResult();
++                }
++            }).Start();
+         }
+ 
+         public override void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments)
          {
  
          }
 +
-+        public async Task OnExecuteFromDM(SocketUser user, SocketDMChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments)
++        public async Task OnExecuteFromDM(SocketUser user, SocketDMChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
 +        {
 +            int page = 0;
 +            List<string> pages = new List<string>();
@@ -107,7 +197,11 @@ index 4f73e73..ea26f9b 100644
 +                pages.Add(currentPage);
 +            }
 +
-+            Discord.Rest.RestUserMessage message = await channel.SendMessageAsync(pages[page]);
++            RestFollowupMessage message = await ev.FollowupAsync(embed: new EmbedBuilder()
++                    .WithTitle("Command category listing")
++                    .WithColor(Color.Blue)
++                    .WithDescription(pages[page])
++                .Build());
 +
 +            Func<Cacheable<IUserMessage, ulong>, Cacheable<IMessageChannel, ulong>, SocketReaction, Task> handler = new Func<Cacheable<IUserMessage, ulong>, Cacheable<IMessageChannel, ulong>, SocketReaction, Task>((arg0, arg1, arg3) =>
 +            {
@@ -134,8 +228,11 @@ index 4f73e73..ea26f9b 100644
 +                            page--;
 +
 +                            var oldmsg = message;
-+                            message = channel.SendMessageAsync(pages[page]).GetAwaiter().GetResult();
-+                            oldmsg.DeleteAsync().GetAwaiter().GetResult();
++                            message.ModifyAsync(t2 => t2.Embed = new EmbedBuilder()
++                                    .WithTitle("Command category listing")
++                                    .WithColor(Color.Blue)
++                                    .WithDescription(pages[page])
++                                .Build()).GetAwaiter().GetResult();
 +
 +                            if (page != 0)
 +                                message.AddReactionAsync(em1).GetAwaiter().GetResult();
@@ -164,8 +261,11 @@ index 4f73e73..ea26f9b 100644
 +                            page++;
 +
 +                            var oldmsg = message;
-+                            message = channel.SendMessageAsync(pages[page]).GetAwaiter().GetResult();
-+                            oldmsg.DeleteAsync().GetAwaiter().GetResult();
++                            message.ModifyAsync(t2 => t2.Embed = new EmbedBuilder()
++                                    .WithTitle("Command category listing")
++                                    .WithColor(Color.Blue)
++                                    .WithDescription(pages[page])
++                                .Build()).GetAwaiter().GetResult();
 +
 +                            if (page != 0)
 +                                message.AddReactionAsync(em1).GetAwaiter().GetResult();
@@ -177,19 +277,28 @@ index 4f73e73..ea26f9b 100644
 +                return null;
 +            });
 +
-+            Bot.GetBot().client.ReactionAdded += handler;
-+            Bot.GetBot().client.MessageDeleted += (arg11, arg22) =>
++            new Thread(() =>
 +            {
-+                if (arg11.Id == message.Id)
++                Bot.GetBot().client.ReactionAdded += handler;
++                Bot.GetBot().client.MessageDeleted += (arg11, arg22) =>
++                {
++                    if (arg11.Id == message.Id)
++                        Bot.GetBot().client.ReactionAdded -= handler;
++                    return null;
++                };
++
++                Task.Run(() =>
++                {
++                    Thread.Sleep(30000);
 +                    Bot.GetBot().client.ReactionAdded -= handler;
-+                return null;
-+            };
-+            
-+            if (pages.Count != 1)
-+            {
-+                if (page != pages.Count)
-+                   await message.AddReactionAsync(em2);
-+            }
++                });
++                
++                if (pages.Count != 1)
++                {
++                    if (page != pages.Count)
++                        message.AddReactionAsync(em2).GetAwaiter().GetResult();
++                }
++            }).Start();
 +        }
      }
  }

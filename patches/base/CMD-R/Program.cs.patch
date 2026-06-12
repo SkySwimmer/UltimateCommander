@@ -1,8 +1,15 @@
 diff --git a/CMD-R/Program.cs b/CMD-R/Program.cs
-index fc7bc02..1322f11 100644
+index fc7bc02..14734ae 100644
 --- a/CMD-R/Program.cs
 +++ b/CMD-R/Program.cs
-@@ -14,6 +14,8 @@ namespace CMDR
+@@ -9,11 +9,15 @@ using System.Threading.Tasks;
+ using Discord;
+ using Discord.WebSocket;
+ using System.IO.Compression;
++using System.Numerics;
++using Discord.Rest;
+ 
+ namespace CMDR
  {
      public partial class Bot
      {
@@ -11,7 +18,7 @@ index fc7bc02..1322f11 100644
          public static void WriteLine(string msg = "")
          {
              Terminal.WriteLine(msg);
-@@ -28,6 +30,7 @@ namespace CMDR
+@@ -28,6 +32,7 @@ namespace CMDR
          static Bot _bot;
          public List<Server> servers;
  
@@ -19,7 +26,15 @@ index fc7bc02..1322f11 100644
          public List<BotModule> modules = new List<BotModule>();
          public List<SystemCommand> commands = new List<SystemCommand>();
          public List<CmdCategory> CmdCategories = new List<CmdCategory>();
-@@ -109,9 +112,9 @@ namespace CMDR
+@@ -35,7 +40,6 @@ namespace CMDR
+         {
+             return _bot;
+         }
+-        public string prefix = "+";
+         public string token = "";
+         public string path;
+         public ulong guild = 0;
+@@ -109,9 +113,9 @@ namespace CMDR
              Console.ForegroundColor = b;
  
              path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -32,7 +47,7 @@ index fc7bc02..1322f11 100644
              Bot.WriteLine();
              Bot.WriteLine("System path: " + path);
              Directory.CreateDirectory(path + "/Modules");
-@@ -131,11 +134,16 @@ namespace CMDR
+@@ -131,11 +135,16 @@ namespace CMDR
                  newToken = true;
              }
  
@@ -52,14 +67,40 @@ index fc7bc02..1322f11 100644
                      client.StopAsync().GetAwaiter().GetResult();
                      client.Dispose();
                      Server.RunSaveAll(true);
-@@ -145,17 +153,25 @@ namespace CMDR
+@@ -144,18 +153,52 @@ namespace CMDR
+                 }
                  e.Cancel = true;
              });
++
++            // Configure client
              Bot.WriteLine("Starting Discord.NET framework...");
 -            client = new DiscordSocketClient();
++
++            // Load itnent config
++            if (!File.Exists(path + "/Intents.cfg"))
++                File.WriteAllText(path + "/Intents.cfg", "# Add required intents here\n# Each intent should be on its own line\n# If none are given, only unprivileged intents are used\n# See Discord.NET GatewayIntents enum for names\n\n");
++            foreach (string line in File.ReadAllLines(path + "/Intents.cfg"))
++            {
++                if (line.StartsWith("#") || line == "")
++                    continue;
++
++                // Parse
++                try
++                {
++                    AddRequiredIntent(Enum.Parse<GatewayIntents>(line));
++                }
++                catch
++                {
++                    throw new FormatException("Unknown intent: " + line + " in Intents.cfg");
++                }
++            }
++            
++            // Create intent list
 +            GatewayIntents intentI = GatewayIntents.AllUnprivileged;
 +            foreach (GatewayIntents i in intents)
 +                intentI = intentI | i;
++
++            // Apply intents
 +            client = new DiscordSocketClient(new DiscordSocketConfig()
 +            {
 +                GatewayIntents = intentI
@@ -78,10 +119,11 @@ index fc7bc02..1322f11 100644
              }
  
 +            Bot.WriteLine("Waiting for servers to load... Please note that the bot needs to be in at least ONE server for it to load.");
++            Bot.WriteLine("Please confirm all required intents are properly configured in the dev portal, as otherwise the bot can hang.");
              while (client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Disconnected) { Thread.Sleep(100); }
              while (client.Guilds.Count == 0 || client.Guilds.FirstOrDefault().Name == null || client.Guilds.FirstOrDefault().Name == "") { Thread.Sleep(100); }
  
-@@ -209,30 +225,31 @@ namespace CMDR
+@@ -209,30 +252,31 @@ namespace CMDR
              {
                  loadPackage(info);
              }
@@ -121,7 +163,7 @@ index fc7bc02..1322f11 100644
                      // Read the archive for getting the new version file, skip if patch.ver is not in the archive
                      ZipArchive file = ZipFile.OpenRead(path + "/Module Packages/" + Path.GetFileName(info.FullName));
                      if (file.Entries.ToList().Find(t => t.Name == "patch.ver") != null)
-@@ -245,20 +262,20 @@ namespace CMDR
+@@ -245,20 +289,20 @@ namespace CMDR
                          }
                          catch
                          {
@@ -147,7 +189,7 @@ index fc7bc02..1322f11 100644
                  // Extract files if new/updated
                  if (update)
                  {
-@@ -293,21 +310,21 @@ namespace CMDR
+@@ -293,21 +337,21 @@ namespace CMDR
                              b = Console.ForegroundColor;
                              Console.ForegroundColor = ConsoleColor.Red;
                              Bot.WriteLine("CRITICAL ERROR: Unable to restore or save storage folder, one already exists in both temp and install output!");
@@ -175,28 +217,35 @@ index fc7bc02..1322f11 100644
                  ConfigDictionary<String, String> conf = new ConfigDictionary<string, string>();
                  if (File.Exists(path + "/Module Packages/" + Path.GetFileNameWithoutExtension(info.FullName) + "/pointer.targets"))
                  {
-@@ -394,22 +411,38 @@ namespace CMDR
+@@ -394,22 +438,44 @@ namespace CMDR
              Bot.WriteLine("Set the autosave interval to " + Server.AutoSaveMinutes + " minutes.");
              Server.StartAutoSaveThread();
  
 +            // Legacy to modern discord
++            Bot.WriteLine();
 +            Bot.WriteLine("Initializing support for legacy commands...");
 +            lockedCmdReg = true;
 +
 +            // Bind event
 +            client.JoinedGuild += InitLegacyCommands;
++            await InitLegacyDmCommands(client);
 +
 +            // Go through existing
-+            foreach (SocketGuild guild in client.Guilds) {
++            foreach (SocketGuild guild in client.Guilds)
++            {
 +                await InitLegacyCommands(guild);
 +            }
++
++            // Bind handler
++            client.SlashCommandExecuted += OnCommand;
++
++            // Init modern commands
++            // FIXME
 +
              Bot.WriteLine();
              Bot.WriteLine("Execute quit or exit to close.");
  
-+            // Bind
-             client.MessageReceived += onMessage;
-+            
+-            client.MessageReceived += onMessage;
              await client.SetGameAsync("");
              while (true)
              {
@@ -216,14 +265,236 @@ index fc7bc02..1322f11 100644
                      Server.StopAutoSaveThread();
                      Environment.Exit(0);
                  }
-@@ -604,11 +637,17 @@ namespace CMDR
+@@ -604,11 +670,239 @@ namespace CMDR
              }
          }
  
 +        private async Task InitLegacyCommands(SocketGuild guild)
 +        {
-+            // Guild joined
-+            // FIXME: todo
++            // Guild loaded
++
++            // De-register old commands
++            bool commandAvailable = false;
++            IReadOnlyCollection<SocketApplicationCommand> arr = null;
++            try
++            {
++                arr = await guild.GetApplicationCommandsAsync();
++                commandAvailable = true;
++                Bot.WriteLine("De-registering old commands for Guild " + guild.Name + "...");
++                foreach (SocketApplicationCommand command in arr)
++                {
++                    if (command.Description.StartsWith("[LEGACY] ") && command.Description.EndsWith(" (Legacy CMD-R Command)"))
++                    {
++                        string name = command.Name;
++                        if (!commands.Any(t => t.commandid == name && t.allowDiscord))
++                        {
++                            try
++                            {
++                                // Old command
++                                Bot.WriteLine("Deleting command " + name + " in Guild " + guild.Name + "...");
++                                await command.DeleteAsync();
++                            }
++                            catch
++                            {
++                            }
++                        }
++                    }
++                }
++            }
++            catch
++            {
++            }
++
++            // Register new commands
++            if (commandAvailable)
++            {
++                Bot.WriteLine("Registering missing commands for Guild " + guild.Name + "...");
++
++                // Find commands to register
++                List<SystemCommand> reregister = new List<SystemCommand>();
++                foreach (SystemCommand command in commands)
++                {
++                    if (command.allowDiscord && !arr.Any(t =>
++                    {
++                        if (t.Description.StartsWith("[LEGACY] ") && t.Description.EndsWith(" (Legacy CMD-R Command)") && t.Name == command.commandid)
++                        {
++                            // Check description
++                            if (("[LEGACY] " + command.description + " (Legacy CMD-R Command)").Length > 100)
++                            {
++                                if (t.Description == ("[LEGACY] Legacy command " + command.commandid + " (Legacy CMD-R Command)"))
++                                {
++                                    return true;
++                                }
++                            }
++                            else
++                            {
++                                if (t.Description == "[LEGACY] " + command.description + " (Legacy CMD-R Command)")
++                                {
++                                    return true;
++                                }
++                            }
++                        }
++                        return false;
++                    }))
++                    {
++                        // Add
++                        Bot.WriteLine("Command to register: " + command.commandid + " in Guild " + guild.Name);
++                        reregister.Add(command);
++                    }
++                }
++
++                // Prepare to add commands
++                Bot.WriteLine("Registering commands for Guild " + guild.Name + "...");
++                foreach (SystemCommand command in reregister)
++                {
++                    // Create command entry
++                    Bot.WriteLine("Registering command: " + command.commandid + " in Guild " + guild.Name + "...");
++                    SlashCommandBuilder b = new SlashCommandBuilder();
++                    b.WithName(command.commandid);
++                    if (("[LEGACY] " + command.description + " (Legacy CMD-R Command)").Length > 100)
++                    {
++                        b.WithDescription("[LEGACY] Legacy command " + command.commandid + " (Legacy CMD-R Command)");
++                    }
++                    else
++                    {
++                        b.WithDescription("[LEGACY] " + command.description + " (Legacy CMD-R Command)");
++                    }
++                    b.AddOption("arguments", ApplicationCommandOptionType.String, "Arguments to pass to this legacy command", false);
++                    try
++                    {
++                        await guild.CreateApplicationCommandAsync(b.Build());
++                    }
++                    catch
++                    {
++                    }
++                }
++
++                // Remove file
++                if (File.Exists(Bot.GetBot().path + "/Server Configs/" + guild.Id + "/commandsfailedregister"))
++                {
++                    File.Delete(Bot.GetBot().path + "/Server Configs/" + guild.Id + "/commandsfailedregister");
++                }
++            }
++            else
++            {
++                // Error
++                // DM the server operator if not done yet
++                if (!File.Exists(Bot.GetBot().path + "/Server Configs/" + guild.Id + "/commandsfailedregister"))
++                {
++                    File.WriteAllText(Bot.GetBot().path + "/Server Configs/" + guild.Id + "/commandsfailedregister", "");
++                    try
++                    {
++                        // DM
++                        await (await client.GetUserAsync(guild.OwnerId)).SendMessageAsync(embed: new EmbedBuilder()
++                            .WithTitle("Missing permissions")
++                            .WithDescription(client.CurrentUser.Username + " is missing required permissions!\n\nPlease re-add the " + client.CurrentUser.Username + " bot with the `Create Application Commands` permission, you can do so by re-inviting with an updated invite link.")
++                            .WithColor(Color.Red)
++                        .Build());
++                    }
++                    catch
++                    {
++                    }
++                }
++            }
++        }
++
++        private async Task InitLegacyDmCommands(DiscordSocketClient client)
++        {// De-register old commands
++            bool commandAvailable = false;
++            IReadOnlyCollection<SocketApplicationCommand> arr = null;
++            try
++            {
++                arr = await client.GetGlobalApplicationCommandsAsync();
++                commandAvailable = true;
++                Bot.WriteLine("De-registering old global commands...");
++                foreach (SocketApplicationCommand command in arr)
++                {
++                    if (command.Description.StartsWith("[LEGACY] ") && command.Description.EndsWith(" (Legacy CMD-R Command)"))
++                    {
++                        string name = command.Name;
++                        if (!commands.Any(t => t.commandid == name && t.allowDiscord && t is DmSupportedCommand))
++                        {
++                            try
++                            {
++                                // Old command
++                                Bot.WriteLine("Deleting command " + name + "...");
++                                await command.DeleteAsync();
++                            }
++                            catch
++                            {
++                            }
++                        }
++                    }
++                }
++            }
++            catch
++            {
++            }
++
++            // Register new commands
++            if (commandAvailable)
++            {
++                Bot.WriteLine("Registering missing global commands...");
++
++                // Find commands to register
++                List<SystemCommand> reregister = new List<SystemCommand>();
++                foreach (SystemCommand command in commands)
++                {
++                    if (command.allowDiscord && !arr.Any(t =>
++                    {
++                        if (t.Description.StartsWith("[LEGACY] ") && t.Description.EndsWith(" (Legacy CMD-R Command)") && t.Name == command.commandid && t is DmSupportedCommand)
++                        {
++                            // Check description
++                            if (("[LEGACY] " + command.description + " (Legacy CMD-R Command)").Length > 100)
++                            {
++                                if (t.Description == ("[LEGACY] Legacy command " + command.commandid + " (Legacy CMD-R Command)"))
++                                {
++                                    return true;
++                                }
++                            }
++                            else
++                            {
++                                if (t.Description == "[LEGACY] " + command.description + " (Legacy CMD-R Command)")
++                                {
++                                    return true;
++                                }
++                            }
++                        }
++                        return false;
++                    }))
++                    {
++                        // Add
++                        Bot.WriteLine("Command to register: " + command.commandid);
++                        reregister.Add(command);
++                    }
++                }
++
++                // Prepare to add commands
++                Bot.WriteLine("Registering global commands...");
++                foreach (SystemCommand command in reregister)
++                {
++                    // Create command entry
++                    Bot.WriteLine("Registering global command: " + command.commandid + "...");
++                    SlashCommandBuilder b = new SlashCommandBuilder();
++                    b.WithName(command.commandid);
++                    if (("[LEGACY] " + command.description + " (Legacy CMD-R Command)").Length > 100)
++                    {
++                        b.WithDescription("[LEGACY] Legacy command " + command.commandid + " (Legacy CMD-R Command)");
++                    }
++                    else
++                    {
++                        b.WithDescription("[LEGACY] " + command.description + " (Legacy CMD-R Command)");
++                    }
++                    b.AddOption("arguments", ApplicationCommandOptionType.String, "Arguments to pass to this legacy command", false);
++                    try
++                    {
++                        await client.CreateGlobalApplicationCommandAsync(b.Build());
++                    }
++                    catch
++                    {
++                    }
++                }
++            }
 +        }
 +
          public static void LoadBotModule(string filename, string filefolder, string classname = "{auto}", string namespacepath = "{auto}")
@@ -235,7 +506,7 @@ index fc7bc02..1322f11 100644
              AppDomain currentDomain = AppDomain.CurrentDomain;
              currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
  
-@@ -620,14 +659,18 @@ namespace CMDR
+@@ -620,14 +914,18 @@ namespace CMDR
                  Assembly assembly = Assembly.LoadFrom(assemblyPath);
                  return assembly;
              }
@@ -256,7 +527,7 @@ index fc7bc02..1322f11 100644
              }
              else
              {
-@@ -635,13 +678,13 @@ namespace CMDR
+@@ -635,13 +933,13 @@ namespace CMDR
                  Bot.WriteLine("Loading module: " + script.id + "...");
                  Bot.WriteLine("Module description: " + script.moduledesctiption);
                  Bot.GetBot().modules.Add(script);
@@ -274,7 +545,7 @@ index fc7bc02..1322f11 100644
                  script.LoadConfig();
                  Bot.WriteLine("Pre-initializing module: " + script.id + "...");
                  script.PreInit(Bot.GetBot());
-@@ -650,6 +693,30 @@ namespace CMDR
+@@ -650,6 +948,30 @@ namespace CMDR
              }
          }
  
@@ -305,167 +576,166 @@ index fc7bc02..1322f11 100644
  #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
          private async Task Client_RoleDeleted(SocketRole arg)
  #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-@@ -819,13 +886,88 @@ namespace CMDR
+@@ -819,75 +1141,110 @@ namespace CMDR
              }
          }
  
 -#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-+#pragma warning disable CS1998
-         private async Task onMessage(SocketMessage msg)
+-        private async Task onMessage(SocketMessage msg)
 -#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-+#pragma warning restore CS1998
++        private async Task OnCommand(SocketSlashCommand ev)
          {
-             var message = msg as SocketUserMessage;
-             if (message == null) return;
-+
-             SocketTextChannel ch = message.Channel as SocketTextChannel;
-+            string prefix = this.prefix;
-+            if (ch != null && ch.Guild != null)
-+            {
-+                Server srv = GetServerFromSocketGuild(ch.Guild);
-+                if (srv != null)
-+                {
-+                    prefix = srv.GetPrefix();
-+                }
-+            }
-+
-+            // I know, its hacky, but this project is a mess and needs a overhaul so ill use this method
-+            if (msg.Content.StartsWith("<@!" + client.CurrentUser.Id + ">", StringComparison.CurrentCulture))
-+            {
-+                prefix = "<@!" + client.CurrentUser.Id + "> ";
-+            }
-+            else if (msg.Content.StartsWith("<@" + client.CurrentUser.Id + ">", StringComparison.CurrentCulture))
-+            {
-+                prefix = "<@" + client.CurrentUser.Id + "> ";
-+            }
-+
-+            string fullcmd = message.Content;
-+
-+            // If there are multiple commands in one message, process all of them
-+            if (fullcmd.Replace("\r", "").Contains("\n"))
-+            {
-+
-+                // Verify command chain
-+                bool valid = true;
-+                foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n'))
-+                {
-+                    if (!cmdL.StartsWith(prefix, StringComparison.CurrentCulture) || cmdL.StartsWith(prefix + " ", StringComparison.CurrentCulture) || cmdL == prefix)
-+                    {
-+                        valid = false;
-+                        break;
-+                    }
-+                }
-+                if (valid)
-+                {
-+                    foreach (string cmdL in fullcmd.Replace("\r", "").Split('\n'))
-+                    {
-+                        string cid = cmdL.Substring(prefix.Length);
-+                        string args = "";
-+                        if (cid.Contains(" "))
-+                        {
-+                            args = cid.Substring(cid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
-+                            cid = cid.Remove(cid.IndexOf(" ", StringComparison.CurrentCulture));
-+                        }
-+
-+                        bool found = false;
-+                        foreach (SystemCommand cmd in commands)
-+                        {
-+                            if (cmd.commandid.ToLower() == cid.ToLower())
-+                            {
-+                                found = true;
-+
-+                                if (CheckPermissions(cmd.permissionnode, msg.Author, ch.Guild))
-+                                {
-+                                    await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, cmdL, args, GetArgumentListFromString(args));
-+                                }
-+                                else
-+                                {
-+                                    await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
-+                                }
-+                            }
-+                        }
-+                        if (!found)
-+                        {
-+                            await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
-+                        }
-+                    }
-+                    return;
-+                }
-+            }
-+
-             if (msg.Content.StartsWith(prefix, StringComparison.CurrentCulture) && ch != null && !msg.Content.StartsWith(prefix + " ", StringComparison.CurrentCulture) && msg.Content != prefix)
+-            var message = msg as SocketUserMessage;
+-            if (message == null) return;
+-            SocketTextChannel ch = message.Channel as SocketTextChannel;
+-            if (msg.Content.StartsWith(prefix, StringComparison.CurrentCulture) && ch != null && !msg.Content.StartsWith(prefix + " ", StringComparison.CurrentCulture) && msg.Content != prefix)
++            SocketUser user = ev.User;
++            if (ev.IsDMInteraction)
              {
-                 bool found = false;
-@@ -833,10 +975,9 @@ namespace CMDR
+-                bool found = false;
+-                foreach (SystemCommand cmd in commands)
++                // Global command
++                if (ev.Channel is SocketDMChannel)
                  {
-                     if (cmd.allowDiscord)
-                     {
+-                    if (cmd.allowDiscord)
+-                    {
 -                        string fullcmd = message.Content;
-                         string cmdid = fullcmd.Substring(prefix.Length);
-                         string arguments = "";
+-                        string cmdid = fullcmd.Substring(prefix.Length);
+-                        string arguments = "";
 -                        if (fullcmd.Contains(" "))
-+                        if (cmdid.Contains(" "))
-                         {
-                             arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
-                             cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
-@@ -862,13 +1003,53 @@ namespace CMDR
-                     await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
+-                        {
+-                            arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
+-                            cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
+-                        }
++                    // Get channel
++                    SocketDMChannel ch = ev.Channel as SocketDMChannel;
+ 
+-                        if (cmd.commandid.ToLower() == cmdid.ToLower())
+-                        {
+-                            found = true;
++                    // Defer
++                    await ev.DeferAsync();
+ 
+-                            if (CheckPermissions(cmd.permissionnode, msg.Author, ch.Guild))
++                    // Find command
++                    string name = ev.CommandName;
++                    SystemCommand cmd = commands.FirstOrDefault(t => t.commandid == name && t.allowDiscord && t is DmSupportedCommand);
++                    if (cmd != null)
++                    {
++                        if (cmd.permissionnode == "sys.anyone")
++                        {
++                            // Run
++                            string args = "";
++                            SocketSlashCommandDataOption opt = ev.Data.Options.FirstOrDefault();
++                            string fullCmd = cmd.commandid + (args != "" ? " " : "") + args;
++                            if (opt != null)
++                                args = opt.Value.ToString();
++                            try
+                             {
+-                                await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, fullcmd, arguments, GetArgumentListFromString(arguments));
++                                // Run
++                                await ((DmSupportedCommand)cmd).OnExecuteFromDM(user, ch, ev, fullCmd, args, GetArgumentListFromString(args));
+                             }
+-                            else
++                            finally
+                             {
+-                                await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
++                                // Delete message if untouched
++                                RestInteractionMessage m = await ev.GetOriginalResponseAsync();
++                                if (m.Flags.HasValue && m.Flags.Value.HasFlag(MessageFlags.Loading))
++                                {
++                                    // Delete
++                                    await m.DeleteAsync();
++                                }
+                             }
+                         }
++                        else
++                        {
++                            await ev.RespondAsync(embed: new EmbedBuilder()
++                                .WithTitle("Insufficient Permissions")
++                                .WithDescription("Sorry, but you do not have the required permissions to use this command.")
++                                .WithColor(Color.Red)
++                            .Build());
++                        }
+                     }
                  }
+-                if (!found)
+-                {
+-                    await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that command, use " + prefix + "help for commands.");
+-                }
              }
 -            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id) await msg.Channel.SendMessageAsync("```diff\n- I am sorry, but CMD-R do not support direct messages yet.\n- Please go to a server and run " + prefix + "help for a list of commands```");
 -            else {
-+            else if (message.Channel is SocketDMChannel && message.Author.Id != client.CurrentUser.Id)
-+            {
-+                bool found = false;
-+                foreach (SystemCommand cmd in commands)
-+                {
-+                    if (cmd is DmSupportedCommand)
-+                    {
-+                        DmSupportedCommand wrapper = (DmSupportedCommand)cmd;
-+                        if (fullcmd.StartsWith(prefix))
-+                        {
-+                            fullcmd = fullcmd.Substring(prefix.Length);
-+                        }
-+
-+                        string cmdid = fullcmd;
-+                        string arguments = "";
-+                        if (fullcmd.Contains(" "))
-+                        {
-+                            arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
-+                            cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
-+                        }
-+
-+                        if (cmd.commandid.ToLower() == cmdid.ToLower())
-+                        {
-+                            if (CheckPermissions(cmd.permissionnode, msg.Author, null))
-+                            {
-+                                await wrapper.OnExecuteFromDM(msg.Author, (SocketDMChannel)msg.Channel, msg, fullcmd, arguments, GetArgumentListFromString(arguments));
-+                            }
-+                            else
-+                            {
-+                                await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
-+                            }
-+                            found = true;
-+                            break;
-+                        }
-+                    }
-+                }
-+                if (!found)
-+                {
-+                    await message.Channel.SendMessageAsync("I am sorry, but i don't recognize that DM command, use help for commands.");
-+                }
-+            }
+-                foreach (SystemCommand cmd in commands)
 +            else
 +            {
-                 foreach (SystemCommand cmd in commands)
++                // Guild command
++                if (ev.Channel is SocketTextChannel)
                  {
-                     if (cmd.allowDiscord && cmd.setNoCmdPrefix)
-                     {
+-                    if (cmd.allowDiscord && cmd.setNoCmdPrefix)
+-                    {
 -                        string fullcmd = message.Content;
-                         string cmdid = fullcmd;
-                         string arguments = "";
-                         if (fullcmd.Contains(" "))
-@@ -904,5 +1085,11 @@ namespace CMDR
+-                        string cmdid = fullcmd;
+-                        string arguments = "";
+-                        if (fullcmd.Contains(" "))
+-                        {
+-                            arguments = cmdid.Substring(cmdid.IndexOf(" ", StringComparison.CurrentCulture) + 1);
+-                            cmdid = cmdid.Remove(cmdid.IndexOf(" ", StringComparison.CurrentCulture));
+-                        }
++                    // Get channels
++                    SocketTextChannel ch = ev.Channel as SocketTextChannel;
++                    SocketGuild guild = ch.Guild;
++
++                    // Defer
++                    await ev.DeferAsync();
+ 
+-                        if (cmd.commandid.ToLower() == cmdid.ToLower())
++                    // Find command
++                    string name = ev.CommandName;
++                    SystemCommand cmd = commands.FirstOrDefault(t => t.commandid == name && t.allowDiscord);
++                    if (cmd != null)
++                    {
++                        // FIXME: better permission system
++                        if (CheckPermissions(cmd.permissionnode, user, ch.Guild))
+                         {
+-                            if (CheckPermissions(cmd.permissionnode, msg.Author, ch.Guild))
++                            // Run
++                            string args = "";
++                            SocketSlashCommandDataOption opt = ev.Data.Options.FirstOrDefault();
++                            string fullCmd = cmd.commandid + (args != "" ? " " : "") + args;
++                            if (opt != null)
++                                args = opt.Value.ToString();
++                            try
+                             {
+-                                await cmd.OnExecuteFromDiscord(ch.Guild, msg.Author, ch, msg, fullcmd, arguments, GetArgumentListFromString(arguments));
++                                // Run
++                                await cmd.OnExecuteFromDiscord(guild, user as SocketGuildUser, ch, ev, fullCmd, args, GetArgumentListFromString(args));
+                             }
+-                            else
++                            finally
+                             {
+-                                await message.Channel.SendMessageAsync("```diff\n- I am sorry, but you are not allowed to run that command```");
++                                // Delete message if untouched
++                                RestInteractionMessage m = await ev.GetOriginalResponseAsync();
++                                if (m.Flags.HasValue && m.Flags.Value.HasFlag(MessageFlags.Loading))
++                                {
++                                    // Delete
++                                    await m.DeleteAsync();
++                                }
+                             }
+                         }
++                        else
++                        {
++                            await ev.RespondAsync(embed: new EmbedBuilder()
++                                .WithTitle("Insufficient Permissions")
++                                .WithDescription("Sorry, but you do not have the required permissions to use this command.")
++                                .WithColor(Color.Red)
++                            .Build());
++                        }
+                     }
+                 }
+             }
+@@ -904,5 +1261,11 @@ namespace CMDR
                  await t.GetAwaiter().GetResult().DeleteAsync();
              });
          }

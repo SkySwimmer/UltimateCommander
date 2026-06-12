@@ -1,0 +1,52 @@
+diff --git a/CMD-R/GetPermCmdModule/GetPermCommand.cs b/CMD-R/GetPermCmdModule/GetPermCommand.cs
+index a78bab9..6fb5f24 100644
+--- a/CMD-R/GetPermCmdModule/GetPermCommand.cs
++++ b/CMD-R/GetPermCmdModule/GetPermCommand.cs
+@@ -1,6 +1,7 @@
+ ﻿using System;
+ using System.Collections.Generic;
+ using System.Threading.Tasks;
++using Discord;
+ using Discord.WebSocket;
+ 
+ namespace CMDR.GetPermCmdModule
+@@ -27,23 +28,35 @@ namespace CMDR.GetPermCmdModule
+ 
+         public override bool allowDiscord => true;
+ 
+-        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments)
++        public override async Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser user, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments)
+         {
+             if (arguments.Count == 1)
+             {
+                 string id = arguments_string;
+                 if (GetBot().commands.Find(t => t.commandid.ToLower() == id.ToLower()) != null && GetBot().commands.Find(t => t.commandid.ToLower() == id.ToLower()).allowDiscord)
+                 {
+-                    await channel.SendMessageAsync("**Permission node of command "+ GetBot().commands.Find(t => t.commandid.ToLower() == id.ToLower()).commandid +": "+ GetBot().commands.Find(t => t.commandid == id).permissionnode+"**");
++                    await ev.FollowupAsync(embed: new EmbedBuilder()
++                            .WithTitle("Permission viewer")
++                            .WithColor(Color.Blue)
++                            .WithDescription("**Permission node of command "+ GetBot().commands.Find(t => t.commandid.ToLower() == id.ToLower()).commandid +": "+ GetBot().commands.Find(t => t.commandid == id).permissionnode+"**")
++                        .Build());
+                 }
+                 else
+                 {
+-                    await channel.SendMessageAsync("**Command not recognized.**");
++                    await ev.FollowupAsync(embed: new EmbedBuilder()
++                            .WithTitle("Error")
++                            .WithColor(Color.Red)
++                            .WithDescription("**Command not recognized.**")
++                        .Build());
+                 }
+             }
+             else
+             {
+-                await channel.SendMessageAsync("**Invalid input.**");
++                await ev.FollowupAsync(embed: new EmbedBuilder()
++                        .WithTitle("Error")
++                        .WithColor(Color.Red)
++                        .WithDescription("**Error: Missing argument**: command name")
++                    .Build());
+             }
+         }
+ 

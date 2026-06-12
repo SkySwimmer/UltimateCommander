@@ -1,5 +1,5 @@
 diff --git a/CMD-R/Server.cs b/CMD-R/Server.cs
-index 861f296..6890954 100644
+index 861f296..b8da7e0 100644
 --- a/CMD-R/Server.cs
 +++ b/CMD-R/Server.cs
 @@ -3,22 +3,45 @@ using System.Collections.Generic;
@@ -49,41 +49,7 @@ index 861f296..6890954 100644
              }
              Bot.WriteLine();
              Bot.WriteLine("Save completed.");
-@@ -75,6 +98,23 @@ namespace CMDR
-         public static bool UseChangeSave = true;
-         public static int AutoSaveMinutes = 60;
-         public static bool _has_changes = false;
-+        public string prefix = null;
-+
-+        public void SetPrefix(string prefix) {
-+            if (prefix == Bot.GetBot().prefix) {
-+                prefix = null;
-+            }
-+
-+            this.prefix = prefix;
-+            ___has_changes = true;
-+        }
-+
-+        public string GetPrefix() {
-+            if (prefix == null)
-+                return Bot.GetBot().prefix;
-+            else
-+                return prefix;
-+        }
- 
-         public static void LoadAllServers(out List<Server> servers)
-         {
-@@ -99,6 +139,9 @@ namespace CMDR
-                 {
-                     Bot.WriteLine("Loading server folder " + server.Name + "...");
-                     Server s = new Server(ulong.Parse(server.Name));
-+                    if (File.Exists(server.FullName + "/prefix.conf")) {
-+                        s.prefix = File.ReadAllText(server.FullName + "/prefix.conf").Replace("\n", "").Replace("\r", "");
-+                    }
-                     servers.Add(s);
-                     Bot.WriteLine("Folder " + server.Name + " loaded, server name: " + s.name);
-                 }
-@@ -123,14 +166,21 @@ namespace CMDR
+@@ -123,13 +146,15 @@ namespace CMDR
                  return lastname;
              }
          }
@@ -98,15 +64,9 @@ index 861f296..6890954 100644
              Directory.CreateDirectory(Bot.GetBot().path + "/Server Configs/" + id);
 +            Directory.CreateDirectory(Bot.GetBot().path + "/Server Configs/" + id + "/Modules");
              File.WriteAllText(Bot.GetBot().path + "/Server Configs/" + id + "/server.info", name);
-+            if (prefix == null && File.Exists(Bot.GetBot().path + "/Server Configs/" + id + "/prefix.conf")) {
-+                File.Delete(Bot.GetBot().path + "/Server Configs/" + id + "/prefix.conf");
-+            } else if (prefix != null && !File.Exists(Bot.GetBot().path + "/Server Configs/" + id + "/prefix.conf")) {
-+                File.WriteAllText(Bot.GetBot().path + "/Server Configs/" + id + "/prefix.conf", prefix);
-+            }
              if (!UseChangeSave)
              {
-                 foreach (FileInfo file in new DirectoryInfo(Bot.GetBot().path + "/Server Configs/" + id).GetFiles("*.role"))
-@@ -156,7 +206,16 @@ namespace CMDR
+@@ -156,7 +181,16 @@ namespace CMDR
                  }
              }
              Bot.WriteLine("Saved server, name: '" + name + "', id: '" + id + "'");
@@ -123,7 +83,7 @@ index 861f296..6890954 100644
          public Server(ulong id)
          {
              this.id = id;
-@@ -169,12 +228,65 @@ namespace CMDR
+@@ -169,12 +203,65 @@ namespace CMDR
              lastname = name;
              LoadAll();
          }
@@ -189,7 +149,7 @@ index 861f296..6890954 100644
              Bot.WriteLine("Loading roles of server " + name + " (" + id + ")");
              foreach (FileInfo file in new DirectoryInfo(Bot.GetBot().path + "/Server Configs/" + id).GetFiles("*.role"))
              {
-@@ -191,6 +303,7 @@ namespace CMDR
+@@ -191,6 +278,7 @@ namespace CMDR
                  roles.Add(r);
              }
              Bot.WriteLine("Loaded "+roles.Count+" role"+(roles.Count==1?"":"s"));

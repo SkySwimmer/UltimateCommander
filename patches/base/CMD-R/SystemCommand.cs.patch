@@ -1,0 +1,13 @@
+diff --git a/CMD-R/SystemCommand.cs b/CMD-R/SystemCommand.cs
+index e9ae685..8847173 100644
+--- a/CMD-R/SystemCommand.cs
++++ b/CMD-R/SystemCommand.cs
+@@ -22,7 +22,7 @@ namespace CMDR
+         public abstract bool allowTerminal { get; }
+         public abstract bool allowDiscord { get; }
+ 
+-        public abstract Task OnExecuteFromDiscord(SocketGuild guild, SocketUser user, SocketTextChannel channel, SocketMessage messageobject, string fullmessage, string arguments_string, List<string> arguments);
++        public abstract Task OnExecuteFromDiscord(SocketGuild guild, SocketGuildUser user, SocketTextChannel channel, SocketSlashCommand ev, string fullmessage, string arguments_string, List<string> arguments);
+         public abstract void OnExecuteFromTerminal(string fullcommand, string arguments_string, List<string> arguments);
+     }
+ }

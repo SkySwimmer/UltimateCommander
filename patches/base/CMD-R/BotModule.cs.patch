@@ -1,12 +1,13 @@
 diff --git a/CMD-R/BotModule.cs b/CMD-R/BotModule.cs
-index 60eef49..deab46a 100644
+index 60eef49..55f43e2 100644
 --- a/CMD-R/BotModule.cs
 +++ b/CMD-R/BotModule.cs
-@@ -12,8 +12,15 @@ namespace CMDR
+@@ -12,29 +12,37 @@ namespace CMDR
              return Bot.GetBot();
          }
  
-+        public Server[] GetServers() {
++        public Server[] GetServers()
++        {
 +            return GetBot().servers.ToArray();
 +        }
 +
@@ -18,7 +19,41 @@ index 60eef49..deab46a 100644
              if (GetBot().CmdCategories.Find(t => t.name.ToLower() == command.commandid.ToLower()) != null)
                  throw new Exception("Error: a category exists with that command id.");
  
-@@ -61,7 +68,7 @@ namespace CMDR
+             if (command.Categories.Any(t => t.name.ToLower() == command.commandid.ToLower()))
+                 throw new Exception("Error: a category exists with that command id.");
+-            
++
+             if (command.commandid.Contains(" "))
+                 throw new FormatException("Command id cannot contain space symbols.");
+ 
+             Bot.WriteLine();
+             Bot.WriteLine("Registering command " + command.commandid + " from module " + id + "...");
+             Bot.WriteLine("    ID = " + command.commandid);
+-            if (command.helpsyntax != "" ) Bot.WriteLine("    Syntax = " + command.helpsyntax);
++            if (command.helpsyntax != "") Bot.WriteLine("    Syntax = " + command.helpsyntax);
+             Bot.WriteLine("    Description = " + command.description);
+             Bot.WriteLine("    Permission node = " + command.permissionnode);
+             Bot.WriteLine("    Allow call from discord = " + command.allowDiscord);
+-            if (command.allowDiscord)  Bot.WriteLine("    Allow call from discord without command specifier = " + command.setNoCmdPrefix);
++            if (command.allowDiscord) Bot.WriteLine("    Allow call from discord without command specifier = " + command.setNoCmdPrefix);
+             Bot.WriteLine("    Allow call from terminal = " + command.allowTerminal);
+ 
+             string catPretty = "";
+-            foreach (CmdCategory c in command.Categories) 
++            foreach (CmdCategory c in command.Categories)
+             {
+                 if (catPretty.Length != 0)
+                     catPretty += ", ";
+@@ -42,7 +50,7 @@ namespace CMDR
+ 
+                 if (GetBot().CmdCategories.Find(t => t.name == c.name) == null)
+                 {
+-                    GetBot().CmdCategories.Add(c); 
++                    GetBot().CmdCategories.Add(c);
+                 }
+             }
+ 
+@@ -61,7 +69,7 @@ namespace CMDR
  
          public void SaveConfig()
          {

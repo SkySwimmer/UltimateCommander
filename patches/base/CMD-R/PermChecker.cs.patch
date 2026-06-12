@@ -1,20 +1,24 @@
 diff --git a/CMD-R/PermChecker.cs b/CMD-R/PermChecker.cs
-index fa2a644..626ef29 100644
+index fa2a644..b4e6226 100644
 --- a/CMD-R/PermChecker.cs
 +++ b/CMD-R/PermChecker.cs
-@@ -12,6 +12,11 @@ namespace CMDR
+@@ -12,15 +12,28 @@ namespace CMDR
              PermissionsAllowed = new List<string>(DefaultPermissions);
              PermissionsBlacklist = new List<string>();
  
 +            if  (server == null){
 +                PermissionsAllowed.Add("sys.anyone");
 +                return;
-+            }
-+            
++            }            
              if (server.OwnerId == usr.Id)
              {
                  PermissionsAllowed.Add("*");
-@@ -21,6 +26,12 @@ namespace CMDR
+             }
++
++            // Get socket guild user
+             SocketGuildUser user = usr as SocketGuildUser;
+ 
++            // Check roles
              List<SocketRole> roles = new List<SocketRole>(server.Roles).FindAll(t => t.Members.Contains(user));
              foreach (Role role in servers.Find(t => t.id == server.Id).roles.FindAll(t => roles.Find(t2 => t2.Id == t.roleid) != null))
              {
